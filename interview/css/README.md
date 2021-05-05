@@ -90,6 +90,28 @@
 
 * 清除浮动
 
+  * 图片浮动后，脱离正常流，包裹图片的容器并未撑高；
+
+  ```css
+  .container {
+    background-color: #f1f1f1;
+  }
+  .left {
+    float: left;
+  }
+  .bfc {
+    overflow: hidden;  /*设置bfc，清除图片浮动带来的容器未撑开问题*/
+  }
+  ```
+
+  ```html
+  <div class="container bfc">
+    <img src="https://images.pexels.com/photos/147359/pexels-photo-147359.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=50" class="left"/>
+    <p>某一段文字……</p>
+    <p>某一段文字……</p>
+  </div>
+  ```
+
 ### 2.1.5、float布局问题，及clearfix
 
 #### 2.1.5.1、如何实现圣杯布局和双飞翼布局？

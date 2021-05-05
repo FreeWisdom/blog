@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>BFC</title>
     <style type="text/css">
         .container {
             background-color: #f1f1f1;
@@ -13,18 +13,15 @@
             float: left;
         }
         .bfc {
-            overflow: hidden; /* 触发元素 BFC */
+            overflow: hidden;  /*设置bfc，清除图片浮动带来的容器未撑开问题*/
         }
     </style>
 </head>
 <body>
     <div class="container bfc">
-        <!-- <img src="https://www.imooc.com/static/img/index/logo.png" class="left"/> -->
-        <div class="left">kuai</div>
+        <img src="https://images.pexels.com/photos/147359/pexels-photo-147359.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=50" class="left"/>
         <p>某一段文字……</p>
-        <p>某二段文字……</p>
         <p>某一段文字……</p>
-        <p>某二段文字……</p>
     </div>
 </body>
 </html>
