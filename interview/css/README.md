@@ -116,33 +116,402 @@
 
 #### 2.1.5.1、如何实现圣杯布局和双飞翼布局？
 
+* 圣杯布局/双飞翼布局**目的**：
+  * 三栏布局，中间一栏最先加载渲染；
+  * 两侧内容固定，中间内容自适应；
+  * 一般用于PC；
+* 圣杯布局/双飞翼布局**技术总结**：
+  * 使用float布局；
+  * 两侧使用margin负值，以便和中间内容横向重叠；
+  * 防止中间内容被两侧覆盖，一个用padding一个用margin；
+
+1. **圣杯布局**
+
+   ```html
+   <style>
+     body {
+       min-width: 550px;
+     }
+   
+     #header {
+       text-align: center;
+       background-color: #f1f1f1;
+     }
+   
+     #container {
+       padding-left: 150px;
+       padding-right: 200px;
+     }
+     .column {
+       float: left;
+     }
+     #center {
+       width: 100%;
+       background-color: aqua;
+     }
+     #left {
+       position: relative;
+       right: 150px;
+       width: 150px;
+       background-color: rgb(229, 255, 0);
+       margin-left: -100%;;
+     }
+     #right {
+       width: 200px;
+       background-color: rgb(25, 0, 255);
+       margin-right: -200px;
+     }
+     .clearfix:after {
+       content: '';
+       display: table;
+       clear: both;
+     }
+   
+     #footer {
+       text-align: center;
+       background-color: #f1f1f1;
+     }
+   </style>
+   <body>
+     <div id="header">this is header</div>
+     <div id="container" class="clearfix">
+       <div id="center" class="column">this is center</div>
+       <div id="left" class="column">this is left</div>
+       <div id="right" class="column">this is right</div>
+     </div>
+     <div id="footer">this is footer</div>
+   </body>
+
+2. **双飞翼布局**
+
+   ```html
+   <style type="text/css">
+     body {
+       min-width: 550px;
+     }
+     #main {
+       background-color: blue;
+       width: 100%;
+       height: 200px;
+     }
+     #main #main-wrap {
+       margin: 0 200px;
+     }
+     #left {
+       background-color: brown;
+       width: 200px;
+       height: 200px;
+       margin-left: -100%;
+     }
+     #right {
+       background-color: rgb(67, 165, 42);
+       width: 200px;
+       height: 200px;
+       margin-left: -200px;
+     }
+     .col {
+       float: left;
+     }
+   </style>
+   <body>
+       <div id="main" class="col">
+           <div id="main-wrap">
+               this is main
+           </div>
+       </div>
+       <div id="left" class="col">
+           this is left
+       </div>
+       <div id="right" class="col">
+           this is right
+       </div>
+   </body>
+   ```
+
 #### 2.1.5.2、手写clearfix
 
+```css
+.clearfix:after {
+  content: '';
+  display: table;
+  clear: both;
+}
+```
+
 ### 2.1.6、flex画三点骰子
+
+```html
+<style type="text/css">
+  .box {
+    width: 300px;
+    height: 300px;
+    border: 2px solid cornflowerblue;
+    border-radius: 30px;
+    padding: 30px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  .item {
+    display: block;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: gray;
+  }
+  .item:nth-child(2) {
+    align-self: center;
+  }
+  .item:nth-child(3) {
+    align-self: flex-end;
+  }
+</style>
+<body>
+    <div class="box">
+        <span class="item"></span>
+        <span class="item"></span>
+        <span class="item"></span>
+    </div>
+</body>
+```
 
 ## 2.2、定位
 
 ### 2.2.1、absolute和relative分别依据什么定位？
 
+* relative依据自身定位；
+* absolute依据最近一层的定位元素定位；
+  * 定位元素：relative、absolute、fixed；
+  * 若父级无定位元素，则依据body定位；
+
 ### 2.2.2、居中对齐的实现方式
+
+* 水平居中
+  * inline元素：`text-align:center;`
+  * block元素：`margin:auto;`
+  * absolute元素：`left:50%;`+`margin-left:负值;`（需先知自身宽度）
+* 垂直居中
+  * inline元素：`line-height`值等于`height`值；
+  * absolute元素：`top:50%;`+`margin-top:负值;`（需先知自身高度）
+  * absolute元素：`transform: (-50%, -50%);`（古老项目兼容性不佳）
+  * absolute元素：`top:0; left:0; bottom:0; right:0; margin:auto;`（终极方案）
+
+```html
+<head>
+  <style type="text/css">
+    .container {
+      border: 1px solid #ccc;
+      margin: 10px;
+      padding: 10px;
+      height: 200px;
+    }
+    .item {
+      background-color: #ccc;
+    }
+
+    .container-1{
+      text-align: center;
+      line-height: 200px;
+      height: 200px;
+    }
+
+    .container-2 {
+      position: relative;
+    }
+    .container-2 .item {
+      width: 300px;
+      height: 100px;
+      position: absolute;
+      left: 50%;
+      margin-left: -150px;
+      top: 50%;
+      margin-top: -50px;
+    }
+
+    .container-3 {
+      position: relative;
+    }
+    .container-3 .item {
+      width: 200px;
+      height: 80px;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%)
+    }
+
+    .container-4 {
+      position: relative;
+    }
+    .container-4 .item {
+      width: 100px;
+      height: 50px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      margin: auto;
+    }
+  </style>
+</head>
+<body>
+    <div class="container container-1">
+        <span>一段文字</span>
+    </div>
+
+    <div class="container container-2">
+        <div class="item">
+            this is item
+        </div>
+    </div>
+
+    <div class="container container-3">
+        <div class="item">
+            this is item
+        </div>
+    </div>
+
+    <div class="container container-4">
+        <div class="item">
+            this is item
+        </div>
+    </div>
+</body>
+```
 
 ## 2.3、图文样式
 
-### 2.3.1、line-height继承问题
+### 2.3.1、line-height如何继承？
+
+1. 父元素`line-height: 40px;`为**具体数值**，此时子元素p标签`line-height: 40px;`**继承具体数值**；
+
+   ```html
+   <head>
+     <style type="text/css">
+       body {
+         font-size: 20px;
+         line-height: 40px;
+       }
+       p {
+         background-color: #ccc;
+         font-size: 16px;
+       }
+     </style>
+   </head>
+   <body>
+       <p>这是一行文字</p>
+   </body>
+   ```
+
+2. 父元素`line-height: 1.5;`为**比例**，此时子元素p标签`line-height: 24px;`**继承比例**；
+
+   ```html
+   <head>
+     <style type="text/css">
+       body {
+         font-size: 20px;
+         line-height: 1.5;
+       }
+       p {
+         background-color: #ccc;
+         font-size: 16px;
+       }
+     </style>
+   </head>
+   <body>
+       <p>这是一行文字</p>
+   </body>
+   ```
+
+3. 父元素`line-height: 1.5;`为**百分比**，此时子元素p标签`line-height: 40px;`**继承计算出来的具体数值**；
+
+   ```html
+   <head>
+     <style type="text/css">
+       body {
+         font-size: 20px;
+         line-height: 200%;
+       }
+       p {
+         background-color: #ccc;
+         font-size: 16px;
+       }
+     </style>
+   </head>
+   <body>
+       <p>这是一行文字</p>
+   </body>
+   ```
 
 ## 2.4、响应式
 
 ### 2.4.1、rem是什么？
 
+* px，相同倍屏情况下是绝对长度，常用；
+* em，相对长度，相对于父元素，不常用；
+* rem，相对长度，相对于跟元素，常用于响应式布局；
+
 ### 2.4.2、如何实现响应式？
 
-## 2.5、CSS3
+```html
+<head>
+  <title>响应式布局</title>
+  <style type="text/css">
+    @media only screen and (max-width: 374px) {
+      /* iphone5 或者更小的尺寸，以 iphone5 的宽度（320px）比例设置 font-size */
+      html {
+        font-size: 86px;
+      }
+    }
+    @media only screen and (min-width: 375px) and (max-width: 413px) {
+      /* iphone6/7/8 和 iphone x */
+      html {
+        font-size: 100px;
+      }
+    }
+    @media only screen and (min-width: 414px) {
+      /* iphone6p 或者更大的尺寸，以 iphone6p 的宽度（414px）比例设置 font-size */
+      html {
+        font-size: 110px;
+      }
+    }
 
-### 2.5.1、CSS3动画
+    body {
+      font-size: 0.16rem;
+    }
+    #div1 {
+      width: 1rem;
+      background-color: #ccc;
+    }
 
+  </style>
+</head>
+<body>
+  <div id="div1">
+    this is div
+  </div>
+</body>
+```
 
+## 2.5、vw/vh
 
+### 2.5.1、rem弊端
 
+* 阶梯性，不能实现阶梯内更细分屏幕宽度的尺寸响应式（即，不能实现真正意义上的等比缩放，同一屏幕不能展示相同多的内容）。
 
+### 2.5.2、网页视口尺寸
 
+* `window.screen.height		// 屏幕高度`；
+* `window.innerHeight			//网页视口高度`；
+  * 浏览器模拟高度与真机不准，真机不包含头和下巴，浏览器中模拟时网页视口高度与屏幕高度相等；
+* `document.body.clientHeight  // 网页 body 内容高度`；
 
+### 2.5.3、vw/vh
+
+* vh网页视口高度的1/100；
+* vw网页视口高度的1/100；
+* vmax取上方两者最大值，vmin取上方两者最小值；
+
+## 2.6、CSS3动画

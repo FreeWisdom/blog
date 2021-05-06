@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>圣杯布局</title>
     <style type="text/css">
-        body {
+        /* body {
             min-width: 550px;
         }
         #header {
@@ -42,13 +42,56 @@
         #footer {
             text-align: center;
             background-color: #f1f1f1;
-        }
+        } */
 
         /* 手写 clearfix */
-        .clearfix:after {
+        /* .clearfix:after {
             content: '';
             display: table;
             clear: both;
+        } */
+
+        body {
+            min-width: 550px;
+        }
+
+        #header {
+            text-align: center;
+            background-color: #f1f1f1;
+        }
+
+        #container {
+            padding-left: 150px;
+            padding-right: 200px;
+        }
+        .column {
+            float: left;
+        }
+        #center {
+            width: 100%;
+            background-color: aqua;
+        }
+        #left {
+            position: relative;
+            right: 150px;
+            width: 150px;
+            background-color: rgb(229, 255, 0);
+            margin-left: -100%;;
+        }
+        #right {
+            width: 200px;
+            background-color: rgb(25, 0, 255);
+            margin-right: -200px;
+        }
+        .clearfix:after {
+            content: '';
+            display: block;
+            clear: both;
+        }
+
+        #footer {
+            text-align: center;
+            background-color: #f1f1f1;
         }
     </style>
 </head>
