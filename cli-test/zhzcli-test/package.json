@@ -1,6 +1,6 @@
 {
   "name": "zhzcli-test",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "bin": {
@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "zhzlib-test": "^1.0.0"
+    "yargs": "^17.0.1",
+    "zhzlib-test": "^2.0.0"
   }
 }
