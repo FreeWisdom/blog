@@ -331,6 +331,7 @@ console.log(xialuo.hasOwnProperty("name"));                     // true
 console.log(xialuo.hasOwnProperty("sayhi"));                    // false
 console.log(xialuo.hasOwnProperty("eat"));                      // false
 console.log(xialuo.hasOwnProperty("hasOwnProperty"));           // false
+```
 
 > 原型链关系图
 
@@ -514,3 +515,173 @@ for (let i = 0; i < 10; i++) {
 
 2. 手写apply
 3. 手写call
+
+# 4、异步
+
+## 4.1、单线程和异步
+
+### 4.1.1、单线程为什么需要异步？
+
+* JS是单线程语言，同时只能做一件事；
+* JS和DOM渲染共用同一个线程，因为js可修改DOM结构；
+* 遇到等待（网络请求，定时任务）不能卡住；
+* 需要异步；
+* 异步是基于回调callback函数形式进行调用的；
+
+### 4.1.2、同步和异步的区别是什么？
+
+* 异步是基于JS是单线程语言的本质而产生的；
+
+* 异步不会阻塞代码执行；
+
+  ```js
+  console.log(100);
+  setTimeout(function() {
+    console.log(200);
+  }, 1000);
+  console.log(300);
+  
+  // 100
+  // 300
+  // 200
+  ```
+
+* 同步会阻塞代码执行；
+
+  ```js
+  console.log(100);
+  alert(200);
+  console.log(300);
+  
+  // 100
+  // 300
+
+## 4.2、应用场景
+
+### 4.2.1、网络请求（ajax/图片加载）
+
+```js
+// ajax
+console.log("start");
+$.get("./data.json", function(data) {
+  console.log(data);
+});
+console.log("end");
+
+// 图片加载
+console.log("start");
+let img = document.createElement("img");
+img.onload = function() {
+  console.log("loaded");
+};
+img.src = "/xxx.png";
+console.log("end");
+```
+
+### 4.2.2、定时任务（setTimeout）
+
+```js
+// setTimeout
+console.log(100);
+setTimeout(function() {
+  console.log(200);
+}, 1000);
+console.log(300);
+
+// setInterval
+console.log(100);
+setInterval(function() {
+  console.log(200);
+}, 1000);
+console.log(300);
+```
+
+## 4.3、callback hell 和 Promise
+
+### 4.3.1、callback hell
+
+```js
+$.get(url1, (data1) => {
+  console.log(data1);
+  
+  $.get(url2, (data2) => {
+    console.log(data2);
+    
+    $.get(url3, (data3) => {
+      console.log(3);
+    })
+  })
+})
+```
+
+### 4.3.2、Promise 
+
+```js
+function getData(url) {
+  return new Promise((resolve, reject) => {
+    $.ajax({
+      url,
+      success(data) {
+        resolve(data);
+      },
+      error(err) {
+        reject(err);
+      }
+    })
+  })
+}
+
+const url1 = "/data1.json";
+const url2 = "/data2.json";
+const url3 = "/data3.json";
+
+getData(url1).then(data1 => {
+  console.log(data1);
+  return getData2(url2);
+}).then(data2 => {
+  console.log(data2);
+  return getData3(url3);
+}).then(data3 => {
+  console.log(data3);
+}).catch(err => console.error(err));
+```
+
+### 4.3.3、手写用promise加载一张图片
+
+```js
+function loadImg(src) {
+  const p = new Promise(
+  	(resolve, reject) => {
+      const img = document.createElement("img");
+      img.onload = () => {
+        resolve(img);
+      };
+      img.onerror = () => {
+				const err = new Error(`图片加载失败${src}`);
+        reject(err);
+      };
+      img.src = src;
+    }
+  )
+  return p;
+}
+
+const url1 = "https://images.pexels.com/photos/7763793/pexels-photo-7763793.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500";
+const url2 = "https://images.pexels.com/photos/163444/sport-treadmill-tor-route-163444.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500";
+
+loadImg(url1).then(img1 => {
+  console.log(img1.width);
+  return img1;
+}).then(img1 => {
+  console.log(img1.height);
+  return loadImg(url2);
+}).then(img2 => {
+  console.log(img2.width);
+  return img2;
+}).then(img2 => {
+  console.log(img2.height);
+}).catch(err => {
+  cosnole.log(err);
+})
+```
+
