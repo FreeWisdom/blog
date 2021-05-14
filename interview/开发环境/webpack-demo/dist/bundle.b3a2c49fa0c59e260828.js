@@ -1,0 +1,1 @@
+(()=>{"use strict";console.log("this is fn."),console.log("zhz"),console.log({task:"find good job!"}),console.log("this is index.js.");console.log(10)})();

@@ -23,8 +23,8 @@ console.log( p1.className )
 console.log(p1.nodeName)
 console.log(p1.nodeType) // 1
 
-// // attribute
-// p1.setAttribute('data-name', 'imooc')
-// console.log( p1.getAttribute('data-name') )
-// p1.setAttribute('style', 'font-size: 50px;')
-// console.log( p1.getAttribute('style') )
+// attribute
+p1.setAttribute('data-name', 'imooc')
+console.log( p1.getAttribute('data-name') )
+p1.setAttribute('style', 'font-size: 50px;')
+console.log( p1.getAttribute('style') )
