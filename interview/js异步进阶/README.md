@@ -70,8 +70,8 @@
 >     return 100;
 >   };
 >   (async function () {
->     const a = fn();
->     const b = await fn();
+>     const a = fn();					// Promise {<fulfilled>: 100}
+>     const b = await fn();		// 100
 >   })();
 >   ```
 >
@@ -86,6 +86,11 @@
 >     console.log("c", c);
 >     console.log("end");
 >   })()
+>   
+>   // start
+>   // a 100
+>   // b 200 
+>   // 报错
 >   ```
 >
 > * Promise 和setTimeout的顺序
@@ -99,6 +104,11 @@
 >     console.log(300);
 >   });
 >   console.log(400);
+>   
+>   // 100
+>   // 400
+>   // 300
+>   // 200
 >   ```
 >
 > * Async/await顺序问题
@@ -107,27 +117,41 @@
 >   async function async1() {
 >     console.log("async1 start");
 >     await async2();
->     console.log("async1 end");
+>     console.log("async1 end");		// 微任务
 >   }
 >   async function async2() {
 >     console.log("async2");
 >   }
 >   
 >   console.log("script start");
->   setTimeout(function () {
+>   setTimeout(function () {				// 宏任务
 >     console.log("settimeout")
 >   }, 0);
 >   
 >   async1();
 >   
+>   // 初始化Promise时，传入的函数会立即被执行；
 >   new Promise(function (resolve) {
 >     console.log("promise1");
 >     resolve()
->   }).then(function () {
+>   }).then(function () {						// 微任务
 >     console.log("promise2");
 >   });
 >   
 >   console.log("script end");
+>   
+>   // script start
+>   // async1 start
+>   // async2
+>   // promise1
+>   // script end				此时callstack被清空 ==> 执行微任务 ==> 尝试触发DOM渲染 ==> 执行宏任务
+>   // async1 end
+>   // promise2
+>   // settimeout
+>   
+>   
+>   // 宏：settimeout
+>   // 微：async1 end/promise2
 >   ```
 
 # 2、 知识点梳理
@@ -145,9 +169,9 @@
 1. 同步代码，一行行放在callstack执行；
 2. 遇到异步，先在webAPI记录下，等待时机（定时、网络请求等）；
 3. 时机到了，移动到callback queue；
-4. 若此时同步代码执行完，callstack为空，则Event Loop开始工作；
+4. 若此时同步代码执行完，**callstack为空，先执行当前微任务，再尝试DOM渲染，最后执行宏任务**，再次触发新的Event Loop开始工作；
 5. 轮询查找callback queue，若有则移动到call stack执行；
-6. 然后继续轮询查找；
+6. 然后继续轮询查找； 
 
 ### 2.1.2、DOM事件和event loop关系
 
@@ -419,4 +443,29 @@ nums.forEach(async (i) => {
 ```
 
 ## 2.6、宏任务/微任务
+
+### 2.6.1、宏任务/微任务基本知识
+
+* 宏任务：setTimeout，setInterval，Ajax，DOM事件；
+* 微任务：Promise async/await；
+* 微任务执行时机比宏任务要早；
+
+### 2.6.2、why微任务执行时机比宏任务要早？
+
+* 宏任务：DOM渲染后触发，如setTimeout；
+* 微任务：DOM渲染前触发，如Promise；
+
+### 2.6.2、why宏任务在DOM渲染后触发，微任务在DOM渲染前触发？
+
+*  why宏任务在DOM渲染后触发？
+
+  <img class="picture" src="https://cdn.nlark.com/yuque/0/2021/png/114317/1620746479230-assets/web-upload/461e963f-3ec1-4ae3-aaec-3b6b13b52796.png?x-oss-process=image%2Fresize%2Cw_440" alt="eventloop" style="width: 600px; height: 400px;">
+
+<img class="picture" src="https://cdn.nlark.com/yuque/0/2021/png/114317/1620746479100-assets/web-upload/85745d31-ba95-478a-8511-6b7f0a1e0860.png?x-oss-process=image%2Fresize%2Cw_440" style="width: 600px; height: 400px;">
+
+* why微任务在DOM渲染前触发？
+
+<img class="picture" src="https://cdn.nlark.com/yuque/0/2021/png/114317/1620747315868-assets/web-upload/e600d66f-b7c5-4f9b-956e-1c491fde661a.png?x-oss-process=image%2Fresize%2Cw_440" style="width: 600px; height: 400px;">
+
+<img class="picture" src="https://cdn.nlark.com/yuque/0/2021/png/114317/1620747315796-assets/web-upload/5093ce1c-a5c1-49af-a340-b253805b94d3.png?x-oss-process=image%2Fresize%2Cw_440" style="width: 600px; height: 400px;">
 
