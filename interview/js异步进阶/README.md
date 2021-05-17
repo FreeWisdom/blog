@@ -300,7 +300,7 @@ async function loadImg2() {
      
      // 执行async函数，返回一个promise对象
      const res1 = fn1();
-     console.log("res1", res1);
+     console.log("res1", res1);		// Promise {<fulfilled>: 100}
      
      // res1 是 Promise对象，可以接then/catch
      res1.then(data => {

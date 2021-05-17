@@ -7,6 +7,10 @@
    > * DOM是哪种数据结构
    > * DOM操作常用API
    > * attr和property区别
+   >   * property是DOM中的属性，是JavaScript里的对象；
+   >     * 而Property是这个DOM元素作为对象，其附加的内容，例如childNodes、firstChild等。
+   >   * attribute是HTML标签上的特性，它的值只能够是字符串；
+   >     * Attribute就是dom节点自带的属性，例如html中常用的id、class、title、align等。
    > * 一次性插入多个DOM节点，考虑性能
 
    * 知识点：
