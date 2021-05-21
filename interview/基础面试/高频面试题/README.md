@@ -149,7 +149,7 @@
     ```js
     const arr = [10, 20, 30, 40, 50]
     
-    // slice 纯函数
+    // slice 纯函数   返回值为新数组
     const arr1 = arr.slice()			// [10, 20, 30, 40, 50]
     const arr2 = arr.slice(1, 4)	// [20, 30, 40]
     const arr3 = arr.slice(2)			// [30, 40, 50]
@@ -162,9 +162,9 @@
     ```js
     const arr = [10, 20, 30, 40, 50]
     
-    // splice 非纯函数
+    // splice 非纯函数    返回值为原数组
     const spliceRes = arr.splice(1, 2, 'a', 'b', 'c')
-    // const spliceRes1 = arr.splice(1, 2)		// 只剪不接
+    // const spliceRes1 = arr.splice(1, 2)										// 只剪不接
     // const spliceRes2 = arr.splice(1, 0, 'a', 'b', 'c')			// 只接不剪
     console.log(spliceRes, arr)
     // [20, 30]
