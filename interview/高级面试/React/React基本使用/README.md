@@ -42,7 +42,7 @@ class JSXBaseDemo extends React.Component {
         // // const styleElem = <p style={{ fontSize: '30px',  color: 'blue' }}>设置 style</p>
         // return styleElem
 
-        // ⚠️原生 html
+        // ⚠️原生 html	处于安全的原因，React当中所有表达式的内容会被转义，如果直接输入，标签会被当成文本。这时候就需要使用`dangerouslySetHTML`属性，它允许我们动态设置`innerHTML`
         const rawHtml = '<span>富文本内容<i>斜体</i><b>加粗</b></span>'
         const rawHtmlData = {
             __html: rawHtml // 注意，必须是这种格式
@@ -143,7 +143,7 @@ export default EventDemo
 
 ## 3.2、♨️event 参数（17与16区别处）
 
-* ❗️react 中 event 是由 SyntheticEvent 封装出来，用来模拟 DOM 事件所有能力；
+* ❗️react 中 event 是由 SyntheticEvent 封装合成出来，用来模拟 DOM 事件所有能力；
 * ❗️而 event.nativeEvent 才可以在 react 中得到原生事件对象 MouseEvent ；
 * ❗️react 和 DOM & Vue 事件不一样，DOM & Vue 事件挂载到当前元素；
 * ❗️React17 以前（不包括17），所有的事件，都被挂载到 document 上；
@@ -188,7 +188,7 @@ class EventDemo extends React.Component {
 export default EventDemo
 ```
 
-## 3.3、传递自定义参数 3 种方法
+## 3.3、🔔传递自定义参数 3 种方法
 
 ```jsx
 import React from 'react'
@@ -249,7 +249,7 @@ export default EventDemo
 
 ## 4.1、受控组件（后补充非受控组件）
 
-* 受控组件，其中受控是组件中的值受到 state 控制；
+* 受控组件，其中**受控是组件中的值受到 state 控制**；
 * 非受控组件：组件中的值不受到 state 控制；
 * 类似于 vue 中的 v-model，react 将双向绑定交给开发者自己写；
 

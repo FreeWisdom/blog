@@ -6,7 +6,7 @@
 
 <img class="picture" src="https://cdn.nlark.com/yuque/0/2021/png/114317/1621652133415-assets/web-upload/c13cc388-61e9-46ad-9f7f-b9409bf45e8a.png?x-oss-process=image%2Fresize%2Cw_800" alt="" style="width: 900px; height: 350px;">
 
-# 2、非受控组件
+# 2、非受控组件(不被state控制)
 
 * ref
 
@@ -101,49 +101,50 @@
   * 文件上传`<input type=file>`；
   * 富文本编辑器，需要传入 DOM 元素；
 
-# 3、Protals (传送门)
+# 3、Portals (传送门)
 
-* 组件默认按照既定层次嵌套渲染；
+* 使用场景
+  * 一个典型的用法就是当父组件的dom元素有 `overflow:hidden`或者`z-inde`样式，而你又需要显示的子元素超出父元素的盒子。
+    * 举例来说，如对话框，悬浮框，和小提示。
+  * 另一个典型用法就是`position:fixed` 失效的情况下：
+    * 组件默认按照既定层次嵌套渲染；
+    * 而许多情况下，`position:fixed` 将会失效；
+      * MDN："当元素祖先的 transform 属性非 none 时，定位容器由视口改为该祖先。"
+      * 详见：https://www.imooc.com/article/67784
+    * 为了避免 `position:fixed` 失效；
+      * 解决方案：需要让 `position:fixed`  的组件放到 DOM 树的最外层；
+    * 如何让组件脱离默认的嵌套渲染，而渲染到父组件以外呢？
 
-* 而许多情况下，`position:fixed` 将会失效；
+* 基本使用：
 
-  * MDN："当元素祖先的 transform 属性非 none 时，定位容器由视口改为该祖先。"
-  * 详见：https://www.imooc.com/article/67784
+```jsx
+import React from 'react'
+import ReactDOM from 'react-dom'
+import './style.css'
 
-* 为了避免 `position:fixed` 失效；
+class App extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+        }
+    }
+    render() {
+        // // 正常渲染
+        // return <div className="modal">
+        //     {this.props.children} {/* vue slot */}
+        // </div>
 
-  * 解决方案：需要让 `position:fixed`  的组件放到 DOM 树的最外层；
+        // 使用 Portals 渲染到 body 上。
+        // fixed 元素要放在 body 上，有更好的浏览器兼容性。
+        return ReactDOM.createPortal(
+            <div className="modal">{this.props.children}</div>,
+            document.body 			// 参数二，将参数一插在哪个目标 DOM 节点？
+        )
+    }
+}
 
-* 如何让组件脱离默认的嵌套渲染，而渲染到父组件以外呢？
-
-  ```jsx
-  import React from 'react'
-  import ReactDOM from 'react-dom'
-  import './style.css'
-  
-  class App extends React.Component {
-      constructor(props) {
-          super(props)
-          this.state = {
-          }
-      }
-      render() {
-          // // 正常渲染
-          // return <div className="modal">
-          //     {this.props.children} {/* vue slot */}
-          // </div>
-  
-          // 使用 Portals 渲染到 body 上。
-          // fixed 元素要放在 body 上，有更好的浏览器兼容性。
-          return ReactDOM.createPortal(
-              <div className="modal">{this.props.children}</div>,
-              document.body 			// 参数二，将参数一插在哪个目标 DOM 节点？
-          )
-      }
-  }
-  
-  export default App
-  ```
+export default App
+```
 
 # 4、context
 
@@ -310,11 +311,88 @@ export default App
 
 ## 6.2、PureComponent 和 React.memo
 
+* 类组件：`React.PureComponent` 与 [`React.Component`](https://zh-hans.reactjs.org/docs/react-api.html#reactcomponent) 很相似。两者的区别在于 [`React.Component`](https://zh-hans.reactjs.org/docs/react-api.html#reactcomponent) 并未实现 [`shouldComponentUpdate()`](https://zh-hans.reactjs.org/docs/react-component.html#shouldcomponentupdate)，而 `React.PureComponent` 中以浅层对比 prop 和 state 的方式来实现了该函数。
+
+* 函数组件：默认情况下其只会对复杂对象做浅层对比，如果你想要控制对比过程，那么请将自定义的比较函数通过第二个参数传入来实现。
+
+  ```jsx
+  function MyComponent(props) {
+    /* 使用 props 渲染 */
+  }
+  function areEqual(prevProps, nextProps) {
+    /*
+    如果把 nextProps 传入 render 方法的返回结果与
+    将 prevProps 传入 render 方法的返回结果一致则返回 true，
+    否则返回 false
+    */
+  }
+  export default React.memo(MyComponent, areEqual);
+  ```
+
 ## 6.3、不可变值 immutable.js
 
-# 7、高阶组件 HOC
+* 不可变数据 (Immutable Data )就是一旦创建，就不能再被更改的数据。**对 Immutable 对象的任何修改或添加删除操作都会返回一个新的 Immutable 对象**；
+* Immutable 实现的原理是持久化数据结构（ Persistent Data Structure），也就是**使用旧数据创建新数据时，要保证旧数据同时可用且不变**；
+* 同时为了避免 deepCopy 把所有节点都复制一遍带来的性能损耗，Immutable 使用了 结构共享（Structural Sharing），即**如果对象树中一个节点发生变化，只修改这个节点和受它影响的父节点，其它节点则进行共享**。
 
-# 8、Render Props
+![react](/Users/Thales/Desktop/学习资料/felixlu-course-gp21/React/react-v13.0-markdown/images/structure-sharing.png)
 
+# 7、组件公共逻辑的抽离
 
+## 7.1、（🔔使用场景）高阶组件 HOC
 
+* 核心思想
+  * Higher-Order Components就是一个函数，传给它一个组件，它返回一个新的组件。
+
+* 基本用法：
+
+  ```jsx
+  const HOCFactory = (Component) => {
+    class HOC extends React.Component {
+      render() {
+        return <Component {...this.props} />
+      }
+    }
+    return HOC;
+  }
+  const EnhancedComponent1 = HOCFactory(WrappedComponent1);
+  const EnhancedComponent1 = HOCFactory(WrappedComponent1);
+  ```
+
+## 7.2、（🔔使用场景）Render Props
+
+* 核心思想
+  * 通过一个 `this.props.render(this.state)` 函数，将 class 组件的 state 作为参数传给纯函数组件；
+
+* 基本使用
+
+```jsx
+const App = () => (
+	<Factory render={
+      /* render 是一个函数组件 */
+      (props) => <p>{props.a}{props.b}...</p>
+  } />
+)
+
+class Factory extends React.Component {
+  constructor() {
+    this.state = {
+      /* 多个组件的公共逻辑 */
+    }
+  }
+  
+  /* 修改state */
+  
+  render() {
+    return <div>{this.props.render(this.state)}</div>
+  }
+}
+```
+
+## 7.3、HOC 🆚 Render Props
+
+* HOC：模式简单
+  * 增加组件层级，增加透传成本，透传过程中会有覆盖，维护成本高；
+* Render Props：代码简洁
+  * 学习成本高
+  * 增加组件层级
