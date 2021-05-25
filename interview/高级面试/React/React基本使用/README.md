@@ -216,13 +216,15 @@ class EventDemo extends React.Component {
     render() {
         // 传递参数 - 用 bind(this, a, b)
         return <ul>{this.state.list.map((item, index) => {
-            // 方法①
+            // ✅方法①：传参数
             return <li key={item.id} onClick={this.clickHandler5(item.id, item.title)}>
+            {/* 方法①：不传参 */}
+            {/* return <li key={item.id} onClick={this.clickHandler6}> */}
               
             {/* 方法② */}
             {/* return <li key={item.id} onClick={(e) => this.clickHandler4(item.id, item.title, e)}> */}
               
-            {/* 方法③ */}
+            {/* 🚫方法③ */}
             {/* return <li key={item.id} onClick={this.clickHandler4.bind(this, item.id, item.title)}> */}
                 index {index}; title {item.title}
             </li>
@@ -234,11 +236,18 @@ class EventDemo extends React.Component {
         console.log(id, title)
         console.log('event', event) // 最后追加一个参数，即可接收 event
     }
-    clickHandler5(id, title) {
+  
+    // 方法①：传参数 -- 函数柯里化，箭头函数不考虑 bind this；
+    clickHandler5 = (id, title) => {
         return (e) => {
             console.log(id, title)
             console.log('event', e) 
         }
+    }
+    
+    // 方法①：不传参数 -- 函数柯里化，，箭头函数不考虑 bind this；
+    clickHandler6 = (e) => {
+      console.log('event', e) 
     }
 }
 
