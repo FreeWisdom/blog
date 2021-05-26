@@ -75,7 +75,7 @@ export default JSXBaseDemo
 * 渲染列表
   * map
 
-# 3、事件
+# 3、♨️事件
 
 ## 3.1、bind this
 
@@ -522,41 +522,67 @@ export default TodoListDemo
   * 对象也不能直接进行属性设置；
 * 必须使用setState对目标进行修改；
 
-## 6.2、setState 异/同步更新均有可能
+## 6.2、♨️♨️setState ***异/同*** 步更新均有可能
 
-1. setState 直接设置值是异步的:
+1. **react 本身的组件中的 setState 是异步的：**
 
-   * 可以增加函数的第二个参数方式（回调函数）获取更新后的值，和 Vue 的 $nextTick 方法类似。
+   * 可以增加函数的第二个参数（回调函数）方式，获取更新后的值，和 Vue 的 $nextTick 方法类似。
 
-   ```js
-   this.setState({
-     count: this.state.count + 1
-   }, () => {
-     // 联想 Vue $nextTick - DOM
-     console.log('count by callback', this.state.count) 			// 回调函数中可以拿到最新的 state
-   })
-   console.log('count', this.state.count) 										// 异步的，拿不到最新值
-   ```
-
-2. setTimeout 中的 setState 是同步的:
-
-   ```js
-   setTimeout(() => {
+   ```jsx
+   render() {
+     return (
+       <div>
+   			<button onClick={this.add4}>增加4异步转同步</button>
+   		</div>
+   	);
+   }
+   add4 = () => {
      this.setState({
        count: this.state.count + 1
+     }, () => {
+       // 第二个参数回调函数中可以拿到最新的 state
+       // 联想 Vue $nextTick - DOM
+       console.log(this.state.count)			// 同步的，拿到最新的 state
      })
-     console.log('count in setTimeout', this.state.count)		// 可以拿到最新的 state
-   }, 0)
+     console.log(this.state.count)				// 异步的，拿不到最新 state 
+   }
    ```
 
-3. componentDidMount 中自己定义的 DOM 事件，setState 是同步的:
+2. **setTimeout 中的 setState 是同步的:**
 
-   ```js
+   ```jsx
+   render() {
+     return (
+       <div>
+       	<button onClick={this.add2}>增加2</button>
+   		</div>
+   	);
+   }
+   add2 = () => {
+     setTimeout(() => {
+       this.setState({
+         count: this.state.count + 1
+       })
+       console.log(this.state.count)			// 同步的，拿到最新的 state
+     }, 0)
+   }
+   ```
+
+3. **自定义 DOM 事件中setState 是同步的:**
+
+   ```jsx
+   render() {
+     return (
+       <div>
+         <button id="click">增加3</button>
+   		</div>
+   	);
+   }
    bodyClickHandler = () => {
      this.setState({
        count: this.state.count + 1
      })
-     console.log('count in body event', this.state.count)		// 可以拿到最新的 state
+     console.log(this.state.count)				// 同步的，拿到最新的 state
    }
    componentDidMount() {
      // 自己定义的 DOM 事件，setState 是同步的
@@ -564,23 +590,24 @@ export default TodoListDemo
    }
    ```
 
-## 6.3、可能会被合并
+## 6.3、♨️可能会被合并
 
 1. 传入对象，会被合并：
 
    * （类似 Object.assign() ）。执行结果只一次 this.state.count + 1；
 
    ```js
-   this.setState({
-     count: this.state.count + 1				// 相当于 count: 0 + 1
-   })
-   this.setState({
-     count: this.state.count + 1				// 相当于 count: 0 + 1
-   })
-   this.setState({
-     count: this.state.count + 1				// 相当于 count: 0 + 1
-   })
-   																 		// 最终将 {count: 1},{count: 1},{count: 1} 合并为一个 {count: 1}
+   add4 = () => {
+     this.setState({
+       count: this.state.count + 1				// 相当于 count: 0 + 1
+     })
+     this.setState({
+       count: this.state.count + 1				// 相当于 count: 0 + 1
+     })
+     this.setState({
+       count: this.state.count + 1				// 相当于 count: 0 + 1
+     })
+   }																	 		// 最终将 {count: 1},{count: 1},{count: 1} 合并为一个 {count: 1}
    ```
 
 2. 传入函数，不被合并：
@@ -588,32 +615,35 @@ export default TodoListDemo
    * 会将传入的函数一个一个执行完，期间 state 会被更改，故执行结果是 +3，故而不会被合并；
 
    ```js
-   this.setState((prevState, props) => {
-     return {
-       count: prevState.count + 1
-     }
-   })
-   this.setState((prevState, props) => {
-     return {
-       count: prevState.count + 1
-     }
-   })
-   this.setState((prevState, props) => {
-     return {
-       count: prevState.count + 1
-     }
-   })
+   add4 = () => {
+     this.setState((prevState, props) => {
+       return {
+         count: prevState.count + 1
+       }
+     })
+     this.setState((prevState, props) => {
+       return {
+         count: prevState.count + 1
+       }
+     })
+     this.setState((prevState, props) => {
+       return {
+         count: prevState.count + 1
+       }
+     })
+   }
    ```
 
-# 7、组件生命周期
+# 7、♨️组件生命周期
 
-react16.4后使用了新的生命周期，使用getDerivedStateFromProps代替了旧的componentWillReceiveProps及componentWillMount。使用getSnapshotBeforeUpdate代替了旧的componentWillUpdate。
-
-* 使用getDerivedStateFromProps(nextProps, prevState)的原因：
-  * 旧的React中componentWillReceiveProps方法是用来判断前后两个 props 是否相同，如果不同，则将新的 props 更新到相应的 state 上去。在这个过程中我们实际上是可以访问到当前props的，这样我们可能会对this.props做一些奇奇怪怪的操作，很可能会破坏 state 数据的单一数据源，导致组件状态变得不可预测。
-  * 而在 getDerivedStateFromProps 中禁止了组件去访问 this.props，强制让开发者去比较 nextProps 与 prevState 中的值，以确保当开发者用到 getDerivedStateFromProps 这个生命周期函数时，就是在根据当前的 props 来更新组件的 state，而不是去访问this.props并做其他一些让组件自身状态变得更加不可预测的事情。
-* 使用getSnapshotBeforeUpdate(prevProps, prevState)的原因：
-  * 在 React 开启异步渲染模式后，在执行函数时读到的 DOM 元素状态并不总是渲染时相同，这就导致在 componentDidUpdate 中使用 componentWillUpdate 中读取到的 DOM 元素状态是不安全的，因为这时的值很有可能已经失效了。
-  * 而getSnapshotBeforeUpdate 会在最终的 render 之前被调用，也就是说在 getSnapshotBeforeUpdate 中读取到的 DOM 元素状态是可以保证与componentDidUpdate 中一致的。
+* react16.4后使用了新的生命周期：
+  * 使用getDerivedStateFromProps代替了旧的componentWillReceiveProps及componentWillMount；
+    * 使用getDerivedStateFromProps(nextProps, prevState)的原因：
+      * 旧的React中componentWillReceiveProps方法是用来判断前后两个 props 是否相同，如果不同，则将新的 props 更新到相应的 state 上去。在这个过程中我们实际上是可以访问到当前props的，这样我们可能会对this.props做一些奇奇怪怪的操作，很**可能会破坏 state 数据的单一数据源，导致组件状态变得不可预测**。
+      * 而在 **getDerivedStateFromProps 中禁止了组件去访问 this.props**，强制让开发者去比较 nextProps 与 prevState 中的值，以确保当开发者用到 getDerivedStateFromProps 这个生命周期函数时，就是在根据当前的 props 来更新组件的 state，而不是去访问this.props并做其他一些让组件自身状态变得更加不可预测的事情。
+  * 使用getSnapshotBeforeUpdate代替了旧的componentWillUpdate；
+    * 使用getSnapshotBeforeUpdate(prevProps, prevState)的原因：
+      * 在 React 开启异步渲染模式后，在**执行函数时读到的 DOM 元素状态并不总是渲染时相同**，这就导致在 componentDidUpdate 中使用 componentWillUpdate 中读取到的 DOM 元素状态是不安全的，因为这时的值很有可能已经失效了。
+      * **而getSnapshotBeforeUpdate 会在最终的 render 之前被调用**，也就是说在 getSnapshotBeforeUpdate 中读取到的 DOM 元素状态是可以保证与componentDidUpdate 中一致的。
 
 <img class="picture" src="https://cdn.nlark.com/yuque/0/2021/png/114317/1621603992361-assets/web-upload/d86f49cc-3a44-4b55-8e55-77591cbc08f5.png?x-oss-process=image%2Fresize%2Cw_700" alt="react生命周期" style="width: 900px; height: 500px;">

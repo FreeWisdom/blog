@@ -74,7 +74,39 @@ function fn() {};		// 特殊引用类型，不用与存储数据，没拷贝/复
   typeof { a: 100};															// "object"
   ```
 
-### 1.2.2、手写深拷贝
+### 1.2.4、Object.prototype.toString.call(obj)类型检测原理
+
+1.  Object.prototype.toString.call() 功能：
+
+   * 由于 typeof 不能分辨引用类型，即分不清 null、数组、对象;
+
+   * 故使用 Object.prototype.toString.call() 可以精准判断所传入参数的数据类型，如下：
+
+```js
+console.log(Object.prototype.toString.call("jerry"));						//[object String]
+console.log(Object.prototype.toString.call(12));								//[object Number]
+console.log(Object.prototype.toString.call(true));							//[object Boolean]
+console.log(Object.prototype.toString.call(undefined));					//[object Undefined]
+console.log(Object.prototype.toString.call(null));							//[object Null]
+console.log(Object.prototype.toString.call({name: "jerry"}));		//[object Object]
+console.log(Object.prototype.toString.call(function(){}));			//[object Function]
+console.log(Object.prototype.toString.call([]));								//[object Array]
+console.log(Object.prototype.toString.call(new Date));					//[object Date]
+console.log(Object.prototype.toString.call(/\d/));							//[object RegExp]
+function Person(){};
+console.log(Object.prototype.toString.call(new Person));				//[object Object]
+```
+
+2. Object.prototype.toString.call(obj) 原理：
+   * Object.prototype.toString.call(obj) 这句话的意思是：
+     * 用 Object 原型上的 toString 方法作用在传入的 obj 的上下文中（通过call将this指向obj）；
+   * 在 JavaScript 中，所有**类都继承于 Object ，因此 toString() 方法也被继承了**；
+   * 但其实各数据类型使用 toString() 后的结果表现不一，原因在于：**所有类在继承Object的时候，改写了toString()方法**；
+   * **但 Object 原型上的 toString() 方法是可以输出数据类型的**；
+   * **因此想判断数据类型时，也只能使用 Object 原型上的 toString() 方法**；
+   * 继而有了此方法：Object.prototype.toString.call(obj)；
+
+### 1.2.3、手写深拷贝
 
 ```js
 /**

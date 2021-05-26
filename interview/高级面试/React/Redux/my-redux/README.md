@@ -1,1 +1,2 @@
-# 手写 redux
+# 手写 Redux 
+

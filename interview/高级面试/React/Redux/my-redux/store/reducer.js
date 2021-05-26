@@ -11,6 +11,11 @@ const reducer = (state, action) => {
         ...state,
         count: state.count + 1
       }
+    case 'subtract':
+      return {
+        ...state,
+        count: state.count - 1
+      }
   
     default:
       return state

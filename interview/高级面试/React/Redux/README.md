@@ -2,9 +2,9 @@
 
 ## 1.1、Store
 
-Store 就是保存数据的地方，你可以把它看成一个容器。整个应用只能有一个 Store。
+* Store 就是保存数据的地方，你可以把它看成一个容器。整个应用只能有一个 Store。
 
-Redux 提供`createStore`这个函数，用来生成 Store。
+* Redux 提供`createStore`这个函数，用来生成 Store。
 
 > ```javascript
 > import { createStore } from 'redux';
@@ -13,7 +13,7 @@ Redux 提供`createStore`这个函数，用来生成 Store。
 
 上面代码中，`createStore`函数接受另一个函数作为参数，返回新生成的 Store 对象。
 
-## 1.2、State
+## 1.2、State/store.getState()
 
 当前时刻的 State，可以通过`store.getState()`拿到。
 
@@ -24,9 +24,11 @@ Redux 提供`createStore`这个函数，用来生成 Store。
 > const state = store.getState();
 > ```
 
-Redux 规定， 一个 State 对应一个 View。只要 State 相同，View 就相同。你知道 State，就知道 View 是什么样，反之亦然。
+* Redux 规定， 一个 State 对应一个 View。只要 State 相同，View 就相同。你知道 State，就知道 View 是什么样，反之亦然。
 
 ## 1.3、Action
+
+* 可以这样理解，**Action 描述当前发生的事情。改变 State 的唯一办法，就是使用 Action。它会运送数据到 Store。**
 
 用户接触不到 State，只能接触到 View。所以，State 的变化必须是 View 导致的。Action 就是 View 发出的通知，表示 State 应该要发生变化了。
 
@@ -40,8 +42,6 @@ Action 是一个对象。其中的`type`属性是必须的，表示 Action 的�
 > ```
 
 上面代码中，Action 的名称是`ADD_TODO`，它携带的信息是字符串`Learn Redux`。
-
-可以这样理解，Action 描述当前发生的事情。改变 State 的唯一办法，就是使用 Action。它会运送数据到 Store。
 
 ## 1.4、Action Creator
 
@@ -72,7 +72,7 @@ export const loadDataSync = (url) => {
 
 ## 1.5、store.dispatch()
 
-`store.dispatch()`是 View 发出 Action 的唯一方法。
+* `store.dispatch()`是 View 发出 Action 的唯一方法。
 
 > ```javascript
 > import { createStore } from 'redux';
@@ -94,7 +94,9 @@ export const loadDataSync = (url) => {
 
 ## 1.6、Reducer
 
-Reducer 是一个函数，它接受 Action 和当前 State 作为参数，返回一个新的 State。
+* Store 收到 Action 以后，必须给出一个新的 State，这样 View 才会发生变化。这种 **State 的计算过程**就叫做 Reducer。
+
+* Reducer 是一个函数，它接受 Action 和当前 State 作为参数，返回一个新的 State。
 
 ```js
 const defaultState = 0;
@@ -113,56 +115,127 @@ const state = reducer(1, {
 });
 ```
 
-上面代码中，`reducer`函数收到名为`ADD`的 Action 以后，就返回一个新的 State，作为加法的计算结果。
+* 实际应用中，Reducer 函数不用像上面这样手动调用，`store.dispatch`方法会触发 Reducer 的自动执行。为此，Store 需要知道 Reducer 函数，做法就是在生成 Store 的时候，将 Reducer 传入`createStore`方法。
+
+```js
+import { createStore } from 'redux';
+const store = createStore(reducer);
+```
+
+* 上面代码中，`createStore`接受 Reducer 作为参数，生成一个新的 Store。以后**每当`store.dispatch`发送过来一个新的 Action，就会自动调用 Reducer，得到新的 State。**
+
+## 1.7、纯函数
+
+* **Reducer 函数最重要的特征是，它是一个纯函数。也就是说，只要是同样的输入，必定得到同样的输出。**
+
+* 纯函数是函数式编程的概念，必须遵守以下约束：
+  * **不得改写入参**
+  * 不能调用系统 I/O 的API
+  * 不能调用`Date.now()`或者`Math.random()`等不纯的方法，因为每次会得到不一样的结果
+
+> 由于 Reducer 是纯函数，就可以保证同样的State，必定得到同样的 View。
+>
+> 但也正因为这一点，Reducer 函数里面不能改变 State，必须返回一个全新的对象，请参考下面的写法：
+
+```js
+// State 是一个对象
+function reducer(state, action) {
+  return Object.assign({}, state, { thingToChange });
+  // 或者
+  return { ...state, ...newState };
+}
+
+// State 是一个数组
+function reducer(state, action) {
+  return [...state, newItem];
+}
+```
+
+> 最好把 State 对象设成只读。你没法改变它，要得到新的 State，唯一办法就是生成一个新对象。
+>
+> 这样的好处是，任何时候，与某个 View 对应的 State 总是一个不变的对象。
+
+## 1.8、store.subscribe()
+
+* State 一旦有变化，Store 就会调用监听函数 store.subscribe() ，并根据新的 store 中的数据，重新设置组件中用到的 state 。
+
+  ```js
+  listener = () => {
+    let newState = store.getState()
+    this.setState({
+      count: newState
+    })
+  }
+  
+  componentDidMount() {
+    store.subscribe(this.listener)
+  }
+  ```
+
+* `store.subscribe`方法返回一个函数，调用这个函数就可以解除监听。
+
+  ```js
+  let unsubscribe = store.subscribe(() =>
+    console.log(store.getState())
+  );
+  
+  unsubscribe();
+  ```
 
 # 2、（🔔补充redux源码）手动实现 redux
+
+ **见 my-redux文件夹**
 
 > App.jsx
 
 ```jsx
 import React, { Component } from 'react'
 import store from './store'
-import Child from './Child'
 
 class App extends Component {
-  handleClick = () => {
+  constructor() {
+    super()
+    this.state = {
+      count: 0
+    }
+  }
+
+  handleClickAdd = () => {
     store.dispatch({
       type: 'add'
     })
   }
 
+  handleClickSubtract = () => {
+    store.dispatch({
+      type: 'subtract'
+    })
+  }
+
+  listener = () => {
+    let newState = store.getState()
+    this.setState({
+      count: newState.count
+    })
+  }
+
+  componentDidMount() {
+    store.subscribe(this.listener)
+  }
+
   render() {
-    let { count } = store.getState()
+    let { count } = this.state
     return (
       <div>
+        <button onClick={this.handleClickSubtract}>-</button>
         <h1>{count}</h1>
-        <Child></Child>
-        <button onClick={this.handleClick}>click</button>
+        <button onClick={this.handleClickAdd}>+</button>
       </div>
     );
   }
 }
 
 export default App;
-```
-
-> Child.jsx
-
-```jsx
-import React, { Component } from 'react';
-import store from './store/index'
-
-class Child extends Component {
-  render() {
-    return (
-      <div>
-        {store.getState().count}
-      </div>
-    );
-  }
-}
-
-export default Child;
 ```
 
 > store/index.js
@@ -181,6 +254,8 @@ export default store
 ```jsx
 const createStore = (reducer) => {
   let state = null
+  
+  // 定义 观察者模式 的♨️观察者♨️；
   let listeners = []
 
   // 获取state
@@ -191,13 +266,14 @@ const createStore = (reducer) => {
     // 让reducer来更新state
     state = reducer(state, action)
 
-    // publish消息，让视图更新
+    // 定义 发布订阅模式 的♨️发布♨️，让视图更新
     listeners.forEach(listener => listener())
   }
 
+  // 定义 发布订阅模式 的♨️订阅♨️，将传入的函数push到观察者数组listeners中；
   const subscribe = listener => listeners.push(listener)
 
-  // 手动派发一次action
+  // 第一次初始化时，手动派发一次action.type === undefined，页面渲染默认数据；
   dispatch({})
 
   // 接口暴露
@@ -227,6 +303,11 @@ const reducer = (state, action) => {
         ...state,
         count: state.count + 1
       }
+    case 'subtract':
+      return {
+        ...state,
+        count: state.count - 1
+      }
   
     default:
       return state
@@ -238,20 +319,21 @@ export default reducer
 
 # 3、单向数据流
 
-![image-20190420013410981](http://www.ruanyifeng.com/blogimg/asset/2016/bg2016091802.jpg)
+> **普通数据流**
+
+<img class="picture" src="https://cdn.nlark.com/yuque/0/2021/jpeg/114317/1622035864314-assets/web-upload/c6f4e7f9-189d-4831-a0fc-bcb04d8bbc84.jpeg" alt="" style="width: 638px; height: 479px;">
+
+> **含中间件数据流**
+
+<img class="picture" src="https://cdn.nlark.com/yuque/0/2021/png/114317/1622040360114-assets/web-upload/5a191447-f0f1-4199-9cd0-b86405d00e9f.png" alt="" style="width: 616px; height: 552px;">
 
 - store通过reducer创建了初始状态
-
 - view通过store.getState()获取到了store中保存的state挂载在了自己的状态上
-
 - 用户产生了操作，调用了actions 的方法
-
 - actions的方法被调用，创建了带有标示性信息的action
-
 - actions将action通过调用store.dispatch方法发送到了reducer中
-
 - reducer(归并 view 的操作)接收到action并根据标识信息判断之后返回了新的state
-
+- State 一旦有变化，Store 就会调用监听函数 store.subscribe(callback) ，并根据新的 store 数据，重新设置组件中用到的 state 
 - store的state被reducer更改为新state的时候，store.subscribe方法里的回调函数会执行，此时就可以通知view去重新获取state
 
 # 3、react-redux
@@ -341,19 +423,66 @@ ReactDOM.render(
 )
 ```
 
-# 4、异步action
+# 4、异步Action
+
+<img class="picture" src="https://cdn.nlark.com/yuque/0/2021/png/114317/1622035864869-assets/web-upload/289160bc-7aa3-467e-81c6-b81769a4e263.png" alt="" style="width: 900px; height: 342px;">
+
+* 同步Action：
+  * Action 发出以后，Reducer 立即算出 State，这叫做同步；
+
+* 异步Action：
+  * Action 发出以后，过一段时间再执行 Reducer，这就是异步。
+
+*  要使 Reducer 在异步操作结束后自动执行，这就要用到新的工具：中间件（middleware）。
 
 # 5、中间件
 
-## 5.1、Redux-thunk
+> * **无中间件 🆚 有中间件**
 
-- **Redux-thunk简介**
+<img class="picture" src="https://cdn.nlark.com/yuque/0/2021/png/114317/1622041571237-assets/web-upload/55e83873-3e6e-47e1-ba63-8a45387bc17b.png" alt="" style="width: 1000px; height: 350px;">
+
+## 5.1、中间件用法
+
+（1）`createStore`方法可以接受整个应用的初始状态作为参数，那样的话，`applyMiddleware`就是第三个参数了。
+
+> ```javascript
+> const initialState = Immutable.Map({})
+> 
+> const store = createStore(
+>   reducer,
+>   initialState,
+>   applyMiddleware(thunk)
+> )
+> 
+> export default store
+> ```
+
+（2）中间件的次序有讲究。
+
+> ```javascript
+> const store = createStore(
+>   reducer,
+>   applyMiddleware(thunk, promise, logger)
+> );
+> ```
+
+上面代码中，`applyMiddleware`方法的三个参数，就是三个中间件。有的中间件有次序要求，使用前要查一下文档。比如，`logger`就一定要放在最后，否则输出结果会不正确。
+
+## 5.2、Redux-thunk
+
+- Redux-thunk简介
   - 组件中使用dispatch派发action；
   - 使用thunk前，派发的 action 是一个扁平的对象；
   - 使用thunk后，派发的 action 是一个函数（中间件一旦挂上，dispatch就会被中间件拦截）；
-    - 该函数，返回之前的扁平action对象，函数的参数为dispatch（该参数是原本往reducer中派发扁平对象的dispatch）；
+    - 该函数返回（之前的）扁平action对象，函数的参数为(dispatch(action))（该参数是原本往reducer中派发扁平对象的dispatch）；
     - 函数中返回的**扁平对象就是可以加入异步ajax请求得到的数据**；
 
+* **Redux-thunk 相较不使用中间件的 react-redux 有哪些优点？**
+
+  * 从设计原则的角度，数据层应该和 view 层（即 页面或者 React 组件）是分离的，即便没有 view 层，数据层也应该保持独立；
+  * 而如果用普通的 ajax ，就得放在页面或者 react 组件中触发请求，然后再把请求结果 dispatch 到 store 中；
+  * 这样把数据层抽拆分了；
+  
 * **Redux-thunk.js 源码（三层函数包裹）**
 
   ```jsx
@@ -413,8 +542,8 @@ ReactDOM.render(
   import * as actionCreator from './actionCreator'
   
   export {
-    Products,
-    reducer,
+    Products,		// UI
+    reducer,		// 逻辑
     actionCreator
   }
   ```
@@ -538,4 +667,4 @@ ReactDOM.render(
   export default reducer
   ```
 
-## 5.2、
+## 5.2、Redux-saga

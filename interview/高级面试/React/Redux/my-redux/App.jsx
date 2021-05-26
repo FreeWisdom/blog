@@ -1,21 +1,37 @@
 import React, { Component } from 'react'
 import store from './store'
-import Child from './Child'
 
 class App extends Component {
-  handleClick = () => {
+  handleClickAdd = () => {
     store.dispatch({
       type: 'add'
     })
+  }
+
+  handleClickSubtract = () => {
+    store.dispatch({
+      type: 'subtract'
+    })
+  }
+
+  listener = () => {
+    let newState = store.getState()
+    this.setState({
+      count: newState
+    })
+  }
+
+  componentDidMount() {
+    store.subscribe(this.listener)
   }
 
   render() {
     let { count } = store.getState()
     return (
       <div>
+        <button onClick={this.handleClickSubtract}>-</button>
         <h1>{count}</h1>
-        <Child></Child>
-        <button onClick={this.handleClick}>click</button>
+        <button onClick={this.handleClickAdd}>+</button>
       </div>
     );
   }
