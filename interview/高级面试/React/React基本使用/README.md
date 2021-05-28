@@ -517,9 +517,33 @@ export default TodoListDemo
 
 * 不可变值是函数式编程的概念——纯函数；
 * 不可变值是在对 state 中的值进行操作之后，不能影响原来的对应值；
-* 不可变值 操作数组、对象的常用形式：
-  * 数组是不能使用push、pop、splice等，这些方法会改变原数组，SCU中深入探析；
-  * 对象也不能直接进行属性设置；
+* 不可变值 操作**数组、对象**的常用形式：
+  * 数组：
+  
+    ```js
+    // 不可变值（函数式编程，纯函数） - 数组
+    const list5Copy = this.state.list5.slice()
+    list5Copy.splice(2, 0, 'a') // 中间插入/删除
+    this.setState({
+        list1: this.state.list1.concat(100), // 追加
+        list2: [...this.state.list2, 100], // 追加
+        list3: this.state.list3.slice(0, 3), // 截取
+        list4: this.state.list4.filter(item => item > 100), // 筛选
+        list5: list5Copy // 其他操作
+    })
+    // ⚠️注意⚠️：不能直接对 this.state.list 进行 push pop splice 等，这样违反不可变值
+    ```
+  
+  * 对象：
+  
+    ```js
+    // 不可变值 - 对象
+    this.setState({
+        obj1: Object.assign({}, this.state.obj1, {a: 100}),
+        obj2: {...this.state.obj2, a: 100}
+    })
+    // ⚠️注意⚠️：不能直接对 this.state.obj 进行属性设置，这样违反不可变值
+    ```
 * 必须使用setState对目标进行修改；
 
 ## 6.2、♨️♨️setState ***异/同*** 步更新均有可能
