@@ -36,7 +36,7 @@ class EventDemo extends React.Component {
         // </p>
 
         // event
-        return <a href="https://imooc.com/" onClick={this.clickHandler3}>
+        return <a href="https://baidu.com/" onClick={this.clickHandler3}>
             click me
         </a>
 
@@ -67,7 +67,7 @@ class EventDemo extends React.Component {
     // 获取 event
     clickHandler3 = (event) => {
         event.preventDefault() // 阻止默认行为
-        event.stopPropagation() // 阻止冒泡
+        // event.stopPropagation() // 阻止冒泡
         console.log('target', event.target) // 触发事件的元素，指向当前元素，即当前元素触发
         console.log('current target', event.currentTarget) // 绑定事件的元素，指向当前元素，假象！！！
 

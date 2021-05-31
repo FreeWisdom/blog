@@ -491,9 +491,264 @@ function sameVnode(vnode1: VNode, vnode2: VNode): boolean {
   * html 的标签都是小写，两者在 jsx 中就可以很好的区分；
 * `React.createElement()` 返回 vnode 后，react 底层再调用类似 `patch()` 的函数进行 vdom 的对比，再渲染真实 dom；
 
-# 4、合成事件
+# 4、合成事件机制
 
-# 5、♨️♨️setState & batchUpdate
+## 4.1、 什么是 React 合成事件？
+
+* React 合成事件（SyntheticEvent）是 React 用来模拟原生 DOM 事件所有能力的一个合成事件对象；
+
+* 在 React 中，所有事件都是合成的，不是原生 DOM 事件，但可以通过 `e.nativeEvent` 属性获取 DOM 事件。
+
+  <img class="picture" src="https://cdn.nlark.com/yuque/0/2021/png/114317/1622353917962-assets/web-upload/a84a0a80-c0d6-4cd0-9d36-de6a7b6219d7.png" alt="" style="width: 900px; height: 350px;">
+
+  1. jsx 中的事件并不被绑定在所属 DOM 上，而是被委托到组件最顶层进行事件合成（React16与React17各自委托不同目标）；
+     * React16 中所有的事件被委托到 document 对象；
+     * 为了渐进升级，为了避免多版本的 React 共存的场景中事件系统发生冲突，React17 中所有事件被委托到 root 节点；。
+
+  2. 在合成事件层，生成 `SyntheticEvent` 的实例 `react event` ，并通过 `dispatchEvent` 传递给相应的事件处理函数；
+  3. 在事件处理层， `react event` 由对应的处理器执行；
+  4. 在组件卸载（unmount）阶段自动销毁绑定在 root 的事件；
+
+## 4.2、React 为什么使用合成事件？
+
+* 进行浏览器兼容，实现更好的跨平台；
+  * 比如由 "浏览器a"==>"浏览器b"，仅仅需要不同浏览器端的dom层面进行小量兼容即可，而合成事件则可以在不同端的浏览器共用，所以实现了更好的跨平台；
+* 减少内存消耗；
+  * 比如“瀑布流的事件绑定”，事件绑定挂载的越多，内存消耗越高，通过合成事件的顶层事件合成代理，则只需在顶层绑定挂载一个事件，减少了内存消耗；
+* 避免频繁解绑；
+  * 所有的事件看似挂载在 dom 上，实则挂载在 root 上；
+  * 所有 dom 删除时，看似所有 dom 都需要将所绑定的事件解绑，实则都没有绑定在每一个 dom ，而是统一绑定在 root 上；
+  * 故而不需要对每一个 dom 解绑，而是在组件卸载阶段统一对 root 解绑，故而减少频繁解绑；
+* 方便事件的统一管理（事务机制）
+
+## 4.3、合成事件和原生事件的区别是什么？
+
+1. 事件名称命名方式不同
+   * 原生事件命名为**纯小写**（onclick, onblur）；
+   * React 事件命名采用**小驼峰式**（camelCase）；
+
+```jsx
+// 原生事件绑定方式
+<button onclick="handleClick()">Leo 按钮命名</button>
+      
+// React 合成事件绑定方式
+const button = <button onClick={handleClick}>Leo 按钮命名</button>
+复制代码
+```
+
+2. 事件处理函数写法不同
+   * 原生事件中事件处理函数为**字符串**；
+   * 在 React JSX 语法中，传入一个**函数**作为事件处理函数。
+
+```jsx
+// 原生事件 事件处理函数写法
+<button onclick="handleClick()">Leo 按钮命名</button>
+      
+// React 合成事件 事件处理函数写法
+const button = <button onClick={handleClick}>Leo 按钮命名</button>
+复制代码
+```
+
+3. 阻止默认行为方式不同
+   * 在原生事件中，可以通过**返回 `false` 方式**来阻止默认行为；
+   * 在 React 中，需要**显式使用 `preventDefault()` 方法**来阻止；
+
+```jsx
+// 原生事件阻止默认行为方式
+<a href="https://www.pingan8787.com" 
+  onclick="console.log('Leo 阻止原生事件~'); return false"
+>
+  Leo 阻止原生事件
+</a>
+
+// React 事件阻止默认行为方式
+const handleClick = e => {
+  e.preventDefault();
+  console.log('Leo 阻止原生事件~');
+}
+const clickElement = <a href="https://www.pingan8787.com" onClick={handleClick}>
+  Leo 阻止原生事件
+</a>
+```
+
+## 4.4、React 事件与原生事件的执行顺序
+
+> - React 所有事件，在初始化时都挂载在 `document` 对象上；
+> - 当真实 DOM 元素触发事件
+>   - 若是 React 事件，会先拿到 `SyntheticEvent` 实例，再处理 React 事件；
+>   - 若是原生事件，则没有拿 `SyntheticEvent` 实例的环节，会直接处理原生事件；
+
+1. 原生事件
+2. React 事件
+3. document 事件
+
+# 5、♨️♨️React: transaction 实现 batchUpdate
+
+## 5.1、什么是 batchUpdate（批量更新）机制？
+
+* 在 MV* 框架中，Batch Update 可以理解为将一段时间内对 model 中 state 的修改，批量更新到 view 的机制。
+  * react 中并不是所有的 setState 修改的 state 都可以命中 batchUpdate 机制；
+  * react 是通过 transaction 机制实现的 batchUpdate 机制；
+
+## 5.2、setState 如何命中 batchUpdate 机制？
+
+* React 可以“管理”入口的函数，setState 可以命中 batchUpdate 机制，如：
+  * 生命周期（及其调用的函数）；
+  * React 中注册的事件（及其调用的函数）；
+
+* React 不可以“管理”入口的函数，setState 不可以命中 batchUpdate 机制，如：
+  * setTimeout & setInterval 等（及其调用的函数）；
+  * 自定义的 DOM 事件（及其调用的函数）；
+
+## 5.3、什么是 transaction（事务）机制？
+
+```ABAP
+*                                    Transaction 作用图
+*                       wrappers (injected at creation time)
+*                                      +        +
+*                                      |        |
+*                    +-----------------|--------|--------------+
+*                    |                 v        |              |
+*                    |      +---------------+   |              |
+*                    |   +--|    wrapper1   |---|----+         |
+*                    |   |  +---------------+   v    |         |
+*                    |   |          +-------------+  |         |
+*                    |   |     +----|   wrapper2  |--------+   |
+*                    |   |     |    +-------------+  |     |   |
+*                    |   |     |                     |     |   |
+*                    |   v     v                     v     v   | wrapper
+*                    | +---+ +---+   +---------+   +---+ +---+ | invariants
+* perform(anyMethod) | |   | |   |   |         |   |   | |   | | maintained
+* +----------------->|-|---|-|---|-->|anyMethod|---|---|-|---|-|-------->
+*                    | |   | |   |   |         |   |   | |   | |
+*                    | |   | |   |   |         |   |   | |   | |
+*                    | |   | |   |   |         |   |   | |   | |
+*                    | +---+ +---+   +---------+   +---+ +---+ |
+*                    |  initialize                    close    |
+*                    +-----------------------------------------+
+```
+
+* Transaction 是什么？
+
+  * Transaction 对一个函数进行包装，让 React 在在一个函数运行前后执行特定逻辑，从而完成整个 Batch Update 流程的控制。
+
+  * Transaction 源码，伪代码如下：
+
+    ```js
+    var transaction = {
+      perform: function(anyMethod) {
+        try {
+          this.initialize();		// 1、创建 updateQueue，创建 isBatchingUpdate === true；
+          anyMethod();					// 2、调用 setState(newState) 方法，将 newState 被推入 updateQueue；
+          													// 若 setState 命中 batchUpdate 机制，则 isBatchingUpdate === true
+          															// 
+    																// 若 setState 不中 batchUpdate 机制，则 isBatchingUpdate === false
+          															// 
+        } finally {
+          this.close();					// 3⃣️ 旧的 state 被 updateQueue 中新的 state 批量更新，并渲染组件；
+        }
+      },
+      initialize: function() {
+        console.log("initialize")
+      },
+      close: function() {
+        console.log("close")
+      }
+    };
+    
+    function anyMethod() {
+      this.setState({
+        xxx: "xxx"
+      })
+      console.log("anyMethod")
+    };
+    
+    transaction.perform(anyMethod)
+    ```
+
+* Transaction 的各个流程：
+
+  1. 在 Transaction 的 initialize 阶段：
+
+     * 创建一个 update queue；
+     * 创建一个 isBatchingUpdate === true 布尔变量；
+
+  2. 在 Transaction 中调用 setState 方法阶段：
+
+     <img class="picture" src="https://cdn.nlark.com/yuque/0/2021/png/114317/1622381621184-assets/web-upload/f3bc6dca-42a3-47f1-b2df-f9739e85d9f9.png" alt="" style="width: 506px; height: 250px;">
+
+     * 状态并不会立即应用，而是被推入到 update queue 中；
+
+     * 判断 setState 是否命中 batchUpdate 机制：
+
+       * 若 setState 命中 batchUpdate 机制，isBatchingUpdate === true；
+
+         * 则将接收到的新状态保存到 dirtyComponents (脏组件)中；
+
+         ```js
+         calss demo extends React.component {
+           constructor(props) {}
+           render() {}
+           
+           // 命中 🎯
+           increase = () => {
+             // 开始：处于 batchUpdate
+             // isBatchingUpdate = true
+             this.setState = ({
+               count = count + 1
+             })
+             // 结束：
+             // isBatchingUpdate = false
+           }
+         }
+         ```
+
+       * 若 setState 不中 batchUpdate 机制，isBatchingUpdate === false；（🤔️宏任务不会触发 batchUpdate 机制）
+
+         * 则遍历所有接受新状态的 dirtyComponents；
+         * 并调用其 updateComponent 方法更新渲染；
+         * 并将  update queue 中的 state 更新；
+         * 执行完之后，将 isBatchingUpdates 置为 true。
+
+         ```js
+         calss demo extends React.component {
+           constructor(props) {}
+           render() {}
+           
+           // 不命中 🙅‍🎯
+           increase = () => {
+             // 开始：处于 batchUpdate
+             // isBatchingUpdate = true
+             setTimeout(() => {
+               // 异步 callback 执行回来，此时 isBatchingUpdate === false
+               this.setState = ({
+                 count: count + 1
+               })
+             })
+             // 结束：
+             // isBatchingUpdate = false
+           }
+           
+           // 不命中 🙅‍🎯
+           componentDidMount() {
+             // 开始：处于 batchUpdate
+             // isBatchingUpdate = true
+             document.body.addEventListener('click', () => {
+               // 宏任务的异步 callback 执行回来，此时 isBatchingUpdate === false
+               this.setState = ({
+                 count: count + 1
+               })
+             })
+             // 结束：
+             // isBatchingUpdate = false
+           }
+         }
+         ```
+
+  3. 函数执行结束进入 Transaction 的 close 阶段：
+
+     * update queue 会被 flush，这时新的状态会被应用到组件上并开始后续 Virtual DOM 更新等工作。
+     * 布尔变量 isBatchingUpdate === false；（🤔️此时宏任务还未执行，再执行宏任务时候，isBatchingUpdate 便被付值 false）
 
 # 6、组件渲染过程
 

@@ -74,17 +74,26 @@
      * 使用唯一值 id 作为 key；
        * 乱序后，仅仅需要移动 vnode 即可；
 
-# 5、JSX本质
+# 5、JSX 是什么
 
-* `React.createElement(tag, props{}, [child|text, ...])` 即对标 Vue 中的 `h()` 函数，都返回 vnode；
+* 是 js 的语法拓展，即将 js 通过 `React.creatElement()` 拓展成表示 DOM 的 vnode ，对标 Vue 中的 h() 函数，参数为：
   * 第一个参数可能是组件，也可能是tag；
   * 第二个参数可能是对象，也可能是 null；
   * 第三个对象可能是 children 数组，也可能是数组中 child 内容分开写成多个参数；
-* React 规定，组件名首字母必须大写；
-  * html 的标签都是小写，两者在 jsx 中就可以很好的区分；
+* React 规定，jsx 中组件名首字母必须大写，与 html 中全小写的标签进行区分；
 * `React.createElement()` 返回 vnode 后，react 底层再调用类似 `patch()` 的函数进行 vdom 的对比，再渲染真实 dom；
 
-# 4、合成事件
+# 4、合成事件机制
+
+* 
+* 在 React 中，通过 jsx 绑定的事件都属于 React 合成事件（SyntheticEvent）；
+* React 合成事件，是 React 模拟原声 DOM 事件所有能力的
+* 
+* ❗️react 中 event 是由 SyntheticEvent 封装合成出来，用来模拟 DOM 事件所有能力；
+* ❗️而 event.nativeEvent 才可以在 react 中得到原生事件对象 MouseEvent ；
+* ❗️react 和 DOM & Vue 事件不一样，DOM & Vue 事件挂载到当前元素；
+* ❗️React17 以前（不包括17），所有的事件，都被挂载到 document 上；
+* ❗️React17 以后（包括17），所有的事件，都被挂载到 root 上；
 
 # 5、♨️♨️setState & batchUpdate
 

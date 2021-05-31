@@ -175,7 +175,7 @@ class EventDemo extends React.Component {
        console.log('current target', event.currentTarget) // 绑定事件的元素，指向当前元素，假象！！！
 
        // ⚠️注意，event 其实是 React 封装的 SyntheticEvent 组合事件，可以看 __proto__.constructor 。
-       console.log('event', event) // 不是原生的 Event ，原生的 MouseEvent
+       console.log('event', event) // 不是原生的 Event ，原生的是 MouseEvent
        console.log('event.__proto__.constructor', event.__proto__.constructor)
 
        // 原生 event 如下。其 __proto__.constructor 是 MouseEvent
