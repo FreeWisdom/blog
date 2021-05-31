@@ -174,19 +174,19 @@ console.log('div1ChildNodesP', div1ChildNodesP)
 div1.removeChild( div1ChildNodesP[0] )
 ```
 
-## 2.4、DOM性能⚠️
+## 2.4、♨️DOM性能
 
-### 2.4.1、对DOM查询做缓存
+### 2.4.1、♨️对DOM查询做缓存
 
 ```js
-// ⚠️不缓存DOM查询结果
+// ♨️不缓存DOM查询结果
 for (let i = 0; i < document.getElementByTagName("p").length; i ++) {
   // 每次循环都会计算length，频繁进行DOM查询；
 }
 ```
 
 ```js
-// ⚠️缓存DOM查询结果
+// ♨️缓存DOM查询结果
 const plist = documnet.getElementByTagName("p");
 const length = plist.length
 for (let i = 0; i < length; i ++) {
@@ -194,10 +194,10 @@ for (let i = 0; i < length; i ++) {
 }
 ```
 
-### 2.4.2、将频繁操作改为一次性操作
+### 2.4.2、♨️将频繁操作改为一次性操作
 
 ```js
-// ⚠️频繁操作
+// ♨️频繁操作
 const list = document.getElementById("list");
 for (let i = 0; i < 10; i++) {
   const li = document.createElement("li");
@@ -207,7 +207,7 @@ for (let i = 0; i < 10; i++) {
 ```
 
 ```js
-// ⚠️一次性操作
+// ♨️一次性操作
 const list = document.getElementById("list");
 const frag = document.createDocumentFragment();	// 创建一个文档片段
 for (let i = 0; i < 20; i ++) {
@@ -218,17 +218,27 @@ for (let i = 0; i < 20; i ++) {
 list.appendChild(frag);		// 一次性操作
 ```
 
-# 3、BOM（浏览器对象模型）
+# 3、♨️BOM（浏览器对象模型）
 
 * navigator（识别浏览器类型）
   * `navigator.userAgent // "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36"`
+  
 * screen
-* location（拆解URL部分）
-  * `location.href`
-  * `location.protocol  // 'http:' 'https:'`
-  * `location.pathname`
-  * `location.search`
-  * `location.hash`
+
+* ♨️location（拆解URL部分）
+
+  ```js
+  // http://127.0.0.1:8880/hash.html?a=100&b=20#/aaa/bbb
+  location.href				// http://127.0.0.1:8880/hash.html?a=100&b=20#/aaa/bbb
+  location.protocol  	// 'http:'
+  location.hostname		// '127.0.0.1'
+  location.port				// '8880'
+  location.host				// '127.0.0.1:8880'
+  location.pathname		// 'hash.html'
+  location.search			// 'a=100&b=20'
+  location.hash				// /aaa/bbb
+  ```
+
 * history
   * `history.back()`
   * `history.forward()`

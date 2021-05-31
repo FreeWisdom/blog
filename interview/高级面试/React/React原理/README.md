@@ -74,7 +74,7 @@
      * 使用唯一值 id 作为 key；
        * 乱序后，仅仅需要移动 vnode 即可；
 
-# 5、JSX 是什么
+# 5、JSX 是什么？
 
 * 是 js 的语法拓展，即将 js 通过 `React.creatElement()` 拓展成表示 DOM 的 vnode ，对标 Vue 中的 h() 函数，参数为：
   * 第一个参数可能是组件，也可能是tag；
@@ -83,21 +83,46 @@
 * React 规定，jsx 中组件名首字母必须大写，与 html 中全小写的标签进行区分；
 * `React.createElement()` 返回 vnode 后，react 底层再调用类似 `patch()` 的函数进行 vdom 的对比，再渲染真实 dom；
 
-# 4、合成事件机制
+# 6、react 事件和 dom 事件的区别？
 
-* 
-* 在 React 中，通过 jsx 绑定的事件都属于 React 合成事件（SyntheticEvent）；
-* React 合成事件，是 React 模拟原声 DOM 事件所有能力的
-* 
-* ❗️react 中 event 是由 SyntheticEvent 封装合成出来，用来模拟 DOM 事件所有能力；
-* ❗️而 event.nativeEvent 才可以在 react 中得到原生事件对象 MouseEvent ；
-* ❗️react 和 DOM & Vue 事件不一样，DOM & Vue 事件挂载到当前元素；
-* ❗️React17 以前（不包括17），所有的事件，都被挂载到 document 上；
-* ❗️React17 以后（包括17），所有的事件，都被挂载到 root 上；
+* React 事件采用了合成事件（SyntheticEvent），是 react 用来模拟原生 DOM 事件所有能力的一个合成事件对象;
+  1. **在 jsx 层**，事件并不是绑定在相应的 dom 上的，而是通过冒泡传到合成事件层；
+     * 16 中事件被委托到 document ；
+     * 17 中，为了渐进升级，并避免多 react 版本在 document 共存，发生事件系统的冲突，故事件被委托到 root ；
+  2. **在合成事件层**，生成 SyntheticEvent 的实例（即 react event），并通过 dispatchEvent 派发给相应的事件处理函数；
+  3. **在事件处理函数层**，react event 由对应的处理器执行；
+* React 中可以用 e.nativeEvent 获取原生的 DOM 事件；
+* 在组件卸载阶段，自动销毁绑定在 root 的 react event；
 
-# 5、♨️♨️setState & batchUpdate
+# 7、react 为什么使用合成事件？
 
-# 6、组件渲染过程
+1. 兼容各个浏览器，更好的实现跨平台；
 
-# 7、前端路由（同vue）
+2. react 的合成事件，方便了事件统一管理，为 react 通过 transaction（事务机制） 实现 batchUpdate 做铺垫；
+
+3. 减少内存消耗；
+
+4. 避免事件频繁解绑；
+
+# 8、合成事件和原生事件的区别是什么？
+
+1. 事件名称命名方式不同
+   * 原生事件命名为**纯小写**（onclick, onblur）；
+   * React 事件命名采用**小驼峰式**（camelCase）；
+
+2. 事件处理函数写法不同
+   * 原生事件中事件处理函数为**字符串**；
+   * 在 React JSX 语法中，传入一个**函数**作为事件处理函数。
+
+3. 阻止默认行为方式不同
+
+   * 在原生事件中，可以通过**返回 `false` 方式**来阻止默认行为；
+
+   * 在 React 中，需要**显式使用 `preventDefault()` 方法**来阻止；
+
+# 9、♨️♨️setState & batchUpdate
+
+# 10、组件渲染过程
+
+# 11、前端路由（同vue）
 

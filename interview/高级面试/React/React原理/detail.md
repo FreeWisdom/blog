@@ -578,9 +578,7 @@ const clickElement = <a href="https://www.pingan8787.com" onClick={handleClick}>
 >   - 若是 React 事件，会先拿到 `SyntheticEvent` 实例，再处理 React 事件；
 >   - 若是原生事件，则没有拿 `SyntheticEvent` 实例的环节，会直接处理原生事件；
 
-1. 原生事件
-2. React 事件
-3. document 事件
+* 原生事件 ==> React 事件 ==> document 事件
 
 # 5、♨️♨️React: transaction 实现 batchUpdate
 
@@ -592,11 +590,11 @@ const clickElement = <a href="https://www.pingan8787.com" onClick={handleClick}>
 
 ## 5.2、setState 如何命中 batchUpdate 机制？
 
-* React 可以“管理”入口的函数，setState 可以命中 batchUpdate 机制，如：
+* React 可以“管理”入口的函数（即，符合合成事件机制），setState 可以命中 batchUpdate 机制，如：
   * 生命周期（及其调用的函数）；
   * React 中注册的事件（及其调用的函数）；
 
-* React 不可以“管理”入口的函数，setState 不可以命中 batchUpdate 机制，如：
+* React 不可以“管理”入口的函数（即，超出合成事件机制），setState 不可以命中 batchUpdate 机制，如：
   * setTimeout & setInterval 等（及其调用的函数）；
   * 自定义的 DOM 事件（及其调用的函数）；
 
@@ -641,11 +639,9 @@ const clickElement = <a href="https://www.pingan8787.com" onClick={handleClick}>
           this.initialize();		// 1、创建 updateQueue，创建 isBatchingUpdate === true；
           anyMethod();					// 2、调用 setState(newState) 方法，将 newState 被推入 updateQueue；
           													// 若 setState 命中 batchUpdate 机制，则 isBatchingUpdate === true
-          															// 
     																// 若 setState 不中 batchUpdate 机制，则 isBatchingUpdate === false
-          															// 
         } finally {
-          this.close();					// 3⃣️ 旧的 state 被 updateQueue 中新的 state 批量更新，并渲染组件；
+          this.close();					// 3、旧的 state 被 updateQueue 中新的 state 批量更新，并渲染组件；
         }
       },
       initialize: function() {
@@ -675,7 +671,9 @@ const clickElement = <a href="https://www.pingan8787.com" onClick={handleClick}>
 
   2. 在 Transaction 中调用 setState 方法阶段：
 
-     <img class="picture" src="https://cdn.nlark.com/yuque/0/2021/png/114317/1622381621184-assets/web-upload/f3bc6dca-42a3-47f1-b2df-f9739e85d9f9.png" alt="" style="width: 506px; height: 250px;">
+     > setState 主流程图
+     >
+     > <img class="picture" src="https://cdn.nlark.com/yuque/0/2021/png/114317/1622381621184-assets/web-upload/f3bc6dca-42a3-47f1-b2df-f9739e85d9f9.png" alt="" style="width: 506px; height: 250px;">
 
      * 状态并不会立即应用，而是被推入到 update queue 中；
 
@@ -703,7 +701,7 @@ const clickElement = <a href="https://www.pingan8787.com" onClick={handleClick}>
          }
          ```
 
-       * 若 setState 不中 batchUpdate 机制，isBatchingUpdate === false；（🤔️宏任务不会触发 batchUpdate 机制）
+       * 若 setState 不中 batchUpdate 机制，isBatchingUpdate === false；（🤔️宏任务(非合成事件)不会触发 batchUpdate 机制）
 
          * 则遍历所有接受新状态的 dirtyComponents；
          * 并调用其 updateComponent 方法更新渲染；
@@ -750,7 +748,128 @@ const clickElement = <a href="https://www.pingan8787.com" onClick={handleClick}>
      * update queue 会被 flush，这时新的状态会被应用到组件上并开始后续 Virtual DOM 更新等工作。
      * 布尔变量 isBatchingUpdate === false；（🤔️此时宏任务还未执行，再执行宏任务时候，isBatchingUpdate 便被付值 false）
 
-# 6、组件渲染过程
+# 6、组件渲染 & 更新过程
+
+## 6.1、组件渲染过程
+
+* 组件整理好自己的 state 和 props；
+* react 通过 jsx 的 `React.createElement(tag, props, children)` 生成 vnode；
+* react 会在底层通过类似 `patch(ele, vnode)` 的方法将 vnode 渲染到相应 dom ；
+
+## 6.2、组件更新过程(默认处于 batchUpdate 机制)
+
+* 组件中通过 `setState(newState)` 修改数据，该组件变成 dirtyComponent ；
+* react 通过 jsx 的 `React.createElement(tag, props, children)` 生成 newVnode；
+* react 会在底层通过类似 `patch(oldVnode, newVnode)` 的方法将 newVnode 渲染到相应 dom ；
+
+## 6.3、React-fiber如何性能优化？
+
+* react 中的 patch 分为两个阶段：
+  * reconciliation 阶段：执行 diff 算法，纯 js 计算；
+  * commit 阶段：将 diff 结果渲染 dom ；
+* patch 的过程中可能会有性能问题：
+  * JS 是单线程，且和 DOM 渲染共用一个线程；
+  * 当组件足够复杂，组件更新时，计算和渲染两个阶段的压力都很大；
+  * 若同时再有 dom 操作（如动画、拖拽等），将出现卡顿；
+* React-fiber 则解决该问题的出现：
+  * 由于 dom 渲染的 commit 不能拆分，所以将 js diff 计算的 reconciliation 阶段进行拆分一个个小片；
+  * 再通过浏览器的 API `window.requestIdleCallback` 监听浏览器 dom 是否需要渲染；
+  * 若浏览器 dom 需要渲染，则暂停 js 计算；
+  * 若浏览器 dom 不需渲染，则继续 js 计算；
 
 # 7、前端路由（同vue）
+
+## 7.1、hash
+
+* hash 特点：
+  * hash 变化，会触发网页跳转；
+    * 即，浏览器前进、后退；
+  * hash 变化，页面跳转，不会刷新页面（刷新页面则为后端路由）；
+    * 即，spa 必备特点；
+  * hash 永远不会提交到 server 端；
+    * 即，前端生前端灭；
+* js 实现 hash 路由：
+  * `location.hash` 获取 hash 初始值；
+  * `location.href = '#/user'` js 修改 url；
+  * ♨️ `window.onhashchange` 监听 hash 变化；
+    * JS 修改 							  url 的 hash
+    * 手动修改 				          url 的 hash
+    * 浏览器前进、后退修改    url 的 hash
+
+```html
+<body>
+    <p>hash test</p>
+    <button id="btn1">修改 hash</button>
+
+    <script>
+        // ✅ hash 变化，包括以下 3 种：
+            // 1. JS 修改 url
+            // 2. 手动修改 url 的 hash
+            // 3. 浏览器前进、后退
+        window.onhashchange = (event) => {
+            console.log('old url', event.oldURL)
+            console.log('new url', event.newURL)
+
+            console.log('hash:', location.hash)
+        }
+
+        // ✅ 页面初次加载，获取 hash
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('hash:', location.hash)
+        })
+
+        // ✅ JS 修改 url
+        document.getElementById('btn1').addEventListener('click', () => {
+            location.href = '#/user'
+        })
+    </script>
+</body>
+```
+
+## 7.2、H5 history
+
+* H5 history 特点：
+  * 用 url 规范的路由（浏览器路径中无法区分前后端路由）；
+  * 跳转时同样不刷新页面（刷新页面则为后端路由）；
+  * 需要后端支持；
+    * 即，无论访问什么路由，后端都要配合返回 `index.html` 文件；
+    * 因为所有的路径都返回 `index.html` ，故而服务器不会返回 404 错误页面，需要前端配置一个补充路由处理 404 界面；
+  * ♨️通过以下两个方法实现：
+    * history.pushState
+    * window.onpopstate
+
+* js 实现 H5 history
+  * `location.pathname` 获取 history 初始值；
+  * ♨️ `history.pushState(state, '', 'page1')` js 切换路由；
+  *  ♨️ `window.onpopstate` 监听浏览器前进、后退；
+
+```html
+<body>
+    <p>history API test</p>
+    <button id="btn1">修改 url</button>
+
+    <script>
+        // ✅ 页面初次加载，获取 path
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('load', location.pathname)
+        })
+
+        // ✅ 打开一个新的路由
+		        // ♨️ 用 pushState 方式，浏览器不会刷新页面
+        document.getElementById('btn1').addEventListener('click', () => {
+            const state = { name: 'page1' }
+            console.log('切换路由到', 'page1')
+            history.pushState(state, '', 'page1') // 重要！！
+        })
+
+        // ✅ 监听浏览器前进、后退
+        window.onpopstate = (event) => { // 重要！！
+            console.log('onpopstate', event.state, location.pathname)
+        }
+
+        // ✅ 需要 server 端配合，无论前端路由是什么，后端始终都要返回 index.html
+        // 可参考：https://router.vuejs.org/zh/guide/essentials/history-mode.html#%E5%90%8E%E7%AB%AF%E9%85%8D%E7%BD%AE%E4%BE%8B%E5%AD%90
+    </script>
+</body>
+```
 

@@ -660,6 +660,8 @@ export default TodoListDemo
 
 # 7、♨️组件生命周期
 
+## 7.1、单组件的生命周期
+
 * react16.4后使用了新的生命周期：
   * 使用getDerivedStateFromProps代替了旧的componentWillReceiveProps及componentWillMount；
     * 使用getDerivedStateFromProps(nextProps, prevState)的原因：
@@ -671,3 +673,5 @@ export default TodoListDemo
       * **而getSnapshotBeforeUpdate 会在最终的 render 之前被调用**，也就是说在 getSnapshotBeforeUpdate 中读取到的 DOM 元素状态是可以保证与componentDidUpdate 中一致的。
 
 <img class="picture" src="https://cdn.nlark.com/yuque/0/2021/png/114317/1621603992361-assets/web-upload/d86f49cc-3a44-4b55-8e55-77591cbc08f5.png?x-oss-process=image%2Fresize%2Cw_700" alt="react生命周期" style="width: 900px; height: 500px;">
+
+## 7.2、父子组件的生命周期

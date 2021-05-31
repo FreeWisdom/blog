@@ -258,7 +258,10 @@ export default App
 
 * 基本用法？
 
-  * ♨️**必须配合不可变值一起使用**；
+  * ♨️**必须配合不可变值一起使用**：
+    * setState 时候不可以改变原来 state 中的值；
+    * 若直接改变 state 中的值则 scu 对比时，会出现 this.state.count === nextState.count ；
+    * 故而 scu 会失效；
 
   ```jsx
   shouldComponentUpdate(nextProps, nextState) {
@@ -311,9 +314,9 @@ export default App
 
 ## 6.2、PureComponent 和 React.memo
 
-* 类组件：`React.PureComponent` 与 [`React.Component`](https://zh-hans.reactjs.org/docs/react-api.html#reactcomponent) 很相似。两者的区别在于 [`React.Component`](https://zh-hans.reactjs.org/docs/react-api.html#reactcomponent) 并未实现 [`shouldComponentUpdate()`](https://zh-hans.reactjs.org/docs/react-component.html#shouldcomponentupdate)，而 `React.PureComponent` 中以浅层对比 prop 和 state 的方式来实现了该函数。
+* PureComponent 类组件：`React.PureComponent` 与 [`React.Component`](https://zh-hans.reactjs.org/docs/react-api.html#reactcomponent) 很相似。两者的区别在于 [`React.Component`](https://zh-hans.reactjs.org/docs/react-api.html#reactcomponent) 并未实现 [`shouldComponentUpdate()`](https://zh-hans.reactjs.org/docs/react-component.html#shouldcomponentupdate)，而 `React.PureComponent` 中以浅层对比 prop 和 state 的方式来实现了该函数。
 
-* 函数组件：默认情况下其只会对复杂对象做浅层对比，如果你想要控制对比过程，那么请将自定义的比较函数通过第二个参数传入来实现。
+* React.memo 函数组件：默认情况下其只会对复杂对象做浅层对比，如果你想要控制对比过程，那么请将自定义的比较函数通过第二个参数传入来实现。
 
   ```jsx
   function MyComponent(props) {
