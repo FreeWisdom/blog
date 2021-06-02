@@ -758,9 +758,12 @@ const clickElement = <a href="https://www.pingan8787.com" onClick={handleClick}>
 
 ## 6.2、组件更新过程(默认处于 batchUpdate 机制)
 
-* 组件中通过 `setState(newState)` 修改数据，该组件变成 dirtyComponent ；
-* react 通过 jsx 的 `React.createElement(tag, props, children)` 生成 newVnode；
-* react 会在底层通过类似 `patch(oldVnode, newVnode)` 的方法将 newVnode 渲染到相应 dom ；
+* Class 组件
+  * 组件中通过 `setState(newState)` 修改数据，生成 dirtyComponent ；
+  * react 通过 jsx 的 `React.createElement(tag, props, children)` 遍历所有的 dirtyComponent ，生成 newVnode；
+  * react 会在底层通过类似 `patch(oldVnode, newVnode)` 的方法将 newVnode 渲染到相应 dom ；
+* 函数组件
+  * 函数组件的大概的过程是，重新执行函数，生成新的组件配置，然后进行 diff 、渲染 view 。所以，每次修改 state ，函数组件都会重新执行、返回新内容。
 
 ## 6.3、React-fiber如何性能优化？
 

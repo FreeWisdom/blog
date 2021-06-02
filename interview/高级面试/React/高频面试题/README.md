@@ -201,3 +201,51 @@ const APP = () => {
      * React 只有核心实现，具体功能需要自己实现；
      * Vue 打包了很多现成的具体功能，直接使用即可（v-for/v-if/v-show）；
 
+# 21、为什么会有 Hooks，它解决了什么问题？
+
+1. 完善函数组件能力：
+   * 函数组件更适合 react 组件，但函数组件能力比 class 组件差，Hooks 可以弥补这方面能力，故应运而生；
+
+2. 组件逻辑复用，使用 hooks 表现更好；
+3. class 组件逻辑复用表现的不易拆解、不易测试、逻辑混乱；
+   * DidMount 和 DidUpdate 两个地方获取数据🤪；
+   * DidMount 绑定事件，WillUnmount 解绑事件，两个地方处理事件🤪；
+   * 使用了 hook 如上方两个例子中，相同的逻辑可以分割到各个 useEffect 中😌；
+
+# 22、React Hooks 如何模拟组件生命周期？
+
+1. 模拟 componentDidMount - useEffect 依赖 []；
+2. 同时模拟 componentDidMount & componentDidUpdate - useEffect 无依赖，或者依赖 [a,b]；
+3. useEffect 中返回一个函数 fn；
+   * useEffect 若依赖 [] ，模拟 componentDidMount ；
+     * 组件销毁时执行 fn ，等于 componentWillUnMount ；
+   * useEffect 无依赖或依赖 [a,b] ，同时模拟 componentDidMount 或 componentDidUpdate ；
+     * 组件更新时执行 fn，等于 componentDidUpdate；（即，下次执行useEffect之前，就会执行fn）
+     * 组件销毁时执行 fn ，等于 componentWillUnMount ；
+
+# 23、如何自定义 Hooks？
+
+* 手写自定义 axios ；
+
+# 24、React Hooks 如何性能优化？
+
+* useMemo 缓存数据；
+* useCallback 缓存函数；
+* 相当于class组件的SCU和PureComponent
+
+# 25、使用 React Hooks 有哪些坑？
+
+1. useState 初始化值，只有第一次有效；
+2. 依赖为 [] 时 useEffect 内部不能修改 state；
+3. useEffect 可能出现死循环；
+
+# 26、Hooks 相比 HOC 和 Render Prop 的组件逻辑复用有哪些优点？
+
+* 组件逻辑复用完全符合 Hooks 原有规则，没有其他要求，易理解记忆；
+* 变量作用域和明确；
+* 不会产生组件嵌；
+
+# 27、useMemo 和 useCallback 何时使用？
+
+* useMemo 和 useCallback 的作用就在于，让你可以不用每次渲染都执行一遍，给你缓存起来；
+* 例如，有一个函数中有网络请求，你不希望每次组件渲染都重新请求一次，那就用 useCallback 。

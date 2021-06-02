@@ -1,12 +1,4 @@
-# 1、函数组件
-
-* 纯函数，输入 props ，输出 JSX；
-* 无实例，无生命周期，无 state ；
-* 不能拓展其他方法；
-
-<img class="picture" src="https://cdn.nlark.com/yuque/0/2021/png/114317/1621652133415-assets/web-upload/c13cc388-61e9-46ad-9f7f-b9409bf45e8a.png?x-oss-process=image%2Fresize%2Cw_800" alt="" style="width: 900px; height: 350px;">
-
-# 2、非受控组件(不被state控制)
+# 1、非受控组件(不被state控制)
 
 * ref
 
@@ -310,7 +302,7 @@ export default App
          }
      ```
 
-  3. 若开发者设计的 state 结构很深，而使用 shouldComponentUpdate 需要对深层结构的 state 进行对比，若使用递归深度比较也会影响一定的性能，当然也能用其他的方法，所以这个交给开发者自己估量利用 scu 进行优化，则体现了react 更强的拓展性；
+  3. 若开发者设计的 **state 结构很深**，而使用 shouldComponentUpdate 需要对深层结构的 state 进行对比，若使用递归深度比较也会影响一定的性能，当然也能用其他的方法，所以这个交给开发者自己估量利用 scu 进行优化，则体现了react 更强的拓展性；
 
 ## 6.2、PureComponent 和 React.memo
 
