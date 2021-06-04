@@ -2,7 +2,13 @@
 
 # 2、module chunk bundle 分别什么意思，有何区别？
 
+* module 是源码，能引用的都是模块，不管是什么类型，css、js、图片等都是模块，都是源码；
+* chunk 是多模块合并成的，中不一定是一个文件，比如 index.js 中还有引入其他的文件 ；
+* bundle 就是 chunk 最终输出的文件，一个 chunk 对应一个 bundle；
+
 # 3、loader 与 plugin 的区别？
+
+
 
 # 4、webpack 如何实现懒加载？
 
@@ -40,4 +46,33 @@
 * 首先，分割文件是为了减小文件大小，使得加载较快，但是拆分文件也需要耗费一定的时间；
 * 针对于开发环境，文件都是在本地的，加载速度本身较快，而且代码频繁改动，每次改动都需要重新拆分代码，所以在开发环境没必要拆分代码；
 * 在生产环境，文件从服务器获取，如果文件太大的话加载较慢，所以需要拆分，另外生产文件也不是频繁打包的，所以可以接受拆分代码时消耗一定的时间。
+
+# 10、build 后如何产生 chunk（单独打包的 js ）？
+
+1.  `import('').then(res => {})` 异步懒加载会产生一个chunk ；
+
+2. 配置几个入口 js 文件，在 build 时就会生成几个 chunk ；
+
+   ```js
+   entry: {
+     index: path.join(srcPath, 'index.js'),
+     other: path.join(srcPath, 'other.js')
+   },
+   ```
+
+3. optimization.splitChunks.cachGroups  中可进行公共代码、第三方代码的拆离，每一个拆离都会生成一个 chunk ；
+
+   ```js
+   optimizaition: {
+     splitChunks: {
+       catchGroup: {
+         // 每一个拆离都会生成一个 chunk ;
+         vendor: {},
+         common: {}
+       }
+     }
+   }
+   ```
+
+   
 

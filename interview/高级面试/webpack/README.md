@@ -82,8 +82,7 @@ module: {
     {
       test: /\.js$/,
       loader: ['babel-loader],
-			include: /src/,
-      exclude: /node_modules/
+			include: path.join(__dirname, '..', 'src'),
     },
     {}
   ]
@@ -217,6 +216,7 @@ output: {
 3. prod config 中 **`[name]` 配置多出口**；
 
    * `[name]` 即，多入口时 entry 的 key；
+     * 生成 chunk ；
 
    ```js
    output: {
@@ -282,7 +282,7 @@ output: {
       
       /**
       * initial 入口 chunk，对于异步导入的文件不处理；
-      * async 异步 chunk，只对异步导入的文件处理；
+      * async 异步 chunk，只对异步导入的文件处理，默认；
       * all 全部 chunk
   		*/
       chunks: 'all',
@@ -324,5 +324,368 @@ output: {
   ]
   ```
 
-## 2.4、
+## 2.4、如何实现懒（异步）加载？
+
+* 使用 import 同步加载：
+
+  * import 返回同步加载的资源；
+
+  ```js
+  import { sum } from './math'
+  
+  const sumRes = sum(10, 20)
+  console.log('sumRes', sumRes)
+  ```
+
+* 使用 import 异步懒加载：
+
+  * import() 返回 Promise，then 中的参数为异步返回的资源；
+  * 不用特意进行 webpack 配置；
+  * 懒加载的资源会单独打包，生成单独的 chunk ；
+
+  > index.js
+
+  ```js
+  setTimeout(() => {
+    // 定义一个 chunk
+    import('./dynamic-data.js').then(res => {
+      console.log(res.default.message)
+    })
+  }, 2000)
+  ```
+
+  > dynamic-data.js
+
+  ```js
+  export.default = {
+    message: "这是异步数据"
+  }
+  ```
+
+## 2.5、如何处理 jsx ？
+
+* 安装：
+
+  ```shell
+  npm install --save-dev @babel/preset-react
+  ```
+
+* 配置 .babelrc
+
+  ```json
+  {
+    "presets": ["@babel/preset-react"]
+  }
+  ```
+
+* common 中 `/\.js$/` 匹配到 `'babel-loader'`，就会使用到 .babelrc 中 `"presets"` 配置的 `"@babel/preset-react"` ；
+
+## 2.6、如何处理 vue ？
+
+* 配置 v-loader
+
+  ```js
+  module: {
+    rules: [
+      {
+        test: /\.vue$/,
+        loader: ['vue-loader'],
+        include: path.join(__dirname, '..', 'src')
+      }
+    ]
+  }
+  ```
+
+# 3、性能优化
+
+## 3.1、优化打包构建速度-开发体验/效率
+
+### 3.1.1、babel-loader（common 开启缓存）
+
+* 优化点：
+  * ✅ build 构建速度加快；
+  * ✅ 防止 `node_modules` 被打包，减少打包体积，减少请求耗时；
+
+```js
+mnodule: {
+  rules: [
+    {
+      test: /\.js$/,
+      loader: 'babel-loader?catchDirectory',	// 第二次启动时，若 es6 代码未改动，则启用缓存，不必重新编译，减少编译时间
+      include: path.join(_dirname, '..', 'src')	// 确定打包范围；
+    }
+  ]
+}
+```
+
+### 3.1.2、IgnorePlugin （prod 不引入无用模块）
+
+* 若使用多国语言兼容的库，其中只使用库中的汉语或英语，会有很多其他国家语言冗余的兼容代码；
+
+  1. 导致 build 会很慢；
+  2. 产出体积很大，prod 环境下请求资源费时；
+
+* 此时需要在 prod 环境下配置 `IgnorePlugin` ，忽略各国语言兼容的包，如下：
+
+  ```js
+  plugins: [
+    // webpack 4
+    new IgnorePlugin(/^\.\/locale$/, /moment$/)			// 忽略 moment 下的 /locale 目录
+    
+    // webpack 5
+    // new webpack.IgnorePlugin({
+    //  	resourceRegExp: /^\.\/locale$/,
+    //  	contextRegExp: /moment$/,
+  	// })
+  ]
+  ```
+
+* 其次，需要在该库使用的地方，单独引入汉语兼容，如下：
+
+  ```js
+  // index.js
+  import moment from 'moment';
+  import 'moment/locale/zh-cn';
+  
+  console.log(moment().locale());								// zh-cn
+  console.log(moment().format('LLL'));					// 2021年6月4日下午1点01分
+  ```
+
+* 优化点：
+  * ✅ build 构建速度加快；
+  * ✅ 产出体积减小，减少请求耗时；
+
+### 3.1.3、noParse（prod 不二次babel+webpack模块化的分析）
+
+* 若文件中存在类似于 `xxxx.min.js` 的文件，是已经经过 webpack 模块化+babel处理过的，不用进行二次文件解析处理；
+
+  * 导致 build 变慢；
+
+* 相比于 IgnorePlugin 不同点在于，ignoreplugin 不引入，noparse会引入；
+
+* 此时需要在 prod 环境下配置 `noParse` ，避免类似于 `xxx.min.js` 的文件打包，如下：
+
+  ```js
+  module: {
+    noParse: [/xxx\.min\.js$/]
+  }
+  ```
+
+* 在 env 环境下， `xxx.min.js` 不利于调试；
+  
+* 优化点：
+  
+  * ✅ build 构建速度加快；
+
+### 3.1.4、happyPack（common 多进程打包）
+
+* Js 本身是单线程的，打包慢，开启多进程打包；
+
+  * ✅ 提高构建速度**（按需使用：⚠️大项目，打包慢的情况下使用；项目小，多进程开启的开销反而会影响打包速度）**；
+
+* 在 common 环境配置 `happyPack` 可以同时提高 prod 或 env 的打包效率，也可以根据情况单独在 prod 或 env 环境使用；
+
+* 首先，在 common 环境的 `rules` 中配置 `happyPack` ，把对 .js 文件的处理，转交给 id 为 babel 的 HappyPack ，如下：
+
+  ```js
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        use: ['happypack/loader?id=babel'],				// 把对 .js 文件的处理转交给 id 为 babel 的 HappyPack 实例
+        include: path.join(__dirname, '..', 'src')
+      }
+    ]
+  },
+  ```
+
+* 其次，在 common 环境的 `plugins` 中配置 `new HappyPack({})` ，如下：
+
+  ```js
+  plugins: [
+    new HappyPack({																// happyPack 开启多进程打包
+      id: 'babel',																// 用唯一的标识符 id 来代表当前的 HappyPack 是用来处理一类特定的文件
+      loader: ['babel-loader?catchDirectory']			// 如何处理 .js 文件，用法和 Loader 配置中一样
+    })
+  ]
+  ```
+
+### 3.1.5、ParallelUglifyPlugin（prod 多进程代码压缩）
+
+* Js 本身是单线程的，代码压缩慢，开启多进程压缩；
+
+  * ✅ 提高压缩速度**（按需使用：⚠️大项目，代码压缩慢的情况下使用；项目小，多进程开启的开销反而会影响代码压缩速度）**；
+
+* env 环境行，没必要做压缩；
+
+* 在 prod 环境的 `plugins` 配置 `new ParallelUglifyPlugin({})` ，如下：
+
+  ```js
+  plugins: [
+    new ParallelUglifyPlugin({		// 使用 ParallelUglifyPlugin 并行压缩输出的 JS 代码
+      uglifyJS: {									// 还是使用 UglifyJS 压缩，只不过帮助开启了多进程，传递给 UglifyJS 的参数
+        output: {
+          beautify: false, 				// 最紧凑的输出
+          comments: false, 				// 删除所有的注释
+        },
+        compress: {
+          drop_console: true,			// 删除所有的 `console` 语句，可以兼容ie浏览器
+          collapse_vars: true,    // 内嵌定义了但是只用到一次的变量
+          reduce_vars: true,			// 提取出出现多次但是没有定义成变量去引用的静态值
+        }
+      }
+    })
+  ]
+  ```
+
+### 3.1.6、自动刷新（dev 自动刷新代码生效）
+
+* 自动刷新功能：新代码保存后，网页要重新刷新，新代码生效，页面表单的状态会丢失 + spa页面的路由会回到首页；
+  * ✅ 提高开发体验；
+* 平时使用 webpack-dev-server 概率较大，而使用 webpack-dev-server 后会帮你实现自动刷新功能，所以自动刷新功能用处不大；
+
+```js
+module.export = {
+  	// 开启监听，默认为 false
+		watch: true,
+    watchOptions: {
+      	// 忽略监听的文件
+        ignored: /node_modules/,
+        // 监听到变化发生后会等 300ms (默认)再去执行动作，防止文件更新太快导致重新编译频率太高
+        aggregateTimeout: 300,
+        // 判断文件是否发生变化是通过不停的去询问系统指定文件有没有变化实现的，默认每隔1000毫秒询问一次
+        poll: 1000
+    }
+}
+```
+
+### 3.1.7、热更新（dev 不用刷新代码生效）
+
+* 热更新功能：新代码保存后，网页不重新刷新，新代码生效，页面表单的状态不丢失 + spa页面的路由不会回到首页；
+  * 由于有成本，建议按需使用；
+  * ✅ 提高开发体验；
+
+1. 在 entry 增加两个参数配置：
+
+   ```js
+   entry: {
+     index: [
+       'webpack-dev-server/client?http://localhost:8080/',			// 参数①
+       'webpack/hot/dev-server',																// 参数②
+       path.join(__dirname, '../src', 'index.js')
+     ]
+   }
+   ```
+
+2. 在 plugins 中配置 `new HotModuleReplacementPlugin()`
+
+   ```js
+   plugins: [
+     new HotModuleReplacementPlugin()
+   ]
+   ```
+
+3. 在 devServer 中配置 `hot: true` :
+
+   ```js
+   devServer: {
+     hot: true
+   }
+   ```
+
+4. 使用的成本较高：
+
+   * 需要在开发时自己注册哪些模块需要使用热更新，下方例子中 sum 模块使用热更新，如：
+
+   ```js
+   // 增加，开启热更新之后的代码逻辑
+   if(module.hot) {
+     module.hot.accept([./sum], () => {
+       const sumRes = sum(10, 30);
+       console.log("sumRes in hot:", sumRes);
+     })
+   }
+   ```
+
+5. 全局热更新
+
+   ```js
+   // 把所有的代码都放在一个 entry 入口，然后如下
+   module.hot.accept(['./entry'], () => { /*...*/ })
+   ```
+
+### 3.1.8、DllPlugin（dev 提高构建速度）
+
+* DLL（Dynamic Link Library）文件：为动态链接库文件，在Windows中，许多应用程序并不是一个完整的可执行文件，它们被分割成一些相对独立的动态链接库，即DLL文件，放置于系统中。当我们执行某一个程序时，相应的DLL文件就会被调用。
+* 通常来说，我们的代码都可以至少简单区分成**业务代码**和**第三方库**。如果不做处理，每次构建时都需要把所有的代码重新构建一次，耗费大量的时间。
+* 大部分情况下，很多第三方库的代码并不会发生变更（除非是版本升级），这时就可以用到 dll：**把复用性较高的第三方模块打包到动态链接库中，在不升级这些库的情况下，动态库不需要重新打包，每次构建只重新打包业务代码**。
+  * ✅ 提高构建速度；
+* 不要用于生产环境：生产环境要考虑打包的体积，和加载的性能。DllPlugin 解决的是打包的速度。这两者不一个目的。如果生产环境用了 DllPlugin ，可能会和打包体积、打包合并的逻辑，产生冲突。
+
+1. 使用 `DLLPlugin` 打包出 dll 文件：
+
+   * `DllPlugin`是`webpack`内置的插件，不需要额外安装，需要单独配置一个 `webpack.dll.config.js` 文件：
+
+   ```js
+   const path = require('path')
+   const DllPlugin = require('webpack/lib/DllPlugin')
+   const { srcPath, distPath } = require('./paths')
+   
+   module.exports = {
+     mode: 'development',
+     // JS 执行入口文件
+     entry: {
+       // 把 React 相关模块的放到一个单独的动态链接库
+       react: ['react', 'react-dom']
+     },
+     output: {
+       // 输出的动态链接库的文件名称，[name] 代表当前动态链接库的名称，
+       // 也就是 entry 中配置的 react 和 polyfill
+       filename: '[name].dll.js',
+       // 输出的文件都放到 dist 目录下
+       path: distPath,
+       // 存放动态链接库的全局变量名称，例如对应 react 来说就是 _dll_react
+       // 之所以在前面加上 _dll_ 是为了防止全局变量冲突
+       library: '_dll_[name]',
+     },
+     plugins: [
+       // 接入 DllPlugin
+       new DllPlugin({
+         // 动态链接库的全局变量名称，需要和 output.library 中保持一致
+         // 该字段的值也就是输出的 manifest.json 文件 中 name 字段的值
+         // 例如 react.manifest.json 中就有 "name": "_dll_react"
+         name: '_dll_[name]',
+         // 生成 json 文件描述动态链接库的 manifest.json 文件输出时的文件名称
+         path: path.join(distPath, '[name].manifest.json'),
+       }),
+     ],
+   }
+   ```
+
+   * package.json 中 script 配置打包命令 `npm run dll` ，dist 中生成两个文件：
+     * react.dll.js
+       * 即，react库 & react-dom库的打包结果；
+     * react.mainfast.json
+       * 即，react库 & react-dom库的索引映射的 json；
+
+   ```json
+   "dll": "webpack --config build/webpack.dll.js"
+   ```
+
+   * 在 index.html 文件中，发现添加了 `<script src="./react.dll.js"></script>` 对 react.dll.js 做引用；
+     * 保证组件内不引用 node_modules 中的内容，也能正常使用；
+
+2. 在 dev 环境的 plugins 中，通过配置 `DllReferencePlugin` 使用 dll 文件：
+
+   ```js
+   // 告诉 Webpack 使用了哪些动态链接库
+   plugins: [
+     new DllReferencePlugin({
+       // 描述 react 动态链接库的文件内容
+       mainfest: require(path.join(__dirname, '../dist', 'react.mainfest.json'))
+     })
+   ]
+   ```
+
+## 3.2、优化产出代码-产品性能
 

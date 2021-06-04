@@ -51,7 +51,7 @@ module.exports = smart(webpackCommonConf, {
             // window.ENV = 'production'
             ENV: JSON.stringify('development')
         }),
-        new HotModuleReplacementPlugin()
+        new HotModuleReplacementPlugin(),
     ],
     devServer: {
         port: 8080,
