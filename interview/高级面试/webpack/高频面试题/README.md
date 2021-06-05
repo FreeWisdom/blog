@@ -74,5 +74,24 @@
    }
    ```
 
-   
+
+# 11、ES Module 和 Commonjs 的区别？
+
+1. ES6 Module 静态引用，编译时引入；
+
+   * 引用时机：静态引用，确定要引用，不能放在逻辑语句里；
+   * 引入时机：🧬📦（编译打包）时才正式引入到代码中；
+
+   <img class="picture" src="https://cdn.nlark.com/yuque/0/2021/png/114317/1622887098723-assets/web-upload/e0f546bf-cb40-4c07-93b2-7925b9174b22.png" alt="" style="width: 908px; height: 222px;">
+
+2. Common Js 动态引用，执行时引入；
+
+   * 引用时机：动态引用，没准引不引用，可方在逻辑语句中判断后引入；
+   * 引入时机：代码执行时，同时引入代码；
+
+   <img class="picture" src="https://cdn.nlark.com/yuque/0/2021/png/114317/1622887098707-assets/web-upload/0a25f7f5-ae30-4949-bcfc-3e3dc6c4a4ca.png" alt="" style="width: 9010px; height: 220px;">
+
+3. 只有 ES6 Module 的静态引用，才能有 webpack 的 `production` 环境下编译时的静态代码分析；
+
+4. 只有 ES6 Module 的编译时引入，才能根据上方静态代码分析的判断，做到按需引入，从而实现 Tree-Shaking ；
 

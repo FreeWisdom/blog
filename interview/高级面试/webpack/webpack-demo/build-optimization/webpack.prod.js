@@ -16,7 +16,7 @@ module.exports = smart(webpackCommonConf, {
         // filename: 'bundle.[contentHash:8].js',  // 打包代码时，加上 hash 戳
         filename: '[name].[contentHash:8].js', // name 即多入口时 entry 的 key
         path: distPath,
-        // publicPath: 'http://cdn.abc.com'  // 修改所有静态文件 url 的前缀（如 cdn 域名），这里暂时用不到
+        publicPath: 'http://cdn.abc.com'  // 修改所有静态文件 url 的前缀（如 cdn 域名），这里暂时用不到
     },
     module: {
         rules: [
@@ -30,7 +30,7 @@ module.exports = smart(webpackCommonConf, {
             },
             // 图片 - 考虑 base64 编码的情况
             {
-                test: /\.(png|jpg|jpeg|gif)$/,
+                test: /\.(html|png|jpg|jpeg|gif)$/,
                 use: {
                     loader: 'url-loader',
                     options: {
@@ -42,10 +42,20 @@ module.exports = smart(webpackCommonConf, {
                         outputPath: '/img1/',
 
                         // 设置图片的 cdn 地址（也可以统一在外面的 output 中设置，那将作用于所有静态资源）
-                        // publicPath: 'http://cdn.abc.com'
+                        publicPath: 'http://cdn.abc.com'
                     }
                 }
             },
+            // 其他资源处理
+            // {
+            //     exclude: /\.(html|css|js|less|jpg|png|gif)$/,
+            //     loader: 'file-loader',
+            //     options: {
+            //         name: '[hash:10].[ext]',
+            //         limit: 5 * 1024,
+            //         outputPath: 'media'
+            //     }
+            // },
             // 抽离 css
             {
                 test: /\.css$/,

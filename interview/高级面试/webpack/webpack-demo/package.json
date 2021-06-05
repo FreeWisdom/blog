@@ -37,6 +37,7 @@
     "webpack-parallel-uglify-plugin": "^1.1.2"
   },
   "dependencies": {
+    "html-loader": "^2.1.2",
     "lodash": "^4.17.15",
     "moment": "^2.29.1"
   }

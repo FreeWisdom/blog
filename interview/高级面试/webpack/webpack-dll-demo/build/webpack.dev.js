@@ -6,6 +6,7 @@ const { srcPath, distPath } = require('./paths')
 
 // 第一，引入 DllReferencePlugin
 const DllReferencePlugin = require('webpack/lib/DllReferencePlugin');
+console.log("srcPath", srcPath)
 
 module.exports = merge(webpackCommonConf, {
     mode: 'development',
