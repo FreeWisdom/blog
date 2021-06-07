@@ -1,22 +1,90 @@
 # 1、前端代码为何进行构建打包？
 
+* 代码层面：
+  1. 体积更小（tree shaking、压缩代码、合并代码），加载更快；
+  2. 可以编译高级语言或语法（ts、es6+、模块化、scss）；
+  3. 更好的兼容性和错误检查（Polifill、postcss、eslint）；
+* 研发流程阶段：
+  1. 形成统一、高效的开发环境；
+  2. 形成统一的构建流程和打包产出标准；
+  3. 可以集成公司的构建规范（提测、上线等）；
+
 # 2、module chunk bundle 分别什么意思，有何区别？
 
 * module 是源码，能引用的都是模块，不管是什么类型，css、js、图片等都是模块，都是源码；
-* chunk 是多模块合并成的，中不一定是一个文件，比如 index.js 中还有引入其他的文件 ；
+* chunk 是多模块合并成的，中不一定是一个文件，比如 index.js 中还有引入其他的文件。（如，由entry、import()、splitChunk合成的代码）；
 * bundle 就是 chunk 最终输出的文件，一个 chunk 对应一个 bundle；
 
 # 3、loader 与 plugin 的区别？
 
+* loader 是模块转换器。
+  * 如 less --> css；
+* Plugin 是拓展插件，是经过 loader 转换后再继续根据需求做拓展的插件。
+  * 如 HtmlWebpackPlugin 把 chunk 状态的 js 塞进 html 文件；
+
+# 4、常见的 loader 和 plugin 有哪些？
 
 
-# 4、webpack 如何实现懒加载？
+
+# 5、babel 和 weabpack 的区别？
+
+1. babel 是 JS 语法编译工具，不关心语法（babel-polyfill 关心），不关心模块化（webpack 关心）；
+2. webpack 是打包构建工具，是多个 loader、plugin 的集合；
+
+# 6、webpack 如何产出一个 lib ？
+
+*  `output.libary` 
+
+```js
+output: {
+  filename: 'lodash.js',				// lib 的文件名
+  path: distPath,								// 输出 lib 到 dist 目录下
+  libary: 'lodash'							// lib 的全局变量名
+}
+```
+
+# 7、babel-runtime 和 babel-polyfill 的区别？
+
+* babel-polyfill
+  * 是利用 core-js 和 regenerator 在目标环境添加缺失特性的标准库的集合；
+  * 解决了 babel 仅转换 语法，不转换 API 的问题；
+  * 会产生全局变量的污染；
+  * 会冗余的加载整个库；
+* babel-runtime 
+  * 是为了解决上述 冗余加载 & 全局污染 问题的一个工具；
+  * 无全局变量污染；
+  * 可以按需加载库；
+* ⚠️⚠️⚠️：
+  * 若产出第三方 lib 一定要使用 babel-runtime；
+  * 若仅产出自己使用的系统，不供第三方使用，可以使用 babel-polifill；
+
+# 8、webpack 如何实现懒加载？
+
+* 其实就是 import() 的语法：
+
+  ```js
+  setTimeout(() => {
+    import('xxx.js').then(res => {
+      console.log(res)
+    })
+  }, 2000)
+  ```
+
+* 与 react 和 vue 的异步组件、路由相似：
+
+  1. react 中使用 `const asyncComponent = React.lazy(() => import('asyncComponent'))` 引入异步组件；
+
+  2. react 中使用 `<React.Suspense fallback={ <div>加载中...</div> }>` 处理加载前的等待效果；
+
+# 9、为何 proxy 不能被 polyfill？
+
+* class 可以用 function 模拟；
+* promise 可以用 callback 模拟；
+* proxy 无法用 Object.defineProperty 模拟；
 
 # 5、webpack 常见性能优化？
 
-# 6、babel-runtime 和 babel-polyfill 的区别？
-
-# 7、关于 webpack 5
+# 7、关于 webpack 5 有和不同？
 
 *  webpack 5 主要进行内部效率的优化；
 * 对比  webpack 4 无太多使用上的改动；

@@ -124,9 +124,9 @@ loader: {
 }
 ```
 
-## 1.5、处理图片（dev+prod✅）
+## 1.5、处理图片（common+prod✅）
 
-* **file-loader**：（dev 正常处理）
+* **file-loader**：（common 正常处理）
   * file-loader 可以用来帮助 webpack 打包处理一系列的图片文件；比如：**.png** 、 **.jpg 、.jepg**等格式的图片；
   * 然后修改打包后图片的储存路径，再根据配置修改我们引用的路径，使之对应引入；
   * 使用 file-loader 打包的图片会给每张图片都生成一个随机的hash值作为图片的名字；
@@ -407,7 +407,7 @@ output: {
 ### 3.1.1、babel-loader（common✅ 开启缓存）
 
 * 优化点：
-  * ✅ build 构建速度加快；
+  * ✅ 启用缓存，不必重新编译，build 构建速度加快；
   * ✅ 防止 `node_modules` 被打包，减少打包体积，减少请求耗时；
 
 ```js
@@ -467,7 +467,7 @@ mnodule: {
 
 * 相比于 IgnorePlugin 不同点在于，ignoreplugin 不引入，noparse会引入；
 
-* 此时需要在 prod 环境下配置 `noParse` ，避免类似于 `xxx.min.js` 的文件打包，如下：
+* 此时需要在 prod 环境下配置 `noParse` ，避免类似于 `xxx.min.js` 的文件二次解析，如下：
 
   ```js
   module: {
@@ -481,7 +481,7 @@ mnodule: {
   
   * ✅ build 构建速度加快；
 
-### 3.1.4、happyPack（common✅ 多进程打包）
+### 3.1.4、happyPack（common✅ 多进程打包）（⚠️thread-loader替代）
 
 * Js 本身是单线程的，打包慢，开启多进程打包；
 
@@ -692,20 +692,27 @@ module.export = {
    ]
    ```
 
-### 3.1.9、webpack 优化构建速度总结
+### 3.1.9、♨️♨️webpack 优化构建速度总结
 
-* 用于生产环境（prod）：
+* 用于公共环境（common）：
   1. 优化 babel-loader
-  2. IgnorePlugin
-  3. noParse
-  4. happyPack
-  5. ParalleUglifyPlugin
-* 用于开发环境（dev）：
-  1. 优化 babel-loader
+     * （处理 js 文件时，开启缓存 `'babel-loader?catchDirectory'`，不必重新编译）
   2. happyPack
-  3. 自动刷新
-  4. 热更新
-  5. DllPlugin
+     * （处理 js 文件时，在开启缓存基础上，开启多进程打包 `use: [happypack/loader?id=babel]` ）
+  3. IgnorePlugin
+     * （忽略库中所有的 locale 模块，使用时再手动引入 locale 中某个有用的模块）
+* 用于生产环境（prod）：
+  1. noParse
+     * （使用 `module.noParse` 对于已经压缩的 xxx.min.js 文件，不进行二次解析，xxx.min.js 不利于开发时 debug）
+  2. ParallelUglifyPlugin
+     * （启动 ParallelUglifyPlugin 插件，帮助 uglifyJS 开启多进程压缩，dev 环境代码没必要压缩体积）
+* 用于开发环境（dev）：
+  1. 自动刷新
+     * （开启 watch 功能并配置 watchOption 开启自动刷新，一般会被 webpack-dev-server 替代，仅为了开发体验，用于 dev）
+  2. 热更新
+     * （配置 entry，配置 plugins，配置 devServer，代码中进行全局热更新，仅为了开发体验用于 dev）
+  3. DllPlugin
+     * （将复用性较高的第三方模块，单独打包到 DLL 动态链接库，开发时第三方模块不升级，则 dll 不再打包，打包的只是业务代码，仅为了提高开发时频繁打包体验用于 dev）
 
 ## 3.2、优化产出代码～～产品性能
 
@@ -774,5 +781,48 @@ module.export = {
   * ✅ 体验优化，无提示代码；
   * ✅ 自动触发 TreeShaking 生效；
 
-### 3.2.8、Scope Hosting（）
+### 3.2.8、Scope Hoisting（prod✅ 多函数压缩成一个函数）
 
+* Scope Hoisting（作用域提升）
+* 原理：多个函数压缩时，变成一个函数进行压缩；
+* 配合：需要 es6 module 模块化语法进行配合；
+* 优化点：
+  * ✅ 减少代码体积；
+  * ✅ 压缩代码中函数的作用域更少；
+  * ✅ 压缩后的代码可读性更好；
+
+* 使用：在 prod 环境下，配置 `plugins` & `resolve` ：
+
+```js
+module.export = {
+  resolve: {
+    // 针对 npm 中第三方模块优先采用 'jsnext.main' 指向的 es6 模块化语法的文件；
+    mainFields: ['jsnext.main', 'browser', 'main'],
+  },
+  plugoins: [
+    // 开启 scope hoisting
+    new ModuleConcactenationPlugin()
+  ]
+}
+```
+
+### 3.2.9、♨️♨️webpack 优化代码产出总结
+
+* 用于公共环境（common）：
+  1. import() 懒加载
+     * （不用特意进行 webpack 配置，在代码中异步的使用 `import('xxx').then()` 即可）
+* 用于生产环境（prod）：
+  1. 小图片 base 64 编码
+     * （prod 环境中 `url-loader` 辨别图片大小，将小图片编码，生成 dataURI 打包到文件中(减少网络请求)，大图片仍使用；common 环境中 `file-loader` 将文件解析为 url 并将文件发送到输出目录中。与快速打包+频繁调试无关，不适用dev。）
+  2. `budule.[contenthash8].js`
+     * （将打包后的 budule ，根据内容添加 hash ，使用缓存机制，减少网络请求。与快速打包+频繁调试无关，不适用dev。）
+  3. 提取公共代码+第三方代码
+     * （配置 optimization 中的 spliceChunk 的 catchGroups，对公共代码 & 第三方代码分组。减少多处引用多处打包，减小压缩体积。与快速打包+频繁调试无关，不适用dev。）
+  4. 使用 cdn 加速
+     * （对 js & 图片 文件使用公司的 cdn 域名进行 `publicPath` 的配置。仅适用 prod）
+  5. 使用 production 
+     * （webpack 4 以后使用 `mode: 'production'` 会自动删除调试代码并压缩，并自动开启 TreeShaking。仅适用 prod）
+  6. Scope Hoisting
+     * （使用 `ModuleConcatenationPlugin` 插件，使多个函数合并成一个函数，合并函数作用域，使代码快速执行。适用于 prod）
+  7. IgnorePlugin
+     * 不引入无用模块，减小压缩体积；
