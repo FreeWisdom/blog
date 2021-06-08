@@ -249,3 +249,30 @@ const APP = () => {
 
 * useMemo 和 useCallback 的作用就在于，让你可以不用每次渲染都执行一遍，给你缓存起来；
 * 例如，有一个函数中有网络请求，你不希望每次组件渲染都重新请求一次，那就用 useCallback 。
+
+# 28、React 如何实现 Todolist？
+
+1. 状态设计
+
+   * 数据描述内容；
+   * 数据要结构化，便于查；
+   * 数据要可拓展，便于增删改；
+
+   <img class="picture" src="https://cdn.nlark.com/yuque/0/2021/png/114317/1623108783130-assets/web-upload/b28e16b1-616d-4635-bd0d-a1657b658072.png" alt="" style="width: 994px; height: 286px;">
+
+2. 组件设计
+
+   * 功能上拆分层次；
+   * 尽量让组件原子化；
+   * 容器组件（只管数据的增删改逻辑）&UI组件（只显示视图）
+
+   ```jsx
+   <App>												{/* 负责管理数据 */}
+   	<Input>										{/* 负责输入，将结果给父组件 */}
+     <List>										{/* 负责输出列表，从父组件获取数据 */}
+     	<ListItem></ListItem>		{/* 显示单条数据，删除、切换 completed 状态 */}
+     </List>
+   </App>
+   ```
+
+3. 见 src/component/TodoLIst

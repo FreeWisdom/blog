@@ -273,7 +273,7 @@ output: {
 * 在 prod 环境，需对公共代码&第三方代码进行抽离，单独打包；
 
   * 优化点：✅ 减少对公共代码多处引用后多处打包，整体上减少代码体积，加快加载速度；
-  * `optimization` 中**配置 `splichunks` 对代码块进行切分**；
+  * `optimization` 中**配置 `splitchunks` 对代码块进行切分**；
     * `chunks` 中**配置 `all` ，对全部的 chunk 进行处理**；
     * `cachgroups` 中**配置 `vender:{}`  和 `common:{}` ，对缓存进行分组**；
 
@@ -281,7 +281,7 @@ output: {
   optimization: {
   
     // 分隔代码
-    spliChunks: {
+    splitChunks: {
       
       /**
       * initial 入口 chunk，对于异步导入的文件不处理；
@@ -799,7 +799,7 @@ module.export = {
     // 针对 npm 中第三方模块优先采用 'jsnext.main' 指向的 es6 模块化语法的文件；
     mainFields: ['jsnext.main', 'browser', 'main'],
   },
-  plugoins: [
+  plugins: [
     // 开启 scope hoisting
     new ModuleConcactenationPlugin()
   ]
@@ -814,7 +814,7 @@ module.export = {
 * 用于生产环境（prod）：
   1. 小图片 base 64 编码
      * （prod 环境中 `url-loader` 辨别图片大小，将小图片编码，生成 dataURI 打包到文件中(减少网络请求)，大图片仍使用；common 环境中 `file-loader` 将文件解析为 url 并将文件发送到输出目录中。与快速打包+频繁调试无关，不适用dev。）
-  2. `budule.[contenthash8].js`
+  2. `bundle.[contenthash8].js`
      * （将打包后的 budule ，根据内容添加 hash ，使用缓存机制，减少网络请求。与快速打包+频繁调试无关，不适用dev。）
   3. 提取公共代码+第三方代码
      * （配置 optimization 中的 spliceChunk 的 catchGroups，对公共代码 & 第三方代码分组。减少多处引用多处打包，减小压缩体积。与快速打包+频繁调试无关，不适用dev。）

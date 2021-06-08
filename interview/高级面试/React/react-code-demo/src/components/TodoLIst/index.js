@@ -24,7 +24,7 @@ class App extends React.Component {
                 }
             ]
         }
-    }
+    }3
     render() {
         return <div>
             <InputItem addItem={this.addItem}/>

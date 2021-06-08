@@ -134,7 +134,16 @@
 
 <img class="picture" src="https://cdn.nlark.com/yuque/0/2021/png/114317/1620891559352-assets/web-upload/e1049027-4dba-43a7-9b30-feb2d1fbe7b3.png?x-oss-process=image%2Fresize%2Cw_440" alt="lerna-开发脚手架流程" style="width: 700px; height: 400px;">
 
+<img class="picture" src="https://cdn.nlark.com/yuque/0/2021/png/114317/1623119879831-assets/web-upload/d2ab7002-48c9-4441-9fba-7790f6c1e1bb.png" alt="" style="width: 900px; height: 400px;">
+
+* expires 已经被 catch-control 代替。
+* webpack 的 `bundle.[hashcontent:8].js` 用的就是强缓存；
 * 若超过Cache-Control时间，缓存资源失效，浏览器则再次请求服务器，重新获取资源，并重新设置缓存时间；
+  * ♨️max-age：最大缓存时间
+  * ♨️no-catch：不用强制缓存，正常请求；
+  * no-store：不用强制缓存，且不用服务端协商缓存，就是要服务端返回；
+  * private：允许最终用户电脑、浏览器、手机做缓存；
+  * public：允许中间的路由、代理做缓存；
 
 ### 4.2.2、协商缓存（对比缓存）
 

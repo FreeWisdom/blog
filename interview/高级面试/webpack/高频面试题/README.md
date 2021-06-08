@@ -24,7 +24,16 @@
 
 # 4、常见的 loader 和 plugin 有哪些？
 
-
+* loader：babel-loader、css-loader、style-loader、postcss-loader、less-loader、url-loader、file-loader、vue-loader......
+* plugin：
+  * HtmlWebpackPlugin
+  * CleanWebpackPlugin
+  * IgnorePlugin
+  * MiniCssExtractPlugin、TerserPlugin、OptimizeCssAssetsPlugin
+  * HappyPack、ParallelUglifyPlugin
+  * HotModuleReplacementPlugin
+  * DllPlugin、DllReferencePlugin
+  * ModuleConcatenationPlugin
 
 # 5、babel 和 weabpack 的区别？
 
@@ -82,9 +91,32 @@ output: {
 * promise 可以用 callback 模拟；
 * proxy 无法用 Object.defineProperty 模拟；
 
-# 5、webpack 常见性能优化？
+# 10、webpack 常见性能优化？
 
-# 7、关于 webpack 5 有和不同？
+* 构建速度优化
+  * common
+    *  `babel-loader?catchDirectory` ；
+    * 配置 HappyPack 插件，对代码开启多进程打包；
+    * 针对所用库中的某个无用模块的忽略 IgnorePlugin，在使用的时候代码中手动引入；
+  * prod
+    * 针对 xxx.min.js 等文件的 noParse ；
+    * 配置 ParalleleUglifyPlugin 插件，对 webpack 自带的 uglify 开启多进程压缩；
+  * dev
+    * 配置 watch & watchOptions ，自动更新；
+    * 配置 HotModuleReplacementPlugin，并配合 entry、sevServer、module.hot.accept() 启动热更新；
+* 代码产出
+  * common
+    * import() 异步加载
+  * prod
+    * 针对公共代码+第三方代码，使用 optimization.splitChunks.cachGroups 进行分组抽离；
+    * 针对小图片，使用 url-loader 判断大小后，对小图片进行 base64 编码，生成 dataURL，打包到文件中；
+    * 针对开发模式使用 `mode: 'production'` 进行区分；
+    * 针对资源，配置 publickPath 进行 cdn 加速；
+    * 针对使用库中无用的模块，使用 ignoreplugin，进行忽略；
+    * 针对产出代码使用  `bundle.[contenthash:8].js` 命中服务端返回的 `ResponseHeader.catche-control:max-age=xxxxx` 强制缓存；
+    * 针对多模块，使用 ModuleConcatenationPlugin 插件将多个模块合并成一个模块，达到 scopeHoisting（作用域提升）；
+
+# 11、关于 webpack 5 有和不同？
 
 *  webpack 5 主要进行内部效率的优化；
 * 对比  webpack 4 无太多使用上的改动；
@@ -95,7 +127,7 @@ output: {
   *  `module.rules` 中 `loader: ['xxx-loader']` 换成 `use: ['xxx-loader']`
   *  `filename: 'bundle.[contenthash:8].js'` 其中 `h` 小写，不能大写
 
-# 8、什么类型项目或什么需求需要多入口文件？
+# 12、什么类型项目或什么需求需要多入口文件？
 
 * 在很多 app 里用 webview 嵌入 h5 网页，都是一个单个页面的嵌入，不能是 spa 。这就需要输入多个页面。
   * 例如用 app 内嵌 h5 实现新闻列表页和详情页，现在给你两个选择：
@@ -109,13 +141,13 @@ output: {
       * 劣势：需与native原生交互，webpack配置相对繁琐一点，不可共享一个状态vuex。
   * 体验优化这个原则就够了，spa 体验太差。而且，多页多 webview 还可以继续做预加载，优化性能。故选择多页；
 
-# 9、抽离公共代码和第三方代码放在哪个环境？
+# 13、抽离公共代码和第三方代码放在哪个环境？
 
 * 首先，分割文件是为了减小文件大小，使得加载较快，但是拆分文件也需要耗费一定的时间；
 * 针对于开发环境，文件都是在本地的，加载速度本身较快，而且代码频繁改动，每次改动都需要重新拆分代码，所以在开发环境没必要拆分代码；
 * 在生产环境，文件从服务器获取，如果文件太大的话加载较慢，所以需要拆分，另外生产文件也不是频繁打包的，所以可以接受拆分代码时消耗一定的时间。
 
-# 10、build 后如何产生 chunk（单独打包的 js ）？
+# 14、build 后如何产生 chunk（单独打包的 js ）？
 
 1.  `import('').then(res => {})` 异步懒加载会产生一个chunk ；
 
@@ -143,7 +175,7 @@ output: {
    ```
 
 
-# 11、ES Module 和 Commonjs 的区别？
+# 15、ES Module 和 Commonjs 的区别？
 
 1. ES6 Module 静态引用，编译时引入；
 
