@@ -16,10 +16,10 @@ console.log(b)	// 100
 ### 1.1.2、引用类型
 
 ```js
-let a = {age: 100};
+let a = {age: 20};
 let b = a;
-b.age = 200;
-console.log(a.age)	// 200
+b.age = 21;
+console.log(a.age)	// 21
 ```
 
 <img class="picture" src="https://cdn.nlark.com/yuque/0/2021/png/114317/1620345547660-assets/web-upload/8254db4f-cc29-4ac7-be38-7b1924a47497.png?x-oss-process=image%2Fresize%2Cw_440" alt="lerna-开发脚手架流程" style="width: 700px; height: 250px;">
@@ -106,7 +106,7 @@ console.log(Object.prototype.toString.call(new Person));				//[object Object]
    * **因此想判断数据类型时，也只能使用 Object 原型上的 toString() 方法**；
    * 继而有了此方法：Object.prototype.toString.call(obj)；
 
-### 1.2.3、手写深拷贝
+### 1.2.3、♨️手写深拷贝
 
 ```js
 /**
@@ -167,6 +167,8 @@ const d = 100 + parseInt("10");	// 110
 ```
 
 ### 1.3.2、”==““===”如何使用？
+
+* == 会进行隐式类型转换，=== 不会进行转换；
 
 ```js
 100 == "100";				// true
@@ -296,6 +298,8 @@ console.log(typeof Student);                                    // "function"
 ```
 
 ## 2.2、instanceof
+
+* 判断前者是否是后者的实例
 
 > 打印上方继承中的例子
 
@@ -437,6 +441,15 @@ for (let i = 0; i < 10; i++) {
 
 ### 3.3.2、闭包的应用
 
+* 闭包的实际应用，主要是用来封装变量。即把变量隐藏起来，不让外面修改。ES5之前JS是没有局部变量的，所以程序员发明了闭包。
+
+  * 防抖
+  * 节流
+  * 高阶函数
+  * https://cloud.tencent.com/developer/article/1728078?from=information.detail.js%E9%97%AD%E5%8C%85%E5%BA%94%E7%94%A8
+  
+* 闭包作用：避免变量被环境污染
+
 * 隐藏数据：做一个简单的cache工具
 
   ```js
@@ -446,7 +459,7 @@ for (let i = 0; i < 10; i++) {
     return {
       set: function(key, val) {
         data[key] = val;
-      }
+      },
       get: function(key) {
         return data[key];
       }

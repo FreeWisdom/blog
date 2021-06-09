@@ -29,7 +29,7 @@
 >   }).then(() => {
 >     console.log(3);
 >   })
->   
+>
 >   // 1
 >   // 3
 >   ```
@@ -43,7 +43,7 @@
 >   }).then(() => {
 >     console.log(3);
 >   })
->   
+>
 >   // 1
 >   // 2
 >   // 3
@@ -58,7 +58,7 @@
 >   }).catch(() => {
 >     console.log(3);
 >   })
->   
+>
 >   // 1
 >   // 2
 >   ```
@@ -86,7 +86,7 @@
 >     console.log("c", c);
 >     console.log("end");
 >   })()
->   
+>
 >   // start
 >   // a 100
 >   // b 200 
@@ -104,7 +104,7 @@
 >     console.log(300);
 >   });
 >   console.log(400);
->   
+>
 >   // 100
 >   // 400
 >   // 300
@@ -148,10 +148,11 @@
 >   // async1 end
 >   // promise2
 >   // settimeout
->   
->   
+>
+>
 >   // 宏：settimeout
 >   // 微：async1 end/promise2
+>
 >   ```
 
 # 2、 知识点梳理
@@ -468,4 +469,37 @@ nums.forEach(async (i) => {
 <img class="picture" src="https://cdn.nlark.com/yuque/0/2021/png/114317/1620747315868-assets/web-upload/e600d66f-b7c5-4f9b-956e-1c491fde661a.png?x-oss-process=image%2Fresize%2Cw_440" style="width: 600px; height: 400px;">
 
 <img class="picture" src="https://cdn.nlark.com/yuque/0/2021/png/114317/1620747315796-assets/web-upload/5093ce1c-a5c1-49af-a340-b253805b94d3.png?x-oss-process=image%2Fresize%2Cw_440" style="width: 600px; height: 400px;">
+
+### 2.6.3、♨️总结♨️
+
+1. 同步 js 代码在 Call Stack 执行；
+
+   * 遇到微任务，将微任务的 then 或 catch 的 callback 函数插到 micro task queue 队列尾；
+
+   * 遇到宏任务，将宏任务中的 callback 函数放到 webAPIs ；
+     * webAPIs 等待时机，将宏任务中的 callback 函数插到 Callback Queue 队列尾；
+
+2. 同步代码执行完毕，Call Stack 清空；
+
+3. 执行当前微任务队列，直到清空：
+
+   * micro task queue 队列中 callback 函数，按先进先出的顺序，从队列头到队列尾，依次放到 Call Stack 全部执行；
+     * 若微任务中嵌套了宏任务，则将该宏任务也放到 webAPIs 中，按照宏任务处理；
+
+4. 尝试 DOM 渲染；
+
+5. 执行当前宏任务队列，直到清空：
+
+   * Callback Queue 队列中 callback 函数，按先进先出的顺序，从队列头到队列尾，依次放到 Call Stack 执行；
+     * 若某个宏任务中嵌套了微任务；
+     * 则先清空上个宏任务中嵌套的微任务；
+     * 再尝试 DOM 渲染；
+     * 最后再执行下个宏任务；
+
+> 即：同步完成，所有微任务；一个宏任务，所有微任务；一个宏任务，所有微任务......
+>
+> 与 node 的差异：
+>
+> - 浏览器环境下，microtask 的任务队列是每个 macrotask 执行完之后执行。
+> - 在 Node.js 中，microtask 会在事件循环的各个阶段之间执行，也就是一个阶段执行完毕，就会去执行 microtask 队列的任务。
 

@@ -1,4 +1,8 @@
-# 1、var/let/const的区别
+# 1⃣️ THML & CSS
+
+# 2⃣️ JS
+
+## 1、var/let/const的区别？
 
 * var
 
@@ -27,7 +31,7 @@
   * 块级作用域
   * 常量
 
-# 2、typeof返回哪些类型
+## 2、typeof返回哪些类型？
 
 * 可以识别所有值类型
   * string
@@ -41,20 +45,34 @@
   * object    ====>    object
   * array     ====>    object
   * null        ====>    object
+* 应该使用 `Object.prototype.toString.call(obj)` ；
 
-# 3、列举强制类型转换和隐式类型转换
+## 3、请列举强制类型转换和隐式类型转换
 
 * 强制类型转换：
-  * parseInt
-  * parseFloat
-  * toString
+  * parseInt(string, redix)
+    * 字符串转数字（整数）
+    * 将空格或数字开头的字符串（第一个参数）中第一个数字（不含小数点），按照基数（第二个参数）转换成数字；
+  * parseFloat(string)
+    * 字符串转数字（小数）
+    * 将空格或数字开头的字符串（第一个参数）中第一个数字（含小数点）转换成数字；
+  * NumberObject.toString(redix)
+    * 数字转字符串
+    * 将数字转以 redix 为基数，换成字符串
 * 隐式类型转换：
   * if
   * 逻辑运算
   * +字符串拼接
   * ==双等号
 
-# 4、手写深度比较 lodash isEqual
+## 4、== 和 === 的不同？
+
+* == 会类型转换
+* === 不会进行类型转换，严格相等
+* 只有在判断 a == null 时使用 == ；
+  * 包含了a === null ||  a === undefined；
+
+## 5、✍️手写深度比较 lodash isEqual
 
 * 实现以下效果：
 
@@ -98,7 +116,7 @@
   }
   ```
 
-# 5、split 和 join 的区别
+## 6、split 和 join 的区别
 
 ```js
 '1-2-3'.split('-');
@@ -107,7 +125,7 @@
 // "1-2-3"
 ```
 
-# 6、数组的pop/push/shift/unshift作用
+## 7、数组的pop/push/shift/unshift作用
 
 * pop
   * 返回数组中最后一个值；
@@ -122,25 +140,144 @@
   * 返回新数组的length；
   * 改变原数组；
 
-# 7、数组的 API 哪些是纯函数？
+## 8、数组的 API 哪些是纯函数？
 
 * 纯函数：不改变原数组（无副作用）、返回一个数组；
   * concat
-  * map
-  * filter
-  * slice
-* 非纯函数：
-  * push
-  * pop
-  * shift
-  * unshift
-  * foreach
-  * some
-  * every
-  * reduce
-  * splice
 
-# 8、数组 slice 和 splice 区别
+    ```js
+    const array1 = ['a', 'b', 'c'];
+    const array2 = ['d', 'e', 'f'];
+    const array3 = array1.concat(array2);
+    
+    console.log(array3);
+    // expected output: Array ["a", "b", "c", "d", "e", "f"]
+    ```
+
+  * map
+
+    ```js
+    const array1 = [1, 4, 9, 16];
+    
+    // pass a function to map
+    const map1 = array1.map(x => x * 2);
+    
+    console.log(map1);
+    // expected output: Array [2, 8, 18, 32]
+    ```
+
+  * filter
+
+    ```js
+    const words = ['spray', 'limit', 'elite', 'exuberant', 'destruction', 'present'];
+    
+    const result = words.filter(word => word.length > 6);
+    
+    console.log(result);
+    // expected output: Array ["exuberant", "destruction", "present"]
+    ```
+
+  * ✅ slice
+
+    ```js
+    const animals = ['ant', 'bison', 'camel', 'duck', 'elephant'];
+    
+    console.log(animals.slice(2));
+    // expected output: Array ["camel", "duck", "elephant"]
+    
+    console.log(animals.slice(2, 4));
+    // expected output: Array ["camel", "duck"]
+    
+    console.log(animals.slice(1, 5));
+    // expected output: Array ["bison", "camel", "duck", "elephant"]
+    ```
+
+* 非纯函数：
+  * ✅ push
+
+  * ✅ pop
+
+  * ✅ shift
+
+  * ✅ unshift
+
+  * foreach
+
+    * `forEach()` 方法对数组的每个元素执行一次给定的函数。
+    * `forEach()` 被调用时，不会改变原数组，也就是调用它的数组（尽管 `callback` 函数在被调用时可能会改变原数组）。
+
+    ```js
+    const array1 = ['a', 'b', 'c'];
+    
+    array1.forEach(element => console.log(element));
+    
+    // expected output: "a"
+    // expected output: "b"
+    // expected output: "c"
+    ```
+
+  * some
+
+    * `some()` 方法测试数组中是不是至少有1个元素通过了被提供的函数测试。它返回的是一个Boolean类型的值。
+
+    ```js
+    const array = [1, 2, 3, 4, 5];
+    
+    // checks whether an element is even
+    const even = (element) => element % 2 === 0;
+    
+    console.log(array.some(even));
+    // expected output: true
+    ```
+
+  * every
+
+    * `every()` 方法测试一个数组内的所有元素是否都能通过某个指定函数的测试。它返回一个布尔值。
+
+    ```js
+    const isBelowThreshold = (currentValue) => currentValue < 40;
+    
+    const array1 = [1, 30, 39, 29, 10, 13];
+    
+    console.log(array1.every(isBelowThreshold));
+    // expected output: true
+    ```
+
+  * reduce
+
+    * `reduce()` 方法对数组中的每个元素执行一个由您提供的**reducer**函数(升序执行)，将其结果汇总为单个返回值。
+
+    ```js
+    const array1 = [1, 2, 3, 4];
+    const reducer = (accumulator, currentValue) => accumulator + currentValue;
+    
+    // 1 + 2 + 3 + 4
+    console.log(array1.reduce(reducer));
+    // expected output: 10
+    
+    // 5 + 1 + 2 + 3 + 4
+    console.log(array1.reduce(reducer, 5));
+    // expected output: 15
+    ```
+
+  * ✅ splice
+
+    * 剪接
+
+    ```js
+    const months = ['Jan', 'March', 'April', 'June'];
+    months.splice(1, 0, 'Feb');
+    // inserts at index 1
+    console.log(months);
+    // expected output: Array ["Jan", "Feb", "March", "April", "June"]
+    
+    months.splice(4, 1, 'May');
+    // replaces 1 element at index 4
+    console.log(months);
+    // expected output: Array ["Jan", "Feb", "March", "April", "May"]
+    ```
+
+## 9、数组 slice 和 splice 区别
 
 * 功能区别
 
@@ -175,14 +312,14 @@
 
 * 是否是纯函数
 
-# 9、[10, 20, 30].map(parseInt)返回结果是什么？
+## 10、[10, 20, 30].map(parseInt)返回结果是什么？
 
 * map参数（函数(item,index)），返回值（数组）
 * parseInt参数（数,进制位），返回值（int值）
 
 ```js
 const res = [10, 20, 30].map(parseInt)
-console.log(res)
+console.log(res)		// [10, NaN, NaN]
 
 // 拆解
 [10, 20, 30].map((num, index) => {
@@ -190,94 +327,59 @@ console.log(res)
 })
 ```
 
-# 10、ajax 请求 get 和 post 的区别？
+## 11、函数 call / apply / bind 的区别？
 
-* get 一般用于查询操作，post 一般用于用户提交操作；
-* get 参数拼接在 url 上，post 放在请求体内（数据体积可更大）；
-* 安全性：post 易于防止 CSRF；
-
-# 11、函数 call 和 apply 的区别？
-
-* 第二个参数的区别
+* call /apply 区别在于第二个参数：
 
 ```js
-fn.call(this, p1, p2, p3);		// 第二个参数零散拆分
-fn.apply(this, arguments);		// 第二个参数数组或类数组的集合
+fn.call(obj, 1, 2);						// 第二个参数零散拆分
+fn.apply(obj, [1, 2]);				// 第二个参数数组或类数组的集合
 ```
 
-# 12、事件代理（委托）是什么？
+* call / bind 区别在于立即执行还是等待执行：
 
-* 利用事件冒泡将事件代理到父元素
+```js
+fn.call(obj, 1, 2); // 改变fn中的this，并且把fn立即执行
+fn.bind(obj, 1, 2); // 改变fn中的this，fn并不执行
+```
 
-# 13、闭包是什么，有什么特性/负面影响，闭包的内存如何释放？
+## 12、闭包
 
-* 作用域，自由变量；
-* 闭包的应用场景：
-  * 函数作为参数被传入
-  * 函数作为返回值被返回
-* 自由变量的查找，要在函数定义的地方，而非执行的地方；
-* 闭包的影响：
-  * 变量会常驻内存，得不到释放，不要乱用，可能造成内存泄漏；
-* 闭包的内存如何释放
+1. 闭包是什么？
+
+   1. 能够访问其他函数内部变量的函数；
+
+   2. 有两种表现：
+      1. 函数作为参数被传入；
+      2. 函数作为返回值被返回；
+   3. 自由变量的查找，要在函数定义的地方，而非执行的地方；
+
+2. 闭包解决了什么问题？
+
+   1. 函数内部能读取全局变量，函数外部无法读取函数内部的变量（局部变量），为了在函数外部读取局部变量，所以就有了闭包；
+
+   2. ES5 之前 JS 是没有局部变量的，所以程序员发明了闭包，用来封装变量，把变量隐藏起来，不让外面修改；
+
+3. 闭包的实际应用？https://cloud.tencent.com/developer/article/1728078?from=information.detail.js%E9%97%AD%E5%8C%85%E5%BA%94%E7%94%A8
+
+   * 防抖
+   * 节流
+   * 高阶函数
+
+4. 闭包有哪些影响？
+   1. 变量会常驻内存，得不到释放，不要乱用，可能造成内存泄漏；
+
+* 闭包的内存如何释放？
   * 没办法，闭包的内存释放不了，除非重新刷新浏览器。
 
-# 14、如何阻止事件冒泡和默认行为？
-
-* event.stopPropagation()
-* event.preventDefault()
-
-# 15、查找、添加、删除、移动 DOM 节点的方法？
-
-* `document.getElementById('XXX')`
-* `document.getElementsByTagName('xxx')`
-* `document.getElementsByClassName('xxx')`
-* `document.querySelectorAll('xxx')`
-* `document.createElement('xxx')`
-* 插入：`xxx.appendChild(newxxx)`
-* 移动：`xxx.appendChild(oldxxx)`
-* `xxxchildeNodes = xxx.childNodes`
-* `xxx.removeChild(removechild)`
-
-# 16、如何减少 DOM 操作？
-
-* 缓存 DOM 查询结果；
-* 多次 DOM 操作，合并到一次插入；
-
-# 17、解释 jsonp 的原理，为何它不是真正的 ajax ？
-
-* jsonp 原理
-  * script 标签绕过同源策略限制进行跨域，携带 callback=abc ；
-  * 服务端在 callback 中返回 json 数据 abc( {a: 10, b:20} )；
-  * 前端调用 callback 函数 window.abc = function (data) {console.log(data)} 就可以获得数据；
-* ajax 依据 XMLHttpRequest API；
-* jsonp 依据 `<script>` 标签可绕过跨域限制；
-
-# 18、document load 和 ready 的区别？
-
-```js
-window.addEventListener('load', function () {
-  //页面加载完全部资源才会执行，包括图片/视频
-})
-document.addEventListener('DOMContentLoaded', function () {
-  // DOM 渲染完即可执行，此时图片、视频可能还未加载完
-})
-```
-
-# 19、== 和 === 的不同？
-
-* == 会类型转换
-* === 不会进行类型转换，严格相等
-* 只有在判断 a == null 时使用 == ；
-  * 包含了a === null ||  a === undefined；
-
-# 20、函数声明和函数表达式的区别？
+## 20、函数声明和函数表达式的区别？
 
 * 函数声明：`function fn() {...}`
   * 函数声明会在代码执行前**预加载**；
 * 函数表达式：`const fn = function () {...}`
   * 函数把表达式，**不会预加载**；
 
-# 21、new Object() 和 Object.create() 的区别？
+## 21、new Object() 和 Object.create() 的区别？
 
 * new Object(xxx) 
 
@@ -534,7 +636,7 @@ flat([[1, 2], 3, [4, 5, [6, 7, [8, 9, [10, 11]]]]]);
   // [1, 2, 0, 44, 3]
   ```
 
-# 34、手写深拷贝
+# 34、✍️手写深拷贝
 
 * **深拷贝和浅拷贝区别：**
   * **浅拷贝**只复制指向某个对象的指针，而不复制对象本身，新旧对象还是共享同一块内存；
@@ -598,4 +700,64 @@ function deepClone(obj = {}) {
 # 36、前端性能如何优化，几个方面考虑？
 
 * 流畅中添加raf
+
+# 3⃣️ JS-web-API
+
+## 11、事件代理（委托）是什么？
+
+* 利用事件冒泡将事件代理到父元素
+
+## 14、如何阻止事件冒泡和默认行为？
+
+* event.stopPropagation()
+* event.preventDefault()
+
+## 15、查找、添加、删除、移动 DOM 节点的方法？
+
+* `document.getElementById('XXX')`
+* `document.getElementsByTagName('xxx')`
+* `document.getElementsByClassName('xxx')`
+* `document.querySelectorAll('xxx')`
+* `document.createElement('xxx')`
+* 插入：`xxx.appendChild(newxxx)`
+* 移动：`xxx.appendChild(oldxxx)`
+* `xxxchildeNodes = xxx.childNodes`
+* `xxx.removeChild(removechild)`
+
+## 16、如何减少 DOM 操作？
+
+* 缓存 DOM 查询结果；
+* 多次 DOM 操作，合并到一次插入；
+
+## 18、document load 和 ready 的区别？
+
+```js
+window.addEventListener('load', function () {
+  //页面加载完全部资源才会执行，包括图片/视频
+})
+document.addEventListener('DOMContentLoaded', function () {
+  // DOM 渲染完即可执行，此时图片、视频可能还未加载完
+})
+```
+
+# 4⃣️ http
+
+## 10、ajax 请求 get 和 post 的区别？
+
+* get 一般用于查询操作，post 一般用于用户提交操作；
+* get 参数拼接在 url 上，post 放在请求体内（数据体积可更大）；
+* 安全性：post 易于防止 CSRF；
+
+## 17、解释 jsonp 的原理，为何它不是真正的 ajax ？
+
+* jsonp 原理
+  * script 标签绕过同源策略限制进行跨域，携带 callback=abc ；
+  * 服务端在 callback 中返回 json 数据 abc( {a: 10, b:20} )；
+  * 前端调用 callback 函数 window.abc = function (data) {console.log(data)} 就可以获得数据；
+* ajax 依据 XMLHttpRequest API；
+* jsonp 依据 `<script>` 标签可绕过跨域限制；
+
+# 5⃣️ development
+
+# 6⃣️ production
 
