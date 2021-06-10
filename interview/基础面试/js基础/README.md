@@ -1,4 +1,4 @@
-# 1、变量类型和计算
+# 1、✅变量类型和计算
 
 ## 1.1、值类型和引用类型的区别
 
@@ -373,7 +373,7 @@ console.log(xialuo.hasOwnProperty("hasOwnProperty"));           // false
 
 <img class="picture" src="https://cdn.nlark.com/yuque/0/2021/png/114317/1620359442671-assets/web-upload/6d50ecac-f9fd-426a-9a97-97837d6b9914.png?x-oss-process=image%2Fresize%2Cw_440" alt="lerna-开发脚手架流程" style="width: 600px; height: 300px;">
 
-# 3、作用域和闭包
+# 3、✅作用域和闭包
 
 ## 3.1、作用域
 
@@ -559,7 +559,7 @@ for (let i = 0; i < 10; i++) {
 2. 手写apply
 3. 手写call
 
-# 4、异步
+# 4、❌异步
 
 ## 4.1、单线程和异步
 

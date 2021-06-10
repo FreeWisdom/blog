@@ -327,7 +327,7 @@ console.log(res)		// [10, NaN, NaN]
 })
 ```
 
-## 11、函数 call / apply / bind 的区别？
+## 11、✍️🈳函数 call / apply / bind 的区别？
 
 * call /apply 区别在于第二个参数：
 
@@ -342,6 +342,10 @@ fn.apply(obj, [1, 2]);				// 第二个参数数组或类数组的集合
 fn.call(obj, 1, 2); // 改变fn中的this，并且把fn立即执行
 fn.bind(obj, 1, 2); // 改变fn中的this，fn并不执行
 ```
+
+1. 手写 call 函数
+2. 手写 bind 函数
+3. 手写 apply 函数
 
 ## 12、闭包
 
@@ -365,19 +369,173 @@ fn.bind(obj, 1, 2); // 改变fn中的this，fn并不执行
    * 防抖
    * 节流
    * 高阶函数
+   * 定时器
+   * 事件绑定
 
 4. 闭包有哪些影响？
-   1. 变量会常驻内存，得不到释放，不要乱用，可能造成内存泄漏；
+   * 变量会常驻内存，得不到释放，不要乱用，可能造成内存泄漏；
 
-* 闭包的内存如何释放？
-  * 没办法，闭包的内存释放不了，除非重新刷新浏览器。
+## 13、JS 垃圾回收机制？
 
-## 20、函数声明和函数表达式的区别？
+*  JS 垃圾回收机制采用**标记清楚法**：
+  * 存在一个根结点，始终不会被回收，称为 GC root（即，浏览器中为 window， dom 根结点）；
+  * 与 GC root 不链接的节点（即，不可访达的节点）被垃圾回收清除；
+
+## 14、什么导致内存泄漏？
+
+1. 使用过多的全局变量，存储了大量数据；
+
+   *  GC root 在浏览器中称为 window，而全局变量是 window 的属性，故全局变量始终不回收；
+   * 故使用过多的全局变量，存储了大量数据，就会导致内存泄漏；
+   * ✅ 建议：全局变量谨慎使用；
+
+   ```html
+   <body>
+     <button onclick="grow()">全局变量</button>
+     <script>
+     	function largeObj() {
+         this.largeArray = new Array(1000000);
+       }
+       
+       // 全局变量存储大量数据，会导致内存泄漏；
+       var x = [];
+       
+       function grow() {
+         var o = new largeObj();
+         x.push(o);
+       }
+     </script>
+   </body>
+   ```
+
+2. 分离的 DOM 节点：
+
+   * 节点从 DOM 树上删除了，但 js 仍留着对它的引用，就会导致内存泄漏；
+   * ✅ 建议：js 对 dom 的引用，放在使用该 dom 的函数中，函数执行完，js 对 dom 的引用同时被垃圾回收；
+
+   ```html
+   <body>
+     <button id="button">移除列表</button>
+     <ul id="list">
+       <li>项目 1</li>
+     </ul>
+     <script>
+     	var button = document.getElementById('button');
+       var list = document.getELementById('list');
+       button.addEventListener('click', function() {
+         // 建议将引用放在函数中；
+         // var list = document.getELementById('list');
+         list.remove();
+       })
+     </script>
+   </body>
+   ```
+
+3. 闭包：
+
+   * ♨️ ***函数实例上的隐式指针会留存实例创建环境下的作用域对象***； 
+   * ✅ 建议：及时清除定时器、计时器，解除事件绑定，在退出函数之前，将不使用的局部变量全部删除。可以使变量赋值为null；
+
+   ```js
+   var funcs = [];
+   function outer() {
+     var someText = new Array(100000000);
+     return function inner() {
+       return someText;
+     }
+   }
+   
+   function closure() {
+     // funcs 数组中每个 outer 函数的实例，都留存着各自定义作用域中的超大的数组对象；
+     funcs.push(outer());
+   }
+   ```
+
+4. 使用 `console.log()` 等进行控制台打印：
+   * 控制台随时保持查看，需要保存打印，故会导致内存泄漏；
+   * ✅ 建议：生产环境，删掉调试语句；
+
+## 15、关于 this 的场景题
+
+* this 值在执行的时候下结论，切勿在定义的时候下结论；
+
+```js
+const zhangsan = {
+  sayHi() {
+    console.log(this);			// {sayHi: ƒ, await: ƒ, awaitAgain: ƒ}
+  },
+  await() {
+    setTimeout(function() {
+      console.log(this);		// window	由于在 webAPI 中运行，脱离原函数，故指向 window，用尖头函数解决该问题；
+    }, 1000)
+  },
+  awaitAgain() {
+    setTimeout(() => {
+      console.log(this);		// {sayHi: ƒ, await: ƒ, awaitAgain: ƒ}
+    }, 1000)
+  }
+}
+```
+
+## 16、关于作用域和自由变量的场景题
+
+```js
+let i;
+for(i = 1; i <= 3; i++) {
+  setTimeout(function () {
+    console.log(i);
+  }, 0)
+}
+
+// 4
+// 4
+// 4
+// 4
+```
+
+```js
+let a =100;
+function test() {
+  alert(a);
+  a = 10;
+  alert(a);
+};
+test();
+alert(a);
+
+// 100
+// 10
+// 10
+```
+
+## 17、函数声明和函数表达式的区别？
 
 * 函数声明：`function fn() {...}`
   * 函数声明会在代码执行前**预加载**；
 * 函数表达式：`const fn = function () {...}`
-  * 函数把表达式，**不会预加载**；
+  * 函数表达式，**不会预加载**；
+
+## 18、讲一下原型和原型链吧？
+
+* 原型关系如下：
+
+1. 每个类都有显示原型 `prototype` ；
+2. 每个实例都有隐式原型 `__proto__` ；
+3. 实例的隐式原型 `__proto__` 指向类的显示原型 `prototype` ；
+
+* 原型链：实例获取属性或调取方法，会先在自身找，若找不到则顺着 `__proto__` 寻找，一直找到 `Object.prototype.__proto__` ；
+
+## 19、如何判断一个变量是不是数组？
+
+```js
+const a = [1, 2, 3];
+a instanceof Array;		// true
+```
+
+## 20、🈳️如何用 JS 实现继承？（8种）
+
+* Class 继承
+* prototype 继承（不推荐）
 
 ## 21、new Object() 和 Object.create() 的区别？
 
@@ -412,42 +570,22 @@ fn.bind(obj, 1, 2); // 改变fn中的this，fn并不执行
   // 			__proto__: Object
   ```
 
-# 22、关于 this 的场景题
+## 22、什么是同步/异步？
 
-* this 值在执行的时候下结论，切勿在定义的时候下结论；
+* JS 是单线程语言，同一时刻只能做一件事；
+* 若遇到等待（网络请求/定时任务）不能卡主 js 运行；
+* 因此异步就应运而生；
+* 异步不会阻塞代码执行，同步会阻塞执行；
 
-# 23、关于作用域和自由变量的场景题
+## 23、✍️🈳️手写 Promise 封装 ajax
 
-```js
-let i;
-for(i = 1; i <= 3; i++) {
-  setTimeout(function () {
-    console.log(i);
-  }, 0)
-}
+## 24、请描述event loop的机制
 
-// 4
-// 4
-// 4
-// 4
-```
+## 25、什么是宏任务和微任务，两者有什么区别？
 
-```js
-let a =100;
-function test() {
-  alert(a);
-  a = 10;
-  alert(a);
-};
-test();
-alert(a);
+## 26、Promise 有了解吗？
 
-// 100
-// 10
-// 10
-```
-
-# 24、判断字符串以字母开头，后面字母数字下划线，长度6-30
+## 24、判断字符串以字母开头，后面字母数字下划线，长度6-30
 
 * `const reg = /^[a-zA-Z]\w{5,29}$/`
 
@@ -483,11 +621,6 @@ Math.max(10, 20, 30);
 // 30
 ```
 
-# 27、如何用 JS 实现继承？（8种）
-
-* Class 继承
-* prototype 继承（不推荐）
-
 # 28、如何捕获 js 程序异常？
 
 * 手动捕获
@@ -510,78 +643,6 @@ finally {
 window.onerror = function (message, source, linenum, colnum, error) {
   // ①，对跨域 js ，如cdn不会有详细报错信息；
   // ②，对于压缩 js ，还要配合 sourceMap 反查到未压缩代码的行列；
-}
-```
-
-# 29、什么是 JSON ?
-
-* 是一种数据格式，本质是一段字符串；
-* json 格式和 js 对象结构一致，对 js 语言友好；
-* window.JSON 是一个全局对象：
-  * JSON.stringify()-----对象转换成JSON；
-  * JSON.parse()--------JSON转换成对象；
-
-# 30、获取当前页面 url 参数
-
-* 传统方式：
-
-  * location.search
-
-  ```js
-  // search:'a=10&b=20&c=30'
-  function query(name) {
-    const search = location.search.substr(1);		// 删除 ? 号
-    const reg = new RegExp(`(^|&)${name}=([^&]*)(&|$)`, 'i');
-    const res = search.match(reg);
-    if(res === null) {
-      return null;
-    }
-    return res[2]
-  };
-  
-  query('a');
-  ```
-
-* 新API，注意兼容
-
-  * URLSearchParams
-
-  ```js
-  // search:'?a=10&b=20&c=30'
-  
-  function query(name) {
-    const search = location.search;
-    const p = new URLSearchParams(search);
-    return p.get(name);
-  }
-  
-  query('a')
-  ```
-
-# 31、将 url 参数解析为 JS 对象
-
-```js
-function urlToObj() {
-  const res = {};
-  const search = location.search.substr(1);
-  search.split('&').forEach(paramStr => {
-    const paramArr = paramStr.split('=');
-    const key = paramArr[0];
-    const val = paramArr[1];
-    res[key] = val;
-  });
-  return res;
-}
-```
-
-```js
-function urlToObj() {
-  const res = {};
-  const parList = new URLSearchParams(location.search);
-  parList.forEach((val, key) => {
-    res[key] = val;
-  })
-  return res;
 }
 ```
 
@@ -756,6 +817,78 @@ document.addEventListener('DOMContentLoaded', function () {
   * 前端调用 callback 函数 window.abc = function (data) {console.log(data)} 就可以获得数据；
 * ajax 依据 XMLHttpRequest API；
 * jsonp 依据 `<script>` 标签可绕过跨域限制；
+
+## 29、什么是 JSON ?
+
+* 是一种数据格式，本质是一段字符串；
+* json 格式和 js 对象结构一致，对 js 语言友好；
+* window.JSON 是一个全局对象：
+  * JSON.stringify()-----对象转换成JSON；
+  * JSON.parse()--------JSON转换成对象；
+
+## 30、获取当前页面 url 参数
+
+* 传统方式：
+
+  * location.search
+
+  ```js
+  // search:'a=10&b=20&c=30'
+  function query(name) {
+    const search = location.search.substr(1);		// 删除 ? 号
+    const reg = new RegExp(`(^|&)${name}=([^&]*)(&|$)`, 'i');
+    const res = search.match(reg);
+    if(res === null) {
+      return null;
+    }
+    return res[2]
+  };
+  
+  query('a');
+  ```
+
+* 新API，注意兼容
+
+  * URLSearchParams
+
+  ```js
+  // search:'?a=10&b=20&c=30'
+  
+  function query(name) {
+    const search = location.search;
+    const p = new URLSearchParams(search);
+    return p.get(name);
+  }
+  
+  query('a')
+  ```
+
+## 31、将 url 参数解析为 JS 对象
+
+```js
+function urlToObj() {
+  const res = {};
+  const search = location.search.substr(1);
+  search.split('&').forEach(paramStr => {
+    const paramArr = paramStr.split('=');
+    const key = paramArr[0];
+    const val = paramArr[1];
+    res[key] = val;
+  });
+  return res;
+}
+```
+
+```js
+function urlToObj() {
+  const res = {};
+  const parList = new URLSearchParams(location.search);
+  parList.forEach((val, key) => {
+    res[key] = val;
+  })
+  return res;
+}
+```
 
 # 5⃣️ development
 
