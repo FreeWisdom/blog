@@ -53,8 +53,8 @@ bindEvent(p1, 'click', event => {
 })
 const body = document.body
 bindEvent(body, 'click', event => {
-    console.log('取消')
-    // console.log(event.target)
+    // console.log('取消')
+    console.log(event.target.innerHTML)
 })
 // const div2 = document.getElementById('div2')
 // bindEvent(div2, 'click', event => {

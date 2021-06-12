@@ -55,8 +55,6 @@ Object.keys(templateMap).forEach(key => {
             return ${template}
         })
     `, context)
-
-    console.log("templateMap[key]", templateMap[key])
 })
 
 console.log(templateMap['templateB']())

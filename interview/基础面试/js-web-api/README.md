@@ -1,3 +1,5 @@
+# ✅✅✅✅✅✅
+
 # 1、JS Web API 概览
 
 1. DOM
@@ -221,7 +223,8 @@ list.appendChild(frag);		// 一次性操作
 # 3、♨️BOM（浏览器对象模型）
 
 * navigator（识别浏览器类型）
-  * `navigator.userAgent // "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36"`
+  * `navigator.userAgent `
+  * `// "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36"`
   
 * screen
 
@@ -616,3 +619,4 @@ response.seterHeader("Access-Control-Allow-Credentials", "true");
 * 区别：
   * localStorage 数据会永久存储，除非代码或手动删除；
   * sessionStorage 数据只存在于当前会话，浏览器关闭则清空；
+

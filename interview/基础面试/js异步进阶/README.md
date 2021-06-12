@@ -1,3 +1,5 @@
+# ✅✅✅✅✅✅
+
 # 1、知识点+题目概览
 
 > 主要内容:
@@ -122,14 +124,14 @@
 >   async function async2() {
 >     console.log("async2");
 >   }
->   
+>       
 >   console.log("script start");
 >   setTimeout(function () {				// 宏任务
 >     console.log("settimeout")
 >   }, 0);
->   
+>       
 >   async1();
->   
+>       
 >   // 初始化Promise时，传入的函数会立即被执行；
 >   new Promise(function (resolve) {
 >     console.log("promise1");
@@ -137,9 +139,9 @@
 >   }).then(function () {						// 微任务
 >     console.log("promise2");
 >   });
->   
+>       
 >   console.log("script end");
->   
+>       
 >   // script start
 >   // async1 start
 >   // async2

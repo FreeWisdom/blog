@@ -1,3 +1,9 @@
+> 🈳️：待补充
+>
+> ✍️：需手写
+>
+> ♨️：重要
+
 # 1⃣️ THML & CSS
 
 # 2⃣️ JS
@@ -574,18 +580,151 @@ a instanceof Array;		// true
 
 * JS 是单线程语言，同一时刻只能做一件事；
 * 若遇到等待（网络请求/定时任务）不能卡主 js 运行；
-* 因此异步就应运而生；
+* 因此异步就应运而生，基于event loop；
 * 异步不会阻塞代码执行，同步会阻塞执行；
 
-## 23、✍️🈳️手写 Promise 封装 ajax
+## 23、✍️🈳️手写ajax（普通+promise）
+
+```js
+// 普通
+function ajax(url, successFn) {
+  const xhr = new XHMHttpRequest();
+  xhr.open("GET", url, true);
+	xhr.onreadystatechange = function () {
+    if(xhr.readyState === 4) {
+      if(xhr.status === 200) {
+        successFn(xhr.responseText);
+      }
+    }
+  }
+  xhr.send(null);
+}
+```
+
+```js
+// promise版
+function ajax(url) {
+  const p = new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", url, true);
+    xhr.onreadystatechange = function () {
+      if(xhr.readystate === 4) {
+        if(xhr.status === 200) {
+          resolve(
+          	JSON.parse(xhr.responseText);
+          )
+        } else if(xhr === 404) {
+          reject(
+          	new Error("404 not found");
+          )
+        }
+      }
+    }
+    xhr.send(null);
+  })
+  return p;
+};
+
+const url = '/xxx/xxx.json';
+ajax(url)
+	.then(res => {
+  	console.log(res);
+	})
+	.catch(err => {
+  	console.error(err);
+	})
+```
 
 ## 24、请描述event loop的机制
 
+### 24.1、浏览器中的 event loop
+
+1. js是单线程的；
+   * 异步（ajax/setTimeout）使用回调，基于event loop；
+   * DOM事件也是使用回调，基于event loop，但DOM 事件不是异步的；
+2. 描述 event loop 机制：
+   1. 同步 js 代码在 Call Stack 执行；
+      * 遇到微任务，将微任务的 then 或 catch 的 callback 函数插到 micro task queue 队列尾；
+
+      * 遇到宏任务，将宏任务中的 callback 函数放到 webAPIs ；
+        * webAPIs 等待时机，将宏任务中的 callback 函数插到 Callback Queue 队列尾；
+   2. 同步代码执行完毕，Call Stack 清空；
+
+   3. 执行当前微任务队列，直到清空：
+
+      * micro task queue 队列中 callback 函数，按先进先出的顺序，从队列头到队列尾，依次放到 Call Stack 全部执行；
+        * 若微任务中嵌套了宏任务，则将该宏任务也放到 webAPIs 中，按照宏任务处理；
+
+   4. 尝试 DOM 渲染；
+
+   5. 执行当前宏任务队列，直到清空：
+
+      * Callback Queue 队列中 callback 函数，按先进先出的顺序，从队列头到队列尾，依次放到 Call Stack 执行；
+        * 若某个宏任务中嵌套了微任务；
+        * 则先清空上个宏任务中嵌套的微任务；
+        * 再尝试 DOM 渲染；
+        * 最后再执行下个宏任务；
+
+### 24.2、node 中的 event loop
+
+1. js执行为单线程，所有代码皆在主线程调用栈完成执行，当主线程任务清空后才会去轮询取任务队列中任务；
+
+2. 在node中事件**每一轮**循环按照**顺序**分为6个阶段，来自**libuv**的实现：
+   1. timers【Timers Queue】：执行满足条件的setTimeout、setInterval回调。
+   2. I/O callbacks【I/O Queue】：是否有已完成的I/O操作的回调函数，来自上一轮的poll残留。
+   3. idle，prepare：可忽略
+   4. poll：等待还没完成的I/O事件，会因timers和超时时间等结束等待。
+   5. check【Check Queue】：执行setImmediate的回调。
+   6. close callbacks【Close Queue】：关闭所有的closing handles，一些onclose事件。
+3. process.nextTick 函数：
+   1. 独立于 `Event Loop` 之外的，它有一个自己的队列；
+   2. 当每个阶段完成后，如果存在`nextTick`队列，就会清空队列中的所有回调函数，并且优先于其他 `microtask` 执行。
+
+### 24.3、node 和浏览器 之间的 event loop 有何差异？
+
+⚠️有一个特别容易混淆的版本改变：
+
+- 如果是node10及其之前版本：
+  - 宏队列当中的有几个宏任务，是要等到宏队列当中的所有宏任务全部执行完毕才会去执行微队列当中的微任务。
+- 如果是node11版本：
+  - 一旦执行一个阶段里对应宏队列当中的一个宏任务(setTimeout,setInterval和setImmediate三者其中之一，不包括I/O)就立刻执行微任务队列，执行完微队列当中的所有微任务再回到刚才的宏队列执行下一个宏任务。这就跟浏览器端运行一致了。
+
 ## 25、什么是宏任务和微任务，两者有什么区别？
+
+* 宏任务和微任务有哪些？
+  1. 宏任务：setTimeout，setInterval，Ajax，DOM事件；
+  2. 微任务：Promise async/await；
+  3. 微任务执行时机比宏任务要早；
+* 为何微任务执行时机比宏任务要早？
+  * 宏任务：DOM渲染后触发，如setTimeout；
+  * 微任务：DOM渲染前触发，如Promise；
 
 ## 26、Promise 有了解吗？
 
-## 24、判断字符串以字母开头，后面字母数字下划线，长度6-30
+1. Promise 是一种异步编程的解决方案，解决了异步流程控制的回调地狱问题；
+
+2. 是一个状态机：pending 只能流转到 resolve 或者 reject，resolve 和 reject 不能互相流转；
+
+   * pending
+
+   * fulfilled/resolved
+   * rejected
+
+3. .then & .catch 
+   * resolved 状态的 Promise 会回调后面的第一个 .then；
+   * rejected 状态的 Promise 会回调后面的第一个 .catch；
+     * 任何一个 rejected 状态后面没有 .catch 的 Promise ，都会造成 Js环境的全局错误；
+
+4. 执行 then 和 catch 会返回一个新的 Promise，该 Promise 最终状态根据 then 和 catch 的回调函数的执行结果决定：
+   * 如果回调函数最终结果是 throw，则该 Promise 是 rejected 状态；
+   * 如果回调函数最终结果是 return，则该 Promise 是 resolved 状态；
+   * 如果回调函数最终 return 了一个新 Promise ，则该老 Promise 会和回调函数 return 的新 Promise 状态保持一致；
+     * 这种 Promise 的链式调用中，可以串行的执行多个异步任务；
+5. Promise.all([promise1, promise2]) 接受一个数组，数组中可以包含多个 promise ；
+   * 数组中所有的 promise 状态都为 resolved 时，会回调后面的第一个 .then；
+   * 数组中所有的 promise 状态都为 rejected 时，会回调后面的第一个 .catch；
+
+## 27、判断字符串以字母开头，后面字母数字下划线，长度6-30
 
 * `const reg = /^[a-zA-Z]\w{5,29}$/`
 
@@ -606,22 +745,22 @@ a instanceof Array;		// true
   /\d+\.\d+\.\d+/
   ```
 
-# 25、手写字符串 trim 方法，保证浏览器兼容性
+## 28、✍️手写字符串 trim 方法，保证浏览器兼容性
 
 ```js
 String.prototype.trim = function () {
-  return this.replace(/^\s+/, '').replace(/\s+$/);
+  return this.replace(/^\s+/,'').replace(/\s+$/,'');
 }
 ```
 
-# 26、如何获取多个数字中的最大值？
+## 29、如何获取多个数字中的最大值？
 
 ```js
 Math.max(10, 20, 30);
 // 30
 ```
 
-# 28、如何捕获 js 程序异常？
+## 30、如何捕获 js 程序异常？
 
 * 手动捕获
 
@@ -646,7 +785,7 @@ window.onerror = function (message, source, linenum, colnum, error) {
 }
 ```
 
-# 32、手写数组 flatern ，考虑多层级
+## 31、✍️手写数组 flatern ，考虑多层级
 
 ```js
 function flat(arr) {
@@ -657,7 +796,7 @@ function flat(arr) {
     return arr;
   }
   
-  // 若有责之行递归，继续拍；
+  // 若有，则执行递归，继续拍；
   const res = Array.prototype.concat.apply([], arr);
   return flat(res);
 }
@@ -666,7 +805,7 @@ flat([[1, 2], 3, [4, 5, [6, 7, [8, 9, [10, 11]]]]]);
 // [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 ```
 
-# 33、数组去重
+## 32、✍️数组去重
 
 * 传统方式，遍历元素挨个比较、去重
 
@@ -697,12 +836,13 @@ flat([[1, 2], 3, [4, 5, [6, 7, [8, 9, [10, 11]]]]]);
   // [1, 2, 0, 44, 3]
   ```
 
-# 34、✍️手写深拷贝
+## 33、✍️手写深拷贝
 
-* **深拷贝和浅拷贝区别：**
+* **深拷贝和浅拷贝区别是啥？**
+  
   * **浅拷贝**只复制指向某个对象的指针，而不复制对象本身，新旧对象还是共享同一块内存；
   * **深拷贝**会另外创造一个一模一样的对象，新对象跟原对象不共享内存，修改新对象不会改到原对象。
-
+  
 * ⚠️Object.assign() 
 
   * **第一层级是深拷贝**；
@@ -728,7 +868,7 @@ flat([[1, 2], 3, [4, 5, [6, 7, [8, 9, [10, 11]]]]]);
 
 ```js
 function deepClone(obj = {}) {
-  // 值类型直接返回
+  // 值类型直接返回，过滤引用类型，若是值类型，直接原本返回；
   if(typeof obj !== 'object' && typeof obj === null) {
     return obj;
   };
@@ -748,49 +888,76 @@ function deepClone(obj = {}) {
     }
   }
   return res;
-}
+
 ```
 
-# 35、介绍 RAF request animation frame
+## 34、介绍 RAF request animation frame
 
 * 要想动画流畅，更新频率要 60帧/s，即 16.67ms 更新一次视图；
 * js 控制要使用 setTimeout 手动控制频率；
 * RAF 控制时，浏览器会自动控制；
 * 若页面切换到后台标签或隐藏iframe中，使用 RAF 浏览器会帮助暂停，而使用 setTimeout 则浏览器会依然之行； 
 
-# 36、前端性能如何优化，几个方面考虑？
+## 35、♨️前端性能如何优化，几个方面考虑？
 
-* 流畅中添加raf
+* Js 方面：
+  * 流畅中添加raf
+* dom 方面：
+  * 对DOM查询做变量缓存；
+  * 将频繁 dom 插入，先插入文档片段，再一次性将文档片段插入；
 
 # 3⃣️ JS-web-API
 
-## 11、事件代理（委托）是什么？
+## 1、常用的 DOM 操作有哪些？
+
+* 创建：
+  * `document.createElement('xxx')`
+* 删除：
+  * `xxx.removeChild('yyy')`；
+* 改：
+  * `xxx.opendChild('yyy')`；
+* 查找：
+  * `document.getElementById('xxx')`；
+  * `document.getElementByTagName('xxx')`；
+  * `document.getElementByClassName('xxx')`；
+  * `document.querySelector('xxx')`；
+  * `document.querySelectorAll('xxx')`；
+  * `body.childNodes` childNodes 属性返回节点的子节点集合，以 NodeList 对象;
+
+## 2、attrribute 和 property 区别？
+
+- property 是 DOM 中的属性，是 JavaScript 里的对象；
+  - Property是这个DOM元素作为对象，其附加的内容，例如childNodes、firstChild等。
+  - 修改对象属性，不一定体现到html结构中；
+- attribute 是 HTML 标签上的特性，它的值只能够是字符串；
+  - 修改html属性，会改变html结构，可能引起DOM重新渲染；
+  - Attribute就是dom节点自带的属性，例如html中常用的id、class、title、align等。
+
+## 3、如何识别浏览器的类型？
+
+* navigator.userAgent
+
+## 4、♨️如何分析拆解URL各个部分？
+
+* `location.href` ；
+* `location.protocal` ；
+* `location.host` ；
+* `location.hostname` ；
+* `location.port` ；
+* `location.pathname` ；
+* `location.search` ；
+* `location.hash` ；
+
+## 5、事件代理（委托）是什么？
 
 * 利用事件冒泡将事件代理到父元素
 
-## 14、如何阻止事件冒泡和默认行为？
+## 6、如何阻止事件冒泡和默认行为？
 
 * event.stopPropagation()
 * event.preventDefault()
 
-## 15、查找、添加、删除、移动 DOM 节点的方法？
-
-* `document.getElementById('XXX')`
-* `document.getElementsByTagName('xxx')`
-* `document.getElementsByClassName('xxx')`
-* `document.querySelectorAll('xxx')`
-* `document.createElement('xxx')`
-* 插入：`xxx.appendChild(newxxx)`
-* 移动：`xxx.appendChild(oldxxx)`
-* `xxxchildeNodes = xxx.childNodes`
-* `xxx.removeChild(removechild)`
-
-## 16、如何减少 DOM 操作？
-
-* 缓存 DOM 查询结果；
-* 多次 DOM 操作，合并到一次插入；
-
-## 18、document load 和 ready 的区别？
+## 7、document load 和 ready 的区别？
 
 ```js
 window.addEventListener('load', function () {
@@ -801,24 +968,196 @@ document.addEventListener('DOMContentLoaded', function () {
 })
 ```
 
-# 4⃣️ http
+## 8、什么是 cookie？
 
-## 10、ajax 请求 get 和 post 的区别？
+* 用于**浏览器和server通讯**；
+* 如何使用：
+  * 可用 `document.cookie = "a=100"` 来修改；
+  * 同一key会覆盖，不同key需要多次追加，一次只能加一个；
+* 缺点：
+  * 存储大小，最大4KB；
+  * http 请求时需要发送到服务端，增加请求数据量；
+  * `document.cookie = "a=100"`的API使用方式不舒服，每次只能追加一个key；
 
-* get 一般用于查询操作，post 一般用于用户提交操作；
-* get 参数拼接在 url 上，post 放在请求体内（数据体积可更大）；
-* 安全性：post 易于防止 CSRF；
+## 9、localStorage 和 sessionStorage 的区别？
 
-## 17、解释 jsonp 的原理，为何它不是真正的 ajax ？
+* HTML5专门为存储而设计的，最大可存5M；
+
+* 如何使用：
+
+  ```js
+  localStorage.setItem("a", 100);							// 自动被转换成字符串
+  localStorage.setItem("b", "200");
+  localStorage.getItem("a");									// 100 自动被转换成字符串 "100"
+  localStorage.getItem("b");									// "200"
+  
+  localStorage.setItem('myCat', 'Tom');				// 加了一个 localStorage 项
+  let cat = localStorage.getItem('myCat');		// 读取 localStorage 项
+  localStorage.removeItem('myCat');						// 移除 localStorage 项
+  localStorage.clear();												// 移除所有的 localStorage 项
+  
+  sessionStorage.setItem('key', 'value');			// 保存数据到 sessionStorage
+  let data = sessionStorage.getItem('key');		// 从 sessionStorage 获取数据
+  sessionStorage.removeItem('key');						// 从 sessionStorage 删除保存的数据
+  sessionStorage.clear();											// 从 sessionStorage 删除所有保存的数据
+  ```
+
+* localStorage / sessionStorage 与 cookie 的区别？
+
+  * 不随着 http 请求被发送出去；
+
+* 区别：
+
+  * localStorage 数据会永久存储，除非代码或手动删除；
+  * sessionStorage 数据只存在于当前会话，浏览器关闭则清空；
+
+# 4⃣️ HTTP
+
+## 1、什么是跨域（同源策略）？
+
+* ajax请求时，浏览器要求当前网页和server必须符合同源策略，即 协议、域名、端口，三者一致；
+
+* 加载 图片/css/js 可无视同源策略
+
+  * `<img src=跨域图片地址 />`
+
+    * 可用于统计打点，访问静态页面时，通过img标签指定src 为访问统计的地址， img标签向统计程序发出请求，实现统计
+
+      统计示例代码采用文件来记录访问次数，实际项目可以记录数据库；
+
+  * `<link href=跨域css地址 />`
+
+    * 可使用CDN，CDN一般都是外域；
+
+  * `<script src=跨域js地址></script>`
+
+    * 可实现 JSONP；
+
+## 2、解释 jsonp 的原理，为何它不是真正的 ajax ？
 
 * jsonp 原理
   * script 标签绕过同源策略限制进行跨域，携带 callback=abc ；
   * 服务端在 callback 中返回 json 数据 abc( {a: 10, b:20} )；
   * 前端调用 callback 函数 window.abc = function (data) {console.log(data)} 就可以获得数据；
-* ajax 依据 XMLHttpRequest API；
-* jsonp 依据 `<script>` 标签可绕过跨域限制；
+* 为何它不是真正的 ajax
+  * ajax 依据 XMLHttpRequest API；
+  * jsonp 依据 `<script>` 标签可绕过跨域限制；
 
-## 29、什么是 JSON ?
+## 3、CORS（服务端支持）
+
+```js
+// 第二个参数填写允许跨域的域名称，不建议直接写"*";
+response.setHeader("Access-Control-Allow-Origin", "http//localhost:8011");
+
+// 接收跨域的cookie
+response.seterHeader("Access-Control-Allow-Credentials", "true");
+```
+
+## 4、🈳️fetch 与 axios
+
+## 5、✍️手写XMLHttpRequest
+
+```js
+// GET 请求
+const xhr = new XMLHttpRequest();
+xhr.open("GET", "/data/test.json", true);	// true 异步请求
+xhr.onreadystatechange = function () {
+  if(xhr.readyState === 4) {
+    if(xhr.status === 200) {
+      console.log(JSON.parse(xhr.responseText));	// 转换成json形式
+      alert(xhr.responseText);
+    } else {
+      console.log("其他情况")
+    }
+  }
+}；
+xhr.send(null);			// get请求不用发送数据
+```
+
+```js
+// POST 请求
+const xhr = new XMLHttpRequest();
+xhr.open("POST", "/login.json", true);
+xhr.onreadystatechange = function () {
+  if(xhr.readyState === 4) {
+    if(xhr.status === 200) {
+      console.log(JSON.parse(xhr.responseText))
+    }
+  }
+}
+const data = {
+  usr: zhz,
+  pasw: xxx
+}
+xhr.send(JSON.stringify(data));		// post请求发送字符串
+```
+
+## 6、了解 readyState 吗？
+
+* 0-（未初始化）还没有调用send()方法；
+
+* 1-（载入）已调用send()方法，正在发送请求；
+* 2-（载入完成）send()方法执行完成，已接收到全部响应内容；
+* 3-（交互）正在解析响应内容；
+* 4-（完成）相应内容解析完成，可在客户端调用；
+
+## 7、了解 xhr.status 吗？
+
+* 1xx - 服务器收到请求；
+* 2xx - 请求成功；
+  * 200 - 成功；
+* 3xx - 重定向；
+  * 301 - 永久重定向，配合新地址（location）浏览器自动处理，下次直接访问新地址； 
+  * 302 - 临时重定向，配合新地址（location）浏览器自动处理，下次访问旧地址；
+  * 304 - 资源未被修改，浏览器读缓存；
+* 4xx - 客户端错误；
+  * 404 - 资源未找到，客户端路径错误；
+  * 403 - 客户端没有权限；
+* 5xx - 服务端错误；
+  * 500 - 服务器错误；
+  * 540 - 网关超时；
+
+## 8、ajax 请求 get 和 post 的区别？
+
+* get 一般用于查询操作，post 一般用于用户提交操作；
+* get 参数拼接在 url 上，post 放在请求体内（数据体积可更大）；
+* 安全性：post 易于防止 CSRF；
+
+## 9、Rrestful API
+
+1. 了解 Rrestful API 吗？
+   * 是一种新的 API 设计方法；
+   * 传统 API 设计把每个 **url 当作一个功能**；
+   * Rrestful API 设计把每个 **url 当作一个唯一的资源**；
+
+2. 如何设计 Rrestful API ？
+   1. 尽量不用 url 参数，即不用 location.search 部分；
+   2. 用 location.pathname 部直接表示要请求的资源；
+
+## 10、常见的请求Request Headers
+
+* Accept 浏览器可接收的数据格式；
+* Accept-Encoding 浏览器可接收的压缩算法，如 gzip；
+* Accept-Language 浏览器可接收的语言，如 zh-CN；
+* Connection：keep-alive 一次TCP连接重复使用；
+* cookie；
+* Host 域名；
+* User-Agent 浏览器信息；
+* Cotent-type 发送数据的格式，如 application/json；
+* **If-None-Match** 客户端发送资源唯一标识，用于协商缓存；
+* **If-Modified-Since** 客户端发送资源最后修改时间，用于协商缓存；
+
+## 11、常见的返回Response Headers
+
+* Cotent-type 返回数据的格式，如 application/json；
+* Cotent-length 返回数据的大小，多少字节；
+* Cotent-Encoding 返回数据的压缩算法，如 gzip；
+* Set-Cookie 服务端设置cookie；
+* **Catch-Control** 服务端返回资源缓存时间，用于强制缓存，status-200；
+* **Etag** 服务端返回资源唯一标识，用于协商缓存，status-304；
+* **Last-Modified** 服务端返回资源最后修改时间，用于协商缓存，status-304；
+
+## 12、什么是 JSON ?
 
 * 是一种数据格式，本质是一段字符串；
 * json 格式和 js 对象结构一致，对 js 语言友好；
@@ -826,7 +1165,7 @@ document.addEventListener('DOMContentLoaded', function () {
   * JSON.stringify()-----对象转换成JSON；
   * JSON.parse()--------JSON转换成对象；
 
-## 30、获取当前页面 url 参数
+## 13、获取当前页面 url 参数
 
 * 传统方式：
 
@@ -863,7 +1202,7 @@ document.addEventListener('DOMContentLoaded', function () {
   query('a')
   ```
 
-## 31、将 url 参数解析为 JS 对象
+## 14、✍️将 url 参数解析为 JS 对象
 
 ```js
 function urlToObj() {
@@ -889,6 +1228,42 @@ function urlToObj() {
   return res;
 }
 ```
+
+## 15、♨️♨️了解 http 缓存吗？
+
+### 15.1、强制缓存
+
+* 后端若认为，资源适合做缓存，则在 Response Headers 中 设置 `Cache-Control: max-age=518400` ；
+* 浏览器再次访问该资源时，若 max-age 设置的时间未过期，则命中缓存，不必请求；
+* 若超过 Cache-Control 时间，缓存资源失效，浏览器则再次请求服务器，重新获取资源，并重新设置缓存时间；
+  * ♨️max-age：最大缓存时间
+  * ♨️no-catch：不用强制缓存，正常请求；
+  * no-store：不用强制缓存，且不用服务端协商缓存，就是要服务端返回；
+  * private：允许最终用户电脑、浏览器、手机做缓存；
+  * public：允许中间的路由、代理做缓存；
+* expires 已经被 catch-control 代替。
+* webpack 的 `bundle.[hashcontent:8].js` 用的就是强缓存；
+
+### 15.2、协商缓存
+
+* 过程：
+  * 浏览器初次请求，服务端返回 **资源** + **资源标识 **给浏览器；
+  * 浏览器携带 **资源标识** 再次请求，服务端根据 **资源标识** 判断客户端资源，是否和服务端一致；
+  * 一致，则返回304，浏览器使用缓存资源；
+  * 不一致，则返回200 + 最新资源 + 资源标识；
+* 协商缓存包含两种资源标识：
+  * Etag（比时间戳更精确）
+    1. 第一次访问，Response Header 中，服务端返回给浏览器资源，并标识为 `Etag: 资源🆔` ；
+    2. 第二次访问，浏览器中需要在 Request Header 中携带 `If-None-Match: 资源🆔` ；
+    3. 服务器根据 `资源🆔` 判断，资源是否改变；
+    4. 未改变，返回304，命中缓存；
+    5. 若改变，重新返回资源与 Etag ；
+  * Last-Modified（只精确到秒级）
+    1. 第一次访问，Response Header 中，服务端返回给浏览器资源，并标识为 `Last-Modified: 时间戳⌚️` ；
+    2. 第二次访问，浏览器中需要在 Request Header 中携带 `If-Modified-Since: 时间戳⌚️` ；
+    3. 服务器根据 `时间戳⌚️` 判断，资源是否改变；
+    4. 未改变，返回 304，命中缓存；
+    5. 若改变，重新返回资源与 Last-Modified ；
 
 # 5⃣️ development
 
