@@ -149,6 +149,7 @@
 ## 8、数组的 API 哪些是纯函数？
 
 * 纯函数：不改变原数组（无副作用）、返回一个数组；
+
   * concat
 
     ```js
@@ -199,6 +200,7 @@
     ```
 
 * 非纯函数：
+
   * ✅ push
 
   * ✅ pop
@@ -384,16 +386,16 @@ fn.bind(obj, 1, 2); // 改变fn中的this，fn并不执行
 ## 13、JS 垃圾回收机制？
 
 *  JS 垃圾回收机制采用**标记清楚法**：
-  * 存在一个根结点，始终不会被回收，称为 GC root（即，浏览器中为 window， dom 根结点）；
-  * 与 GC root 不链接的节点（即，不可访达的节点）被垃圾回收清除；
+   * 存在一个根结点，始终不会被回收，称为 GC root（即，浏览器中为 window， dom 根结点）；
+   * 与 GC root 不链接的节点（即，不可访达的节点）被垃圾回收清除；
 
 ## 14、什么导致内存泄漏？
 
 1. 使用过多的全局变量，存储了大量数据；
 
    *  GC root 在浏览器中称为 window，而全局变量是 window 的属性，故全局变量始终不回收；
-   * 故使用过多的全局变量，存储了大量数据，就会导致内存泄漏；
-   * ✅ 建议：全局变量谨慎使用；
+   *  故使用过多的全局变量，存储了大量数据，就会导致内存泄漏；
+   *  ✅ 建议：全局变量谨慎使用；
 
    ```html
    <body>
@@ -458,6 +460,7 @@ fn.bind(obj, 1, 2); // 改变fn中的this，fn并不执行
    ```
 
 4. 使用 `console.log()` 等进行控制台打印：
+
    * 控制台随时保持查看，需要保存打印，故会导致内存泄漏；
    * ✅ 建议：生产环境，删掉调试语句；
 
@@ -486,32 +489,11 @@ const zhangsan = {
 ## 16、关于作用域和自由变量的场景题
 
 ```js
-let i;
-for(i = 1; i <= 3; i++) {
-  setTimeout(function () {
-    console.log(i);
-  }, 0)
-}
-
-// 4
-// 4
-// 4
-// 4
+let i;for(i = 1; i <= 3; i++) {  setTimeout(function () {    console.log(i);  }, 0)}// 4// 4// 4// 4
 ```
 
 ```js
-let a =100;
-function test() {
-  alert(a);
-  a = 10;
-  alert(a);
-};
-test();
-alert(a);
-
-// 100
-// 10
-// 10
+let a =100;function test() {  alert(a);  a = 10;  alert(a);};test();alert(a);// 100// 10// 10
 ```
 
 ## 17、函数声明和函数表达式的区别？
@@ -534,8 +516,7 @@ alert(a);
 ## 19、如何判断一个变量是不是数组？
 
 ```js
-const a = [1, 2, 3];
-a instanceof Array;		// true
+const a = [1, 2, 3];a instanceof Array;		// true
 ```
 
 ## 20、🈳️如何用 JS 实现继承？（8种）
@@ -548,32 +529,13 @@ a instanceof Array;		// true
 * new Object(xxx) 
 
   ```js
-  const obj1 = {
-    a: 10,
-    b: 20
-  };
-  const obj2 = new Object(obj1);
-  
-  console.log(obj1 === obj2);			// true，地址相同
+  const obj1 = {  a: 10,  b: 20};const obj2 = new Object(obj1);console.log(obj1 === obj2);			// true，地址相同
   ```
 
 * Object.create(xxx) 会创建一个空对象，并且该空对象的`__proto__`原型指向传入的对象；
 
   ```js
-  const obj1 = Object.create(null);
-  const obj2 = Object.create({
-    a: 10,
-    b: 20
-  });
-  console.log(obj1);
-  // {}
-  // 		No properties
-  console.log(obj2);
-  // {}
-  // 		__proto__: 
-  // 			a: 10
-  // 			b: 20
-  // 			__proto__: Object
+  const obj1 = Object.create(null);const obj2 = Object.create({  a: 10,  b: 20});console.log(obj1);// {}// 		No propertiesconsole.log(obj2);// {}// 		__proto__: // 			a: 10// 			b: 20// 			__proto__: Object
   ```
 
 ## 22、什么是同步/异步？
@@ -586,53 +548,11 @@ a instanceof Array;		// true
 ## 23、✍️🈳️手写ajax（普通+promise）
 
 ```js
-// 普通
-function ajax(url, successFn) {
-  const xhr = new XHMHttpRequest();
-  xhr.open("GET", url, true);
-	xhr.onreadystatechange = function () {
-    if(xhr.readyState === 4) {
-      if(xhr.status === 200) {
-        successFn(xhr.responseText);
-      }
-    }
-  }
-  xhr.send(null);
-}
+// 普通function ajax(url, successFn) {  const xhr = new XHMHttpRequest();  xhr.open("GET", url, true);	xhr.onreadystatechange = function () {    if(xhr.readyState === 4) {      if(xhr.status === 200) {        successFn(xhr.responseText);      }    }  }  xhr.send(null);}
 ```
 
 ```js
-// promise版
-function ajax(url) {
-  const p = new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    xhr.open("GET", url, true);
-    xhr.onreadystatechange = function () {
-      if(xhr.readystate === 4) {
-        if(xhr.status === 200) {
-          resolve(
-          	JSON.parse(xhr.responseText);
-          )
-        } else if(xhr === 404) {
-          reject(
-          	new Error("404 not found");
-          )
-        }
-      }
-    }
-    xhr.send(null);
-  })
-  return p;
-};
-
-const url = '/xxx/xxx.json';
-ajax(url)
-	.then(res => {
-  	console.log(res);
-	})
-	.catch(err => {
-  	console.error(err);
-	})
+// promise版function ajax(url) {  const p = new Promise((resolve, reject) => {    const xhr = new XMLHttpRequest();    xhr.open("GET", url, true);    xhr.onreadystatechange = function () {      if(xhr.readystate === 4) {        if(xhr.status === 200) {          resolve(          	JSON.parse(xhr.responseText);          )        } else if(xhr === 404) {          reject(          	new Error("404 not found");          )        }      }    }    xhr.send(null);  })  return p;};const url = '/xxx/xxx.json';ajax(url)	.then(res => {  	console.log(res);	})	.catch(err => {  	console.error(err);	})
 ```
 
 ## 24、请描述event loop的机制
@@ -839,10 +759,10 @@ flat([[1, 2], 3, [4, 5, [6, 7, [8, 9, [10, 11]]]]]);
 ## 33、✍️手写深拷贝
 
 * **深拷贝和浅拷贝区别是啥？**
-  
+
   * **浅拷贝**只复制指向某个对象的指针，而不复制对象本身，新旧对象还是共享同一块内存；
   * **深拷贝**会另外创造一个一模一样的对象，新对象跟原对象不共享内存，修改新对象不会改到原对象。
-  
+
 * ⚠️Object.assign() 
 
   * **第一层级是深拷贝**；
@@ -898,14 +818,6 @@ function deepClone(obj = {}) {
 * RAF 控制时，浏览器会自动控制；
 * 若页面切换到后台标签或隐藏iframe中，使用 RAF 浏览器会帮助暂停，而使用 setTimeout 则浏览器会依然之行； 
 
-## 35、♨️前端性能如何优化，几个方面考虑？
-
-* Js 方面：
-  * 流畅中添加raf
-* dom 方面：
-  * 对DOM查询做变量缓存；
-  * 将频繁 dom 插入，先插入文档片段，再一次性将文档片段插入；
-
 # 3⃣️ JS-web-API
 
 ## 1、常用的 DOM 操作有哪些？
@@ -960,12 +872,7 @@ function deepClone(obj = {}) {
 ## 7、document load 和 ready 的区别？
 
 ```js
-window.addEventListener('load', function () {
-  //页面加载完全部资源才会执行，包括图片/视频
-})
-document.addEventListener('DOMContentLoaded', function () {
-  // DOM 渲染完即可执行，此时图片、视频可能还未加载完
-})
+window.addEventListener('load', function () {  //页面加载完全部资源才会执行，包括图片/视频})document.addEventListener('DOMContentLoaded', function () {  // DOM 渲染完即可执行，此时图片、视频可能还未加载完})
 ```
 
 ## 8、什么是 cookie？
@@ -986,20 +893,7 @@ document.addEventListener('DOMContentLoaded', function () {
 * 如何使用：
 
   ```js
-  localStorage.setItem("a", 100);							// 自动被转换成字符串
-  localStorage.setItem("b", "200");
-  localStorage.getItem("a");									// 100 自动被转换成字符串 "100"
-  localStorage.getItem("b");									// "200"
-  
-  localStorage.setItem('myCat', 'Tom');				// 加了一个 localStorage 项
-  let cat = localStorage.getItem('myCat');		// 读取 localStorage 项
-  localStorage.removeItem('myCat');						// 移除 localStorage 项
-  localStorage.clear();												// 移除所有的 localStorage 项
-  
-  sessionStorage.setItem('key', 'value');			// 保存数据到 sessionStorage
-  let data = sessionStorage.getItem('key');		// 从 sessionStorage 获取数据
-  sessionStorage.removeItem('key');						// 从 sessionStorage 删除保存的数据
-  sessionStorage.clear();											// 从 sessionStorage 删除所有保存的数据
+  localStorage.setItem("a", 100);							// 自动被转换成字符串localStorage.setItem("b", "200");localStorage.getItem("a");									// 100 自动被转换成字符串 "100"localStorage.getItem("b");									// "200"localStorage.setItem('myCat', 'Tom');				// 加了一个 localStorage 项let cat = localStorage.getItem('myCat');		// 读取 localStorage 项localStorage.removeItem('myCat');						// 移除 localStorage 项localStorage.clear();												// 移除所有的 localStorage 项sessionStorage.setItem('key', 'value');			// 保存数据到 sessionStoragelet data = sessionStorage.getItem('key');		// 从 sessionStorage 获取数据sessionStorage.removeItem('key');						// 从 sessionStorage 删除保存的数据sessionStorage.clear();											// 从 sessionStorage 删除所有保存的数据
   ```
 
 * localStorage / sessionStorage 与 cookie 的区别？
@@ -1046,11 +940,7 @@ document.addEventListener('DOMContentLoaded', function () {
 ## 3、CORS（服务端支持）
 
 ```js
-// 第二个参数填写允许跨域的域名称，不建议直接写"*";
-response.setHeader("Access-Control-Allow-Origin", "http//localhost:8011");
-
-// 接收跨域的cookie
-response.seterHeader("Access-Control-Allow-Credentials", "true");
+// 第二个参数填写允许跨域的域名称，不建议直接写"*";response.setHeader("Access-Control-Allow-Origin", "http//localhost:8011");// 接收跨域的cookieresponse.seterHeader("Access-Control-Allow-Credentials", "true");
 ```
 
 ## 4、🈳️fetch 与 axios
@@ -1058,38 +948,11 @@ response.seterHeader("Access-Control-Allow-Credentials", "true");
 ## 5、✍️手写XMLHttpRequest
 
 ```js
-// GET 请求
-const xhr = new XMLHttpRequest();
-xhr.open("GET", "/data/test.json", true);	// true 异步请求
-xhr.onreadystatechange = function () {
-  if(xhr.readyState === 4) {
-    if(xhr.status === 200) {
-      console.log(JSON.parse(xhr.responseText));	// 转换成json形式
-      alert(xhr.responseText);
-    } else {
-      console.log("其他情况")
-    }
-  }
-}；
-xhr.send(null);			// get请求不用发送数据
+// GET 请求const xhr = new XMLHttpRequest();xhr.open("GET", "/data/test.json", true);	// true 异步请求xhr.onreadystatechange = function () {  if(xhr.readyState === 4) {    if(xhr.status === 200) {      console.log(JSON.parse(xhr.responseText));	// 转换成json形式      alert(xhr.responseText);    } else {      console.log("其他情况")    }  }}；xhr.send(null);			// get请求不用发送数据
 ```
 
 ```js
-// POST 请求
-const xhr = new XMLHttpRequest();
-xhr.open("POST", "/login.json", true);
-xhr.onreadystatechange = function () {
-  if(xhr.readyState === 4) {
-    if(xhr.status === 200) {
-      console.log(JSON.parse(xhr.responseText))
-    }
-  }
-}
-const data = {
-  usr: zhz,
-  pasw: xxx
-}
-xhr.send(JSON.stringify(data));		// post请求发送字符串
+// POST 请求const xhr = new XMLHttpRequest();xhr.open("POST", "/login.json", true);xhr.onreadystatechange = function () {  if(xhr.readyState === 4) {    if(xhr.status === 200) {      console.log(JSON.parse(xhr.responseText))    }  }}const data = {  usr: zhz,  pasw: xxx}xhr.send(JSON.stringify(data));		// post请求发送字符串
 ```
 
 ## 6、了解 readyState 吗？
@@ -1172,18 +1035,7 @@ xhr.send(JSON.stringify(data));		// post请求发送字符串
   * location.search
 
   ```js
-  // search:'a=10&b=20&c=30'
-  function query(name) {
-    const search = location.search.substr(1);		// 删除 ? 号
-    const reg = new RegExp(`(^|&)${name}=([^&]*)(&|$)`, 'i');
-    const res = search.match(reg);
-    if(res === null) {
-      return null;
-    }
-    return res[2]
-  };
-  
-  query('a');
+  // search:'a=10&b=20&c=30'function query(name) {  const search = location.search.substr(1);		// 删除 ? 号  const reg = new RegExp(`(^|&)${name}=([^&]*)(&|$)`, 'i');  const res = search.match(reg);  if(res === null) {    return null;  }  return res[2]};query('a');
   ```
 
 * 新API，注意兼容
@@ -1191,31 +1043,13 @@ xhr.send(JSON.stringify(data));		// post请求发送字符串
   * URLSearchParams
 
   ```js
-  // search:'?a=10&b=20&c=30'
-  
-  function query(name) {
-    const search = location.search;
-    const p = new URLSearchParams(search);
-    return p.get(name);
-  }
-  
-  query('a')
+  // search:'?a=10&b=20&c=30'function query(name) {  const search = location.search;  const p = new URLSearchParams(search);  return p.get(name);}query('a')
   ```
 
 ## 14、✍️将 url 参数解析为 JS 对象
 
 ```js
-function urlToObj() {
-  const res = {};
-  const search = location.search.substr(1);
-  search.split('&').forEach(paramStr => {
-    const paramArr = paramStr.split('=');
-    const key = paramArr[0];
-    const val = paramArr[1];
-    res[key] = val;
-  });
-  return res;
-}
+function urlToObj() {  const res = {};  const search = location.search.substr(1);  search.split('&').forEach(paramStr => {    const paramArr = paramStr.split('=');    const key = paramArr[0];    const val = paramArr[1];    res[key] = val;  });  return res;}
 ```
 
 ```js
@@ -1267,5 +1101,184 @@ function urlToObj() {
 
 # 5⃣️ development
 
+## 1、git 有哪些常用命令？
+
+## 2、常见 Linux 命令知道吗？
+
 # 6⃣️ production
 
+## 1、讲一下输入 url 到渲染出页面的过程？
+
+1. 加载资源的过程：
+   1. 浏览器拿着域名根据 DNS 解析出 IP地址；
+   2. 浏览器拿着 IP 地址向服务器发请求；
+   3. 服务器接受请求，并返回给浏览器数据；
+2. 渲染页面的过程：
+   1. 浏览器根据 HTML & CSS 分别生成 DOM Tree & CSSDOM Tree；
+   2. 浏览器根据 DOM Tree & CSSDOM Tree ，生成 Render Tree；
+   3. 浏览器根据 Render Tree 渲染页面；
+   4. 遇到 js ，暂停渲染，加载并执行 js ，js 可能更改 Render Tree ，则重新渲染；
+   5. 直至渲染完成；
+
+## 2、知道重绘和回流吗？
+
+* 重绘：
+  * 当前元素的样式(背景颜色、字体颜色等)发生改变的时候，我们只需要把改变的元素重新的渲染一下即可；
+  * 重绘对浏览器的性能影响较小，所以 一般不考虑；
+  * 发生重绘的情形：改变容器的外观风格等，比如background：black等。改变外观，不改变布局，不影响其他的dom。
+* 回流：
+  * 是指浏览器为了重新渲染部分或者全部的文档而重新计算文档中元素的位置和几何构造的过程；
+  * 因为回流可能导致整个dom树的重新构造，所以是性能的一大杀手；（即：一个元素的回流导致了其所有子元素以及DOM中紧随其后的祖先元素的随后的回流）
+
+* 什么会导致回流呢？
+
+  1. 调整窗口大小（Resizing the window）
+  2. 改变字体（Changing the font）
+  3. 增加或者移除样式表（Adding or removing a stylesheet）
+  4. 内容变化，比如用户在input框中输入文字（Content changes, such as a user typing text in
+     an input box）
+  5. 激活 CSS 伪类，比如 :hover (IE 中为兄弟结点伪类的激活)（Activation of CSS pseudo classes such as :hover (in IE the activation of the pseudo class of a sibling)）
+  6. 操作 class 属性（Manipulating the class attribute）
+  7. 脚本操作 DOM（A script manipulating the DOM）
+  8. 计算 offsetWidth 和 offsetHeight 属性（Calculating offsetWidth and offsetHeight）
+  9. 设置 style 属性的值 （Setting a property of the style attribute）
+  10. fixed定位的元素,在拖动滚动条的时候会一直回流
+
+* 如何避免回流或将它们对性能的影响降到最低？
+  1. 如果想设定元素的样式，通过改变元素的 class 名 (尽可能在 DOM 树的最末端)（Change classes on the element you wish to style (as low in the dom tree as possible)）
+  2. 避免设置多项内联样式（Avoid setting multiple inline styles）
+  3. 应用元素的动画，使用 position 属性的 fixed 值或 absolute 值（Apply animations to elements that are position fixed or absolute）
+  4. 权衡平滑和速度（Trade smoothness for speed）
+  5. 避免使用table布局（Avoid tables for layout）
+  6. 避免使用CSS的JavaScript表达式 (仅 IE 浏览器)（Avoid JavaScript expressions in the CSS (IE only)）
+
+## 3、为何建议把 css 放到 head 中？
+
+1. 用户体验：
+   * css 放在 body 标签尾部时会在网页中短暂出现”裸奔“的 HTML ，这不利于用户体验；
+2. 提升性能：
+   1. css 放在 head 中会先形成 CSSDOM Tree 并和 DOM Tree 一同形成 Render Tree ，然后渲染；
+   2. css 若放在 body 标签尾部，DOM Tree 会在读取 css 文件前，先进行一次 Render Tree 的转化；
+   3. 在读取 css 形成 CSSDOM Tree 后再进行一次 Render Tree 转化；
+   4. 多了一次 Render Tree 的转化；
+
+## 4、为何建议把 JS 放到 body 最后？
+
+* js 放到头部，会阻塞页面渲染；
+* js 放到文件底部，当解析到 js 时，通常页面大部分内容都渲染完毕，用户可以在最早看到非空白的页面；
+
+## 5、async/defer模式有什么区别？
+
+* async
+  * script.js 会被异步加载，即加载和渲染后续文档元素的过程将和 script.js 的加载并行进行（异步）；
+  * 当 script.js加载完整立即执行script.js。执行script.js时，html解析暂停；
+  * 从加载完成立即执行来看，async模式执行顺序与写的顺序无关，不保证执行顺序；
+* defer
+  * script.js 会被异步加载，即加载和渲染后续文档元素的过程将和 script.js 的加载并行进行（异步），这一点与 `async` 模式一致；
+  * 不同的是当 script.js 加载完成并不会立即执行，而是在所有元素解析完成之后， `DOMContentLoaded` 事件触发之前完成。因此它会按照写的顺序执行。
+
+## 6、window.onload 和 DOMContentLoaded 的区别？
+
+```js
+window.addEventListener('load', function(){
+  // 页面全部资源加载完才会执行，包括图片、视频等；
+})
+document.addEventListener('DOMContentLoaded', function() {
+  // DOM渲染完即可执行，此时图片、视频还可能没有加载完；
+})
+```
+
+## 7、了解前端安全防范吗？
+
+1. XSS 跨站请求攻击：
+   * case：（核心：利用可执行脚本）
+     * 如一个内容平台，黑客用户在发布的内容中嵌入恶意 script 脚本，脚本会在 html 执行时执行，用来获取正在读这篇文章普通用户的 cookie ，并发送到黑客用户的服务器；
+   * countermeasures：
+     * `<` / `>` / `&` 等特殊字符替换成 `&lt;` / `&gt;` / `&amp;` 等；
+2. XSRF 跨站请求伪造：
+   * case：（核心：利用已登陆的用户信息）
+     * 如用户登陆了一个交易网站，黑客向用户发送了一个诱惑邮件，邮件中隐藏着该交易网站的付费接口，且该网站的付费接口无验证，用户打开该邮件，就调用了付费接口；
+   * countermeasures：
+     * 使用 POST 接口；
+     * 增加验证；
+
+# 7⃣️ 性能优化
+
+## 1、♨️前端性能如何优化，几个方面考虑？
+
+### 1.1、让加载更快：
+
+* 减少资源体积
+  1. webpack 压缩代码：
+
+* 减少访问次数
+  1. webpack 模块化代码：
+  2. 雪碧图合并图片：
+  3. SSR 服务端渲染：
+  4. http 缓存：
+* 使用更快的网络
+  1. CDN；
+
+### 1.2、✍️ 让渲染更快：
+
+1. css 放在 head ，js 放在 body 底部；
+
+2. js 执行用 DOMContentLoaded 触发；
+
+3. 图片懒加载：
+
+   * 根据元素顶到视口顶的距离 `object.getBoundingClientRect().top` ， 设置图片加载默认 `src="preview.png"` 还是加载真实 `real-src="real.png"` ；
+
+4. 对DOM查询做变量缓存；
+
+5. 将频繁 dom 插入，先插入文档片段，再一次性将文档片段插入；
+
+6. ✍️ 防抖（减少频繁请求）：
+
+   ```js
+   const input1 = document.getElementById('input1')
+   
+   function debounce(fn, delay = 500) {
+       // timer 在闭包中，与外界隔离，保持变量不被外界改变；
+       timer = null;
+       return function () {
+           if (timer) {
+               clearTimeout(timer)
+           };
+           timer = setTimeout(() => {
+               fn.apply(this, arguments);
+               timer = null;
+           }, delay)
+       }
+   };
+   
+   input1.addEventListener('keyup', debounce(function (e) {
+       console.log(input1.value);
+       console.log(e.target);
+   }, 600))
+   ```
+
+7. ✍️ 节流（减少回流）：
+
+   ```js
+   const div1 = document.geteElementById('div');
+   
+   function throttle(fn, delay = 100) {
+     let timer = null;
+     return function () {
+       if(timer) {
+         return ;
+       };
+       timer = setTimeout(() => {
+         fn.apply(this, arguments);
+         timer = null;
+       }, delay)
+     }
+   };
+   
+   div1.addEventListener('drag', throttle(function (e) {
+     console.log(e.offsetX, e.offsetY);
+   }, 1000))
+   ```
+
+8. 避免回流：
