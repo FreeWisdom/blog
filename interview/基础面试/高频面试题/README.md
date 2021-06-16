@@ -818,6 +818,57 @@ function deepClone(obj = {}) {
 * RAF 控制时，浏览器会自动控制；
 * 若页面切换到后台标签或隐藏iframe中，使用 RAF 浏览器会帮助暂停，而使用 setTimeout 则浏览器会依然之行； 
 
+## 35、new 调用函数和直接调用函数区别？
+
+* 如果函数返回值为值类型（Number、String、Boolean）时：
+  * new 调用函数---- 将会返回一个该函数的实例对象；
+  * 直接调用函数 ---- 将会返回该值类型；
+* 如果函数返回一个引用类型（Object、Array、Function）时：
+  * new 调用函数与直接调用函数产生的结果等同，都是该函数返回的对象；
+
+https://blog.csdn.net/hy6688_/article/details/22453043?utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromMachineLearnPai2%7Edefault-1.control&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromMachineLearnPai2%7Edefault-1.control
+
+## 36、匿名函数和箭头函数的区别？
+
+1. 箭头函数没有`prototype`(原型)，所以箭头函数本身没有this。
+
+```js
+let a = () => {};
+console.log(a.prototype); 									// undefined
+```
+
+2. 箭头函数内部的this是词法作用域，由上下文确定，this指向在定义的时候继承自外层第一个普通函数的this；
+
+3. 匿名函数中，因为匿名函数的执行环境具有全局性，所以它的 this 一般指向 window；
+
+   ```js
+   var name = 'window'
+       var person = {
+           name :'Alan',
+           sayName:function () {
+             	// var that = this						// 把外部作用域的this传递给匿名函数
+               return function () {
+                   console.log(this.name)		// 这里sayName方法return了一个匿名函数，这个匿名函数中this指向window
+               }
+           }
+       }
+       person.sayName()()  									// window
+   ```
+
+## 37、✍️实现一个简单的 EventEmitter ，要求包括 on/emit/off 
+
+https://www.xiabingbao.com/post/design/observer-eventemitter.html
+
+## 38、实现一个 calculator
+
+https://leetcode-cn.com/problems/basic-calculator/
+
+## 39、将 location.search 中键值对，按照键的首字母顺序重新排列，返回新的 url
+
+
+
+
+
 # 3⃣️ JS-web-API
 
 ## 1、常用的 DOM 操作有哪些？
@@ -1028,14 +1079,24 @@ window.addEventListener('load', function () {  //页面加载完全部资源才�
   * JSON.stringify()-----对象转换成JSON；
   * JSON.parse()--------JSON转换成对象；
 
-## 13、获取当前页面 url 参数
+## 13、✍️获取当前页面 url 参数
 
 * 传统方式：
 
   * location.search
 
   ```js
-  // search:'a=10&b=20&c=30'function query(name) {  const search = location.search.substr(1);		// 删除 ? 号  const reg = new RegExp(`(^|&)${name}=([^&]*)(&|$)`, 'i');  const res = search.match(reg);  if(res === null) {    return null;  }  return res[2]};query('a');
+  // search:'a=10&b=20&c=30'
+  function query(name) {  
+    const search = location.search.substr(1);		// 删除 ? 号  
+    const reg = new RegExp(`(^|&)${name}=([^&]*)(&|$)`, 'i');  
+    const res = search.match(reg);  
+    if(res === null) {    
+      return null;  
+    }  
+    return res[2]
+  };
+  query('a');
   ```
 
 * 新API，注意兼容
@@ -1043,13 +1104,28 @@ window.addEventListener('load', function () {  //页面加载完全部资源才�
   * URLSearchParams
 
   ```js
-  // search:'?a=10&b=20&c=30'function query(name) {  const search = location.search;  const p = new URLSearchParams(search);  return p.get(name);}query('a')
+  // search:'?a=10&b=20&c=30'
+  function query(name) {  
+    const search = location.search;  
+    const p = new URLSearchParams(search);  
+    return p.get(name);
+  };
+  query('a')
   ```
 
 ## 14、✍️将 url 参数解析为 JS 对象
 
 ```js
-function urlToObj() {  const res = {};  const search = location.search.substr(1);  search.split('&').forEach(paramStr => {    const paramArr = paramStr.split('=');    const key = paramArr[0];    const val = paramArr[1];    res[key] = val;  });  return res;}
+function urlToObj() {  
+  const res = {};  
+  const search = location.search.substr(1);  
+  search.split('&').forEach( paramStr => {    
+    const paramArr = paramStr.split('=');    
+    const key = paramArr[0];    
+    const val = paramArr[1];    
+    res[key] = val;  });  
+  return res;
+}
 ```
 
 ```js

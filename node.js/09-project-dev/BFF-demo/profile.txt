@@ -1,0 +1,596 @@
+Statistical profiling result from isolate-0x1046c2000-18349-v8.log, (1119 ticks, 3 unaccounted, 0 excluded).
+
+ [Shared libraries]:
+   ticks  total  nonlib   name
+     15    1.3%          /usr/lib/system/libsystem_pthread.dylib
+      6    0.5%          /usr/lib/system/libsystem_platform.dylib
+      1    0.1%          /usr/lib/system/libsystem_kernel.dylib
+
+ [JavaScript]:
+   ticks  total  nonlib   name
+      3    0.3%    0.3%  LazyCompile: *Module._nodeModulePaths internal/modules/cjs/loader.js:575:37
+      1    0.1%    0.1%  LazyCompile: *resolve path.js:973:10
+      1    0.1%    0.1%  LazyCompile: *hidden internal/errors.js:286:25
+
+ [C++]:
+   ticks  total  nonlib   name
+    329   29.4%   30.0%  t node::fs::Read(v8::FunctionCallbackInfo<v8::Value> const&)
+    322   28.8%   29.4%  T __ZN2v88internal8Compiler30GetSharedFunctionInfoForScriptEPNS0_7IsolateENS0_6HandleINS0_6StringEEERKNS1_13ScriptDetailsENS_19ScriptOriginOptionsEPNS_9ExtensionEPNS0_10ScriptDataENS_14ScriptCompiler14CompileOptionsENSF_13NoCacheReasonENS0_11NativesFlagE
+     72    6.4%    6.6%  t node::fs::InternalModuleReadJSON(v8::FunctionCallbackInfo<v8::Value> const&)
+     70    6.3%    6.4%  T node::contextify::ContextifyContext::CompileFunction(v8::FunctionCallbackInfo<v8::Value> const&)
+     67    6.0%    6.1%  T node::native_module::NativeModuleEnv::CompileFunction(v8::FunctionCallbackInfo<v8::Value> const&)
+     36    3.2%    3.3%  T node::fs::Close(v8::FunctionCallbackInfo<v8::Value> const&)
+     31    2.8%    2.8%  t node::fs::InternalModuleStat(v8::FunctionCallbackInfo<v8::Value> const&)
+     22    2.0%    2.0%  T _vm_copy
+     21    1.9%    1.9%  t node::fs::Open(v8::FunctionCallbackInfo<v8::Value> const&)
+     14    1.3%    1.3%  T node::binding::GetInternalBinding(v8::FunctionCallbackInfo<v8::Value> const&)
+      9    0.8%    0.8%  T _task_policy_set
+      8    0.7%    0.7%  T node::contextify::ContextifyScript::New(v8::FunctionCallbackInfo<v8::Value> const&)
+      7    0.6%    0.6%  t __ZN2v88internal12StringHasher20HashSequentialStringIhEEjPKT_iy
+      5    0.4%    0.5%  t void node::Buffer::(anonymous namespace)::StringSlice<(node::encoding)1>(v8::FunctionCallbackInfo<v8::Value> const&)
+      5    0.4%    0.5%  t _small_malloc_from_free_list
+      5    0.4%    0.5%  T _mach_msg_server
+      3    0.3%    0.3%  t node::fs::LStat(v8::FunctionCallbackInfo<v8::Value> const&)
+      3    0.3%    0.3%  t _szone_realloc
+      3    0.3%    0.3%  T ___ulock_wait
+      2    0.2%    0.2%  t std::__1::ostreambuf_iterator<char, std::__1::char_traits<char> > std::__1::__pad_and_output<char, std::__1::char_traits<char> >(std::__1::ostreambuf_iterator<char, std::__1::char_traits<char> >, char const*, char const*, char const*, std::__1::ios_base&, char)
+      2    0.2%    0.2%  t std::__1::basic_istream<wchar_t, std::__1::char_traits<wchar_t> >& std::__1::__input_arithmetic<long long, wchar_t, std::__1::char_traits<wchar_t> >(std::__1::basic_istream<wchar_t, std::__1::char_traits<wchar_t> >&, long long&)
+      2    0.2%    0.2%  t node::fs::FStat(v8::FunctionCallbackInfo<v8::Value> const&)
+      2    0.2%    0.2%  t _free_tiny
+      2    0.2%    0.2%  t __platform_memmove$VARIANT$Haswell
+      2    0.2%    0.2%  T node::fs::Access(v8::FunctionCallbackInfo<v8::Value> const&)
+      2    0.2%    0.2%  T node::TTYWrap::New(v8::FunctionCallbackInfo<v8::Value> const&)
+      2    0.2%    0.2%  T ___sfp
+      2    0.2%    0.2%  T __ZN2v88internal25FunctionCallbackArgumentsC1EPNS0_7IsolateENS0_6ObjectENS0_10HeapObjectES4_S5_Pmi
+      1    0.1%    0.1%  t std::__1::locale::__imp::__imp(std::__1::locale::__imp const&, std::__1::locale::facet*, long)
+      1    0.1%    0.1%  t std::__1::deque<node::MemoryRetainerNode*, std::__1::allocator<node::MemoryRetainerNode*> >::__add_back_capacity()
+      1    0.1%    0.1%  t std::__1::__shared_ptr_pointer<node::inspector::protocol::NodeRuntime::Frontend*, std::__1::default_delete<node::inspector::protocol::NodeRuntime::Frontend>, std::__1::allocator<node::inspector::protocol::NodeRuntime::Frontend> >::__on_zero_shared_weak()
+      1    0.1%    0.1%  t node::EnvGetter(v8::Local<v8::Name>, v8::PropertyCallbackInfo<v8::Value> const&)
+      1    0.1%    0.1%  t node::Buffer::(anonymous namespace)::ByteLengthUtf8(v8::FunctionCallbackInfo<v8::Value> const&)
+      1    0.1%    0.1%  t _tiny_try_realloc_in_place
+      1    0.1%    0.1%  t _tiny_malloc_from_free_list
+      1    0.1%    0.1%  t _tiny_free_list_add_ptr
+      1    0.1%    0.1%  t _small_malloc_should_clear
+      1    0.1%    0.1%  t _rack_region_insert
+      1    0.1%    0.1%  t __cxxabiv1::__function_type_info::~__function_type_info()
+      1    0.1%    0.1%  t ___printf_render_quote
+      1    0.1%    0.1%  t __ZNSt3__16vectorIPN2v88internal8compiler4NodeENS2_13ZoneAllocatorIS5_EEE8__appendEm
+      1    0.1%    0.1%  t __ZNSt3__16vectorIN2v88internal10ZoneVectorIiEENS2_13ZoneAllocatorIS4_EEE24__emplace_back_slow_pathIJS4_EEEvDpOT_
+      1    0.1%    0.1%  t __ZN2v88internalL24Builtin_Impl_ArrayConcatENS0_16BuiltinArgumentsEPNS0_7IsolateE
+      1    0.1%    0.1%  t __ZN2v88internal14LookupIteratorC2EPNS0_7IsolateENS0_6HandleINS0_6ObjectEEENS4_INS0_4NameEEEmNS4_INS0_10JSReceiverEEENS1_13ConfigurationE
+      1    0.1%    0.1%  t __ZN2v88internal12_GLOBAL__N_119HandleApiCallHelperILb0EEENS0_11MaybeHandleINS0_6ObjectEEEPNS0_7IsolateENS0_6HandleINS0_10HeapObjectEEESA_NS8_INS0_20FunctionTemplateInfoEEENS8_IS4_EENS0_16BuiltinArgumentsE
+      1    0.1%    0.1%  t __ZN2v84base19TemplateHashMapImplIPvS2_NS0_26HashEqualityThenKeyMatcherIS2_PFbS2_S2_EEENS0_23DefaultAllocationPolicyEE6ResizeES7_
+      1    0.1%    0.1%  T std::__1::future<void>::get()
+      1    0.1%    0.1%  T node::loader::ModuleWrap::SetSyntheticExport(v8::FunctionCallbackInfo<v8::Value> const&)
+      1    0.1%    0.1%  T node::loader::ModuleWrap::Instantiate(v8::FunctionCallbackInfo<v8::Value> const&)
+      1    0.1%    0.1%  T node::contextify::ContextifyContext::MakeContext(v8::FunctionCallbackInfo<v8::Value> const&)
+      1    0.1%    0.1%  T node::TCPWrap::Bind6(v8::FunctionCallbackInfo<v8::Value> const&)
+      1    0.1%    0.1%  T node::NodeArrayBufferAllocator::Allocate(unsigned long)
+      1    0.1%    0.1%  T node::InitThreadLocalOnce()
+      1    0.1%    0.1%  T _semaphore_create
+      1    0.1%    0.1%  T _realloc
+      1    0.1%    0.1%  T _read$NOCANCEL
+      1    0.1%    0.1%  T _malloc_zone_malloc
+      1    0.1%    0.1%  T _kdebug_typefilter
+      1    0.1%    0.1%  T _inet_net_pton
+      1    0.1%    0.1%  T ___gdtoa
+      1    0.1%    0.1%  T __ZN2v88internal8Compiler30GetFunctionFromValidatedStringENS0_6HandleINS0_7ContextEEENS0_11MaybeHandleINS0_6StringEEENS0_16ParseRestrictionEi
+      1    0.1%    0.1%  T __ZN2v88internal5Scope6LookupILNS1_15ScopeLookupModeE1EEEPNS0_8VariableEPNS0_13VariableProxyEPS1_S8_S8_b
+      1    0.1%    0.1%  T __ZN2v88internal5Scope28AllocateVariablesRecursivelyEv
+      1    0.1%    0.1%  T __ZN2v88internal27Builtin_DataViewConstructorEiPmPNS0_7IsolateE
+      1    0.1%    0.1%  T __ZN2v87Context12FromSnapshotEPNS_7IsolateEmNS_33DeserializeInternalFieldsCallbackEPNS_22ExtensionConfigurationENS_10MaybeLocalINS_5ValueEEEPNS_14MicrotaskQueueE
+      1    0.1%    0.1%  T __ZN2v86Object19SetAccessorPropertyENS_5LocalINS_4NameEEENS1_INS_8FunctionEEES5_NS_17PropertyAttributeENS_13AccessControlE
+      1    0.1%    0.1%  T __ZN2v85debug18GetNextRandomInt64EPNS_7IsolateE
+
+ [Summary]:
+   ticks  total  nonlib   name
+      5    0.4%    0.5%  JavaScript
+   1089   97.3%   99.3%  C++
+     24    2.1%    2.2%  GC
+     22    2.0%          Shared libraries
+      3    0.3%          Unaccounted
+
+ [C++ entry points]:
+   ticks    cpp   total   name
+    675   64.9%   60.3%  T __ZN2v88internal21Builtin_HandleApiCallEiPmPNS0_7IsolateE
+    339   32.6%   30.3%  T __ZN2v88internal8Compiler30GetSharedFunctionInfoForScriptEPNS0_7IsolateENS0_6HandleINS0_6StringEEERKNS1_13ScriptDetailsENS_19ScriptOriginOptionsEPNS_9ExtensionEPNS0_10ScriptDataENS_14ScriptCompiler14CompileOptionsENSF_13NoCacheReasonENS0_11NativesFlagE
+      7    0.7%    0.6%  T __ZN2v88internal17Builtin_JsonParseEiPmPNS0_7IsolateE
+      5    0.5%    0.4%  T _mach_msg_server
+      5    0.5%    0.4%  T __ZN2v88internal27Builtin_FunctionConstructorEiPmPNS0_7IsolateE
+      3    0.3%    0.3%  T __ZN2v88internal28Builtin_ObjectDefinePropertyEiPmPNS0_7IsolateE
+      1    0.1%    0.1%  T std::__1::future<void>::get()
+      1    0.1%    0.1%  T __ZN2v88internal34Builtin_StringPrototypeLastIndexOfEiPmPNS0_7IsolateE
+      1    0.1%    0.1%  T __ZN2v88internal33Builtin_FunctionPrototypeToStringEiPmPNS0_7IsolateE
+      1    0.1%    0.1%  T __ZN2v88internal27Builtin_DataViewConstructorEiPmPNS0_7IsolateE
+      1    0.1%    0.1%  T __ZN2v88internal24Builtin_ErrorConstructorEiPmPNS0_7IsolateE
+      1    0.1%    0.1%  T __ZN2v88internal19Builtin_ArrayConcatEiPmPNS0_7IsolateE
+
+ [Bottom up (heavy) profile]:
+  Note: percentage shows a share of a particular caller in the total
+  amount of its parent calls.
+  Callers occupying less than 1.0% are not shown.
+
+   ticks parent  name
+    329   29.4%  t node::fs::Read(v8::FunctionCallbackInfo<v8::Value> const&)
+    329  100.0%    T __ZN2v88internal21Builtin_HandleApiCallEiPmPNS0_7IsolateE
+    329  100.0%      LazyCompile: ~readSync fs.js:555:18
+    329  100.0%        LazyCompile: ~tryReadSync fs.js:362:21
+    329  100.0%          LazyCompile: ~readFileSync fs.js:374:22
+    321   97.6%            LazyCompile: ~Module._extensions..js internal/modules/cjs/loader.js:1072:37
+
+    322   28.8%  T __ZN2v88internal8Compiler30GetSharedFunctionInfoForScriptEPNS0_7IsolateENS0_6HandleINS0_6StringEEERKNS1_13ScriptDetailsENS_19ScriptOriginOptionsEPNS_9ExtensionEPNS0_10ScriptDataENS_14ScriptCompiler14CompileOptionsENSF_13NoCacheReasonENS0_11NativesFlagE
+    139   43.2%    T __ZN2v88internal8Compiler30GetSharedFunctionInfoForScriptEPNS0_7IsolateENS0_6HandleINS0_6StringEEERKNS1_13ScriptDetailsENS_19ScriptOriginOptionsEPNS_9ExtensionEPNS0_10ScriptDataENS_14ScriptCompiler14CompileOptionsENSF_13NoCacheReasonENS0_11NativesFlagE
+     25   18.0%      T __ZN2v88internal8Compiler30GetSharedFunctionInfoForScriptEPNS0_7IsolateENS0_6HandleINS0_6StringEEERKNS1_13ScriptDetailsENS_19ScriptOriginOptionsEPNS_9ExtensionEPNS0_10ScriptDataENS_14ScriptCompiler14CompileOptionsENSF_13NoCacheReasonENS0_11NativesFlagE
+      3   12.0%        LazyCompile: ~<anonymous> internal/util/inspect.js:151:44
+      3  100.0%          T __ZN2v88internal8Compiler30GetSharedFunctionInfoForScriptEPNS0_7IsolateENS0_6HandleINS0_6StringEEERKNS1_13ScriptDetailsENS_19ScriptOriginOptionsEPNS_9ExtensionEPNS0_10ScriptDataENS_14ScriptCompiler14CompileOptionsENSF_13NoCacheReasonENS0_11NativesFlagE
+      3  100.0%            Eval: ~<anonymous> internal/util/inspect.js:1:1
+      2    8.0%        LazyCompile: ~pushLine /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/generate-function/index.js:94:26
+      2  100.0%          LazyCompile: ~line /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/generate-function/index.js:115:22
+      1   50.0%            LazyCompile: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/protocol-buffers/compile.js:302:22
+      1   50.0%            LazyCompile: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/protocol-buffers/compile.js:227:22
+      2    8.0%        LazyCompile: ~<anonymous> internal/per_context/primordials.js:23:10
+      1   50.0%          LazyCompile: ~resolvePackageTargetString internal/modules/esm/resolve.js:317:36
+      1  100.0%            LazyCompile: ~resolvePackageTarget internal/modules/esm/resolve.js:371:30
+      1   50.0%          LazyCompile: ~readPackageScope internal/modules/cjs/loader.js:271:26
+      1  100.0%            LazyCompile: ~Module._extensions..js internal/modules/cjs/loader.js:1072:37
+      1    4.0%        T __ZN2v88internal8Compiler30GetSharedFunctionInfoForScriptEPNS0_7IsolateENS0_6HandleINS0_6StringEEERKNS1_13ScriptDetailsENS_19ScriptOriginOptionsEPNS_9ExtensionEPNS0_10ScriptDataENS_14ScriptCompiler14CompileOptionsENSF_13NoCacheReasonENS0_11NativesFlagE
+      1  100.0%          Eval: ~<anonymous> internal/util/inspect.js:1:1
+      1  100.0%            LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      1    4.0%        LazyCompile: ~toIdentifier /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/toidentifier/index.js:22:23
+      1  100.0%          LazyCompile: ~forEachCode /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/http-errors/index.js:265:38
+      1  100.0%            T __ZN2v88internal8Compiler30GetSharedFunctionInfoForScriptEPNS0_7IsolateENS0_6HandleINS0_6StringEEERKNS1_13ScriptDetailsENS_19ScriptOriginOptionsEPNS_9ExtensionEPNS0_10ScriptDataENS_14ScriptCompiler14CompileOptionsENSF_13NoCacheReasonENS0_11NativesFlagE
+      1    4.0%        LazyCompile: ~stat internal/modules/cjs/loader.js:132:14
+      1  100.0%          LazyCompile: ~Module._findPath internal/modules/cjs/loader.js:444:28
+      1  100.0%            LazyCompile: ~Module._resolveFilename internal/modules/cjs/loader.js:796:35
+      1    4.0%        LazyCompile: ~shouldUseNative /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/object-assign/index.js:21:25
+      1  100.0%          Eval: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/object-assign/index.js:1:1
+      1  100.0%            LazyCompile: ~Module._compile internal/modules/cjs/loader.js:1017:37
+      1    4.0%        LazyCompile: ~resolve path.js:973:10
+      1  100.0%          LazyCompile: ~resolveMainPath internal/modules/run_main.js:8:25
+      1  100.0%            LazyCompile: ~executeUserEntryPoint internal/modules/run_main.js:65:31
+      1    4.0%        LazyCompile: ~resolve /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/protocol-buffers/compile.js:505:26
+      1  100.0%          LazyCompile: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/protocol-buffers/compile.js:383:22
+      1  100.0%            LazyCompile: ~forEach /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/protocol-buffers/compile.js:206:28
+      1    4.0%        LazyCompile: ~readPackage internal/modules/cjs/loader.js:240:21
+      1  100.0%          LazyCompile: ~resolveExports internal/modules/cjs/loader.js:422:24
+      1  100.0%            LazyCompile: ~Module._findPath internal/modules/cjs/loader.js:444:28
+      1    4.0%        LazyCompile: ~nameFunc /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/http-assert/node_modules/http-errors/index.js:228:19
+      1  100.0%          LazyCompile: ~createClientErrorConstructor /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/http-assert/node_modules/http-errors/index.js:132:39
+      1  100.0%            LazyCompile: ~forEachCode /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/http-assert/node_modules/http-errors/index.js:243:38
+      1    4.0%        LazyCompile: ~line /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/generate-function/index.js:115:22
+      1  100.0%          LazyCompile: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/protocol-buffers/compile.js:411:33
+      1  100.0%            T __ZN2v88internal8Compiler30GetSharedFunctionInfoForScriptEPNS0_7IsolateENS0_6HandleINS0_6StringEEERKNS1_13ScriptDetailsENS_19ScriptOriginOptionsEPNS_9ExtensionEPNS0_10ScriptDataENS_14ScriptCompiler14CompileOptionsENSF_13NoCacheReasonENS0_11NativesFlagE
+      1    4.0%        LazyCompile: ~isGeneratorFunction /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/is-generator-function/index.js:19:46
+      1  100.0%          LazyCompile: ~use /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/koa/lib/application.js:122:6
+      1  100.0%            Eval: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/download/index.js:1:1
+      1    4.0%        LazyCompile: ~Module.load internal/modules/cjs/loader.js:916:33
+      1  100.0%          LazyCompile: ~Module._load internal/modules/cjs/loader.js:704:24
+      1  100.0%            LazyCompile: ~Module.require internal/modules/cjs/loader.js:944:36
+      1    4.0%        LazyCompile: ~Module._findPath internal/modules/cjs/loader.js:444:28
+      1  100.0%          LazyCompile: ~Module._resolveFilename internal/modules/cjs/loader.js:796:35
+      1  100.0%            LazyCompile: ~Module._load internal/modules/cjs/loader.js:704:24
+      1    4.0%        LazyCompile: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/koa-mount/node_modules/debug/src/node.js:124:55
+      1  100.0%          T __ZN2v88internal8Compiler30GetSharedFunctionInfoForScriptEPNS0_7IsolateENS0_6HandleINS0_6StringEEERKNS1_13ScriptDetailsENS_19ScriptOriginOptionsEPNS_9ExtensionEPNS0_10ScriptDataENS_14ScriptCompiler14CompileOptionsENSF_13NoCacheReasonENS0_11NativesFlagE
+      1  100.0%            Eval: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/koa-mount/node_modules/debug/src/node.js:1:1
+      1    4.0%        LazyCompile: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/core-js/library/modules/_object-assign.js:12:59
+      1  100.0%          LazyCompile: ~module.exports /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/core-js/library/modules/_fails.js:1:27
+      1  100.0%            Eval: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/core-js/library/modules/_object-assign.js:1:1
+      1    4.0%        LazyCompile: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/core-js/library/modules/_meta.js:9:44
+      1  100.0%          LazyCompile: ~module.exports /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/core-js/library/modules/_fails.js:1:27
+      1  100.0%            Eval: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/core-js/library/modules/_meta.js:1:1
+      1    4.0%        Eval: ~<anonymous> internal/util/inspect.js:1:1
+      1  100.0%          LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      1  100.0%            LazyCompile: ~nativeModuleRequire internal/bootstrap/loaders.js:303:29
+      1    4.0%        Eval: ~<anonymous> internal/querystring.js:1:1
+      1  100.0%          LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      1  100.0%            LazyCompile: ~nativeModuleRequire internal/bootstrap/loaders.js:303:29
+      1    4.0%        Eval: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/easy_sock/node_modules/debug/src/node.js:1:1
+      1  100.0%          LazyCompile: ~Module._compile internal/modules/cjs/loader.js:1017:37
+      1  100.0%            LazyCompile: ~Module._extensions..js internal/modules/cjs/loader.js:1072:37
+     19   13.7%      LazyCompile: ~resolve path.js:973:10
+     18   94.7%        LazyCompile: ~readPackage internal/modules/cjs/loader.js:240:21
+     18  100.0%          LazyCompile: ~readPackageScope internal/modules/cjs/loader.js:271:26
+     18  100.0%            LazyCompile: ~Module._extensions..js internal/modules/cjs/loader.js:1072:37
+      1    5.3%        LazyCompile: ~patchProcessObject internal/bootstrap/pre_execution.js:80:28
+      1  100.0%          LazyCompile: ~prepareMainThreadExecution internal/bootstrap/pre_execution.js:19:36
+      1  100.0%            Eval: ~<anonymous> internal/main/run_main_module.js:1:1
+      5    3.6%      LazyCompile: ~realpathSync fs.js:1650:22
+      5  100.0%        LazyCompile: ~toRealPath internal/modules/cjs/loader.js:343:20
+      3   60.0%          LazyCompile: ~tryFile internal/modules/cjs/loader.js:334:17
+      2   66.7%            LazyCompile: ~tryExtensions internal/modules/cjs/loader.js:350:23
+      1   33.3%            LazyCompile: ~tryPackage internal/modules/cjs/loader.js:288:20
+      2   40.0%          LazyCompile: ~Module._findPath internal/modules/cjs/loader.js:444:28
+      1   50.0%            LazyCompile: ~resolveMainPath internal/modules/run_main.js:8:25
+      1   50.0%            LazyCompile: ~Module._resolveFilename internal/modules/cjs/loader.js:796:35
+      5    3.6%      LazyCompile: ~Module._load internal/modules/cjs/loader.js:704:24
+      5  100.0%        LazyCompile: ~Module.require internal/modules/cjs/loader.js:944:36
+      5  100.0%          LazyCompile: ~require internal/modules/cjs/helpers.js:87:31
+      1   20.0%            Eval: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/source-map/lib/source-map-generator.js:1:1
+      1   20.0%            Eval: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/koa/lib/request.js:1:1
+      1   20.0%            Eval: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/graphql/language/parser.js:1:1
+      1   20.0%            Eval: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/babel-runtime/core-js/json/stringify.js:1:1
+      1   20.0%            Eval: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/list/node/index.js:1:1
+      5    3.6%      LazyCompile: *realpathSync fs.js:1650:22
+      5  100.0%        LazyCompile: ~toRealPath internal/modules/cjs/loader.js:343:20
+      5  100.0%          LazyCompile: ~tryFile internal/modules/cjs/loader.js:334:17
+      5  100.0%            LazyCompile: ~tryExtensions internal/modules/cjs/loader.js:350:23
+      4    2.9%      LazyCompile: ~getOptions internal/fs/utils.js:284:20
+      4  100.0%        LazyCompile: ~readFileSync fs.js:374:22
+      4  100.0%          LazyCompile: ~Module._extensions..js internal/modules/cjs/loader.js:1072:37
+      4  100.0%            LazyCompile: ~Module.load internal/modules/cjs/loader.js:916:33
+      3    2.2%      LazyCompile: ~toRealPath internal/modules/cjs/loader.js:343:20
+      3  100.0%        LazyCompile: ~tryFile internal/modules/cjs/loader.js:334:17
+      3  100.0%          LazyCompile: ~tryExtensions internal/modules/cjs/loader.js:350:23
+      3  100.0%            LazyCompile: ~Module._findPath internal/modules/cjs/loader.js:444:28
+      2    1.4%      LazyCompile: ~readPackage internal/modules/cjs/loader.js:240:21
+      2  100.0%        LazyCompile: ~readPackageScope internal/modules/cjs/loader.js:271:26
+      1   50.0%          LazyCompile: ~trySelf internal/modules/cjs/loader.js:391:17
+      1  100.0%            LazyCompile: ~Module._resolveFilename internal/modules/cjs/loader.js:796:35
+      1   50.0%          LazyCompile: ~Module._extensions..js internal/modules/cjs/loader.js:1072:37
+      1  100.0%            LazyCompile: ~Module.load internal/modules/cjs/loader.js:916:33
+      2    1.4%      LazyCompile: ~assignValue /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/lodash/_assignValue.js:20:21
+      2  100.0%        LazyCompile: ~copyObject /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/lodash/_copyObject.js:14:20
+      2  100.0%          LazyCompile: ~baseAssign /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/lodash/_baseAssign.js:13:20
+      2  100.0%            LazyCompile: ~baseClone /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/lodash/_baseClone.js:90:19
+      2    1.4%      LazyCompile: ~_loop2 /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/babel-traverse/lib/path/index.js:194:29
+      2  100.0%        Eval: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/babel-traverse/lib/path/index.js:1:1
+      2  100.0%          LazyCompile: ~Module._compile internal/modules/cjs/loader.js:1017:37
+      2  100.0%            LazyCompile: ~Module._extensions..js internal/modules/cjs/loader.js:1072:37
+      2    1.4%      LazyCompile: ~Module.load internal/modules/cjs/loader.js:916:33
+      2  100.0%        LazyCompile: ~Module._load internal/modules/cjs/loader.js:704:24
+      2  100.0%          LazyCompile: ~Module.require internal/modules/cjs/loader.js:944:36
+      2  100.0%            LazyCompile: ~require internal/modules/cjs/helpers.js:87:31
+      2    1.4%      Eval: ~<anonymous> internal/errors.js:1:1
+      2  100.0%        LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      2  100.0%          LazyCompile: ~nativeModuleRequire internal/bootstrap/loaders.js:303:29
+      2  100.0%            LazyCompile: ~setupPrepareStackTrace internal/bootstrap/node.js:252:32
+      9    2.8%    LazyCompile: ~readFileSync fs.js:374:22
+      9  100.0%      LazyCompile: ~Module._extensions..js internal/modules/cjs/loader.js:1072:37
+      9  100.0%        LazyCompile: ~Module.load internal/modules/cjs/loader.js:916:33
+      9  100.0%          LazyCompile: ~Module._load internal/modules/cjs/loader.js:704:24
+      9  100.0%            LazyCompile: ~Module.require internal/modules/cjs/loader.js:944:36
+      6    1.9%    T __ZN2v88internal17Builtin_JsonParseEiPmPNS0_7IsolateE
+      3   50.0%      LazyCompile: ~Module._extensions..json internal/modules/cjs/loader.js:1097:39
+      3  100.0%        LazyCompile: ~Module.load internal/modules/cjs/loader.js:916:33
+      3  100.0%          LazyCompile: ~Module._load internal/modules/cjs/loader.js:704:24
+      3  100.0%            LazyCompile: ~Module.require internal/modules/cjs/loader.js:944:36
+      2   33.3%      LazyCompile: ~readPackage internal/modules/cjs/loader.js:240:21
+      2  100.0%        LazyCompile: ~resolveExports internal/modules/cjs/loader.js:422:24
+      2  100.0%          LazyCompile: ~Module._findPath internal/modules/cjs/loader.js:444:28
+      2  100.0%            LazyCompile: ~Module._resolveFilename internal/modules/cjs/loader.js:796:35
+      1   16.7%      Eval: ~<anonymous> internal/bootstrap/node.js:1:1
+      6    1.9%    LazyCompile: ~Module._load internal/modules/cjs/loader.js:704:24
+      6  100.0%      LazyCompile: ~Module.require internal/modules/cjs/loader.js:944:36
+      6  100.0%        LazyCompile: ~require internal/modules/cjs/helpers.js:87:31
+      1   16.7%          Eval: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/koa-graphql/dist/index.js:1:1
+      1  100.0%            LazyCompile: ~Module._compile internal/modules/cjs/loader.js:1017:37
+      1   16.7%          Eval: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/graphql/validation/specifiedRules.js:1:1
+      1  100.0%            LazyCompile: ~Module._compile internal/modules/cjs/loader.js:1017:37
+      1   16.7%          Eval: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/graphql/validation/rules/UniqueFragmentNames.js:1:1
+      1  100.0%            LazyCompile: ~Module._compile internal/modules/cjs/loader.js:1017:37
+      1   16.7%          Eval: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/graphql/subscription/subscribe.js:1:1
+      1  100.0%            LazyCompile: ~Module._compile internal/modules/cjs/loader.js:1017:37
+      1   16.7%          Eval: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/babel-template/lib/index.js:1:1
+      1  100.0%            LazyCompile: ~Module._compile internal/modules/cjs/loader.js:1017:37
+      1   16.7%          Eval: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/list/component/container.jsx:1:1
+      1  100.0%            LazyCompile: ~Module._compile internal/modules/cjs/loader.js:1017:37
+      6    1.9%    LazyCompile: ~Module._findPath internal/modules/cjs/loader.js:444:28
+      6  100.0%      LazyCompile: ~Module._resolveFilename internal/modules/cjs/loader.js:796:35
+      6  100.0%        LazyCompile: ~Module._load internal/modules/cjs/loader.js:704:24
+      6  100.0%          LazyCompile: ~Module.require internal/modules/cjs/loader.js:944:36
+      6  100.0%            LazyCompile: ~require internal/modules/cjs/helpers.js:87:31
+      5    1.6%    T __ZN2v88internal21Builtin_HandleApiCallEiPmPNS0_7IsolateE
+      3   60.0%      LazyCompile: ~closeSync fs.js:434:19
+      3  100.0%        LazyCompile: ~readFileSync fs.js:374:22
+      3  100.0%          LazyCompile: ~Module._extensions..js internal/modules/cjs/loader.js:1072:37
+      3  100.0%            LazyCompile: ~Module.load internal/modules/cjs/loader.js:916:33
+      1   20.0%      LazyCompile: ~readSync fs.js:555:18
+      1  100.0%        LazyCompile: ~tryReadSync fs.js:362:21
+      1  100.0%          LazyCompile: ~readFileSync fs.js:374:22
+      1  100.0%            LazyCompile: ~Module._extensions..js internal/modules/cjs/loader.js:1072:37
+      1   20.0%      LazyCompile: ~load /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/babel-register/lib/cache.js:51:14
+      1  100.0%        Eval: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/babel-register/lib/node.js:1:1
+      1  100.0%          LazyCompile: ~Module._compile internal/modules/cjs/loader.js:1017:37
+      1  100.0%            LazyCompile: ~Module._extensions..js internal/modules/cjs/loader.js:1072:37
+      5    1.6%    LazyCompile: ~tryReadSync fs.js:362:21
+      5  100.0%      LazyCompile: ~readFileSync fs.js:374:22
+      5  100.0%        LazyCompile: ~Module._extensions..js internal/modules/cjs/loader.js:1072:37
+      5  100.0%          LazyCompile: ~Module.load internal/modules/cjs/loader.js:916:33
+      5  100.0%            LazyCompile: ~Module._load internal/modules/cjs/loader.js:704:24
+      5    1.6%    LazyCompile: ~Module._compile internal/modules/cjs/loader.js:1017:37
+      5  100.0%      LazyCompile: ~Module._extensions..js internal/modules/cjs/loader.js:1072:37
+      4   80.0%        LazyCompile: ~Module.load internal/modules/cjs/loader.js:916:33
+      4  100.0%          LazyCompile: ~Module._load internal/modules/cjs/loader.js:704:24
+      4  100.0%            LazyCompile: ~Module.require internal/modules/cjs/loader.js:944:36
+      1   20.0%        LazyCompile: ~require.extensions.<computed> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/babel-register/lib/node.js:150:38
+      1  100.0%          LazyCompile: ~Module.load internal/modules/cjs/loader.js:916:33
+      1  100.0%            LazyCompile: ~Module._load internal/modules/cjs/loader.js:704:24
+      4    1.2%    T __ZN2v88internal27Builtin_FunctionConstructorEiPmPNS0_7IsolateE
+      4  100.0%      LazyCompile: ~line.toFunction /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/generate-function/index.js:155:29
+      4  100.0%        LazyCompile: ~compileMessage /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/protocol-buffers/compile.js:173:33
+      4  100.0%          LazyCompile: ~resolve /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/protocol-buffers/compile.js:505:26
+      4  100.0%            LazyCompile: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/protocol-buffers/compile.js:528:75
+      4    1.2%    LazyCompile: ~toString buffer.js:776:46
+      4  100.0%      LazyCompile: ~readFileSync fs.js:374:22
+      4  100.0%        LazyCompile: ~Module._extensions..js internal/modules/cjs/loader.js:1072:37
+      4  100.0%          LazyCompile: ~Module.load internal/modules/cjs/loader.js:916:33
+      4  100.0%            LazyCompile: ~Module._load internal/modules/cjs/loader.js:704:24
+      4    1.2%    LazyCompile: ~readPackage internal/modules/cjs/loader.js:240:21
+      2   50.0%      LazyCompile: ~resolveExports internal/modules/cjs/loader.js:422:24
+      2  100.0%        LazyCompile: ~Module._findPath internal/modules/cjs/loader.js:444:28
+      2  100.0%          LazyCompile: ~Module._resolveFilename internal/modules/cjs/loader.js:796:35
+      2  100.0%            LazyCompile: ~Module._load internal/modules/cjs/loader.js:704:24
+      2   50.0%      LazyCompile: ~readPackageScope internal/modules/cjs/loader.js:271:26
+      2  100.0%        LazyCompile: ~Module._extensions..js internal/modules/cjs/loader.js:1072:37
+      2  100.0%          LazyCompile: ~Module.load internal/modules/cjs/loader.js:916:33
+      2  100.0%            LazyCompile: ~Module._load internal/modules/cjs/loader.js:704:24
+      4    1.2%    LazyCompile: ~read internal/modules/package_json_reader.js:16:14
+      4  100.0%      LazyCompile: ~readPackage internal/modules/cjs/loader.js:240:21
+      4  100.0%        LazyCompile: ~resolveExports internal/modules/cjs/loader.js:422:24
+      4  100.0%          LazyCompile: ~Module._findPath internal/modules/cjs/loader.js:444:28
+      4  100.0%            LazyCompile: ~Module._resolveFilename internal/modules/cjs/loader.js:796:35
+      4    1.2%    LazyCompile: ~getOptions internal/fs/utils.js:284:20
+      4  100.0%      LazyCompile: ~readFileSync fs.js:374:22
+      4  100.0%        LazyCompile: ~Module._extensions..js internal/modules/cjs/loader.js:1072:37
+      4  100.0%          LazyCompile: ~Module.load internal/modules/cjs/loader.js:916:33
+      4  100.0%            LazyCompile: ~Module._load internal/modules/cjs/loader.js:704:24
+      4    1.2%    LazyCompile: ~<anonymous> internal/per_context/primordials.js:23:10
+      1   25.0%      LazyCompile: ~resolveExports internal/modules/cjs/loader.js:422:24
+      1  100.0%        LazyCompile: ~Module._findPath internal/modules/cjs/loader.js:444:28
+      1  100.0%          LazyCompile: ~Module._resolveFilename internal/modules/cjs/loader.js:796:35
+      1  100.0%            LazyCompile: ~Module._load internal/modules/cjs/loader.js:704:24
+      1   25.0%      LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      1  100.0%        LazyCompile: ~nativeModuleRequire internal/bootstrap/loaders.js:303:29
+      1  100.0%          Eval: ~<anonymous> crypto.js:1:1
+      1  100.0%            LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      1   25.0%      LazyCompile: ~NativeModule internal/bootstrap/loaders.js:173:14
+      1  100.0%        LazyCompile: ~<anonymous> internal/bootstrap/loaders.js:170:34
+      1  100.0%          T __ZN2v88internal8Compiler30GetSharedFunctionInfoForScriptEPNS0_7IsolateENS0_6HandleINS0_6StringEEERKNS1_13ScriptDetailsENS_19ScriptOriginOptionsEPNS_9ExtensionEPNS0_10ScriptDataENS_14ScriptCompiler14CompileOptionsENSF_13NoCacheReasonENS0_11NativesFlagE
+      1  100.0%            LazyCompile: ~<anonymous> internal/per_context/primordials.js:23:10
+      1   25.0%      Eval: ~<anonymous> internal/console/global.js:1:1
+      1  100.0%        LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      1  100.0%          LazyCompile: ~nativeModuleRequire internal/bootstrap/loaders.js:303:29
+      1  100.0%            LazyCompile: ~createGlobalConsole internal/bootstrap/node.js:317:29
+
+     72    6.4%  t node::fs::InternalModuleReadJSON(v8::FunctionCallbackInfo<v8::Value> const&)
+     72  100.0%    T __ZN2v88internal21Builtin_HandleApiCallEiPmPNS0_7IsolateE
+     72  100.0%      LazyCompile: ~read internal/modules/package_json_reader.js:16:14
+     72  100.0%        LazyCompile: ~readPackage internal/modules/cjs/loader.js:240:21
+     70   97.2%          LazyCompile: ~resolveExports internal/modules/cjs/loader.js:422:24
+     70  100.0%            LazyCompile: ~Module._findPath internal/modules/cjs/loader.js:444:28
+      2    2.8%          LazyCompile: ~readPackageScope internal/modules/cjs/loader.js:271:26
+      2  100.0%            LazyCompile: ~shouldUseESMLoader internal/modules/run_main.js:23:28
+
+     70    6.3%  T node::contextify::ContextifyContext::CompileFunction(v8::FunctionCallbackInfo<v8::Value> const&)
+     70  100.0%    T __ZN2v88internal21Builtin_HandleApiCallEiPmPNS0_7IsolateE
+     70  100.0%      LazyCompile: ~wrapSafe internal/modules/cjs/loader.js:964:18
+     70  100.0%        LazyCompile: ~Module._compile internal/modules/cjs/loader.js:1017:37
+     70  100.0%          LazyCompile: ~Module._extensions..js internal/modules/cjs/loader.js:1072:37
+     69   98.6%            LazyCompile: ~Module.load internal/modules/cjs/loader.js:916:33
+      1    1.4%            LazyCompile: ~require.extensions.<computed> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/babel-register/lib/node.js:150:38
+
+     67    6.0%  T node::native_module::NativeModuleEnv::CompileFunction(v8::FunctionCallbackInfo<v8::Value> const&)
+     67  100.0%    T __ZN2v88internal21Builtin_HandleApiCallEiPmPNS0_7IsolateE
+     67  100.0%      LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+     62   92.5%        LazyCompile: ~nativeModuleRequire internal/bootstrap/loaders.js:303:29
+      6    9.7%          Eval: ~<anonymous> internal/bootstrap/node.js:1:1
+      4    6.5%          Eval: ~<anonymous> stream.js:1:1
+      4  100.0%            LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      3    4.8%          LazyCompile: ~setupPrepareStackTrace internal/bootstrap/node.js:252:32
+      3  100.0%            Eval: ~<anonymous> internal/bootstrap/node.js:1:1
+      3    4.8%          Eval: ~<anonymous> internal/source_map/source_map_cache.js:1:1
+      3  100.0%            LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      3    4.8%          Eval: ~<anonymous> http.js:1:1
+      3  100.0%            LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      3    4.8%          Eval: ~<anonymous> fs.js:1:1
+      3  100.0%            LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      3    4.8%          Eval: ~<anonymous> events.js:1:1
+      3  100.0%            LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      3    4.8%          Eval: ~<anonymous> crypto.js:1:1
+      3  100.0%            LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      3    4.8%          Eval: ~<anonymous> buffer.js:1:1
+      3  100.0%            LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      2    3.2%          LazyCompile: ~setupProcessObject internal/bootstrap/node.js:271:28
+      2  100.0%            Eval: ~<anonymous> internal/bootstrap/node.js:1:1
+      2    3.2%          LazyCompile: ~setupBuffer internal/bootstrap/node.js:300:21
+      2  100.0%            Eval: ~<anonymous> internal/bootstrap/node.js:1:1
+      2    3.2%          LazyCompile: ~initializeCJSLoader internal/bootstrap/pre_execution.js:407:29
+      2  100.0%            LazyCompile: ~prepareMainThreadExecution internal/bootstrap/pre_execution.js:19:36
+      2    3.2%          LazyCompile: ~createGlobalConsole internal/bootstrap/node.js:317:29
+      2  100.0%            Eval: ~<anonymous> internal/bootstrap/node.js:1:1
+      2    3.2%          Eval: ~<anonymous> tty.js:1:1
+      2  100.0%            LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      2    3.2%          Eval: ~<anonymous> timers.js:1:1
+      2  100.0%            LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      2    3.2%          Eval: ~<anonymous> internal/modules/cjs/helpers.js:1:1
+      2  100.0%            LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      1    1.6%          LazyCompile: ~listenInCluster net.js:1356:25
+      1  100.0%            LazyCompile: ~Server.listen net.js:1398:35
+      1    1.6%          Eval: ~<anonymous> module.js:1:1
+      1  100.0%            LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      1    1.6%          Eval: ~<anonymous> internal/util/inspect.js:1:1
+      1  100.0%            LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      1    1.6%          Eval: ~<anonymous> internal/url.js:1:1
+      1  100.0%            LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      1    1.6%          Eval: ~<anonymous> internal/timers.js:1:1
+      1  100.0%            LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      1    1.6%          Eval: ~<anonymous> internal/streams/readable.js:1:1
+      1  100.0%            LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      1    1.6%          Eval: ~<anonymous> internal/process/esm_loader.js:1:1
+      1  100.0%            LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      1    1.6%          Eval: ~<anonymous> internal/modules/esm/loader.js:1:1
+      1  100.0%            LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      1    1.6%          Eval: ~<anonymous> internal/modules/esm/get_source.js:1:1
+      1  100.0%            LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      1    1.6%          Eval: ~<anonymous> internal/console/global.js:1:1
+      1  100.0%            LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      1    1.6%          Eval: ~<anonymous> internal/cluster/master.js:1:1
+      1  100.0%            LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      1    1.6%          Eval: ~<anonymous> internal/child_process.js:1:1
+      1  100.0%            LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      1    1.6%          Eval: ~<anonymous> internal/bootstrap/pre_execution.js:1:1
+      1  100.0%            LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      1    1.6%          Eval: ~<anonymous> child_process.js:1:1
+      1  100.0%            LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      1    1.6%          Eval: ~<anonymous> assert.js:1:1
+      1  100.0%            LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      1    1.6%          Eval: ~<anonymous> _http_common.js:1:1
+      1  100.0%            LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      1    1.6%          Eval: ~<anonymous> _http_client.js:1:1
+      1  100.0%            LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      5    7.5%        LazyCompile: ~compileForPublicLoader internal/bootstrap/loaders.js:219:25
+      5  100.0%          LazyCompile: ~loadNativeModule internal/modules/cjs/helpers.js:31:26
+      5  100.0%            LazyCompile: ~Module._load internal/modules/cjs/loader.js:704:24
+
+     36    3.2%  T node::fs::Close(v8::FunctionCallbackInfo<v8::Value> const&)
+     36  100.0%    T __ZN2v88internal21Builtin_HandleApiCallEiPmPNS0_7IsolateE
+     36  100.0%      LazyCompile: ~closeSync fs.js:434:19
+     36  100.0%        LazyCompile: ~readFileSync fs.js:374:22
+     36  100.0%          LazyCompile: ~Module._extensions..js internal/modules/cjs/loader.js:1072:37
+     36  100.0%            LazyCompile: ~Module.load internal/modules/cjs/loader.js:916:33
+
+     31    2.8%  t node::fs::InternalModuleStat(v8::FunctionCallbackInfo<v8::Value> const&)
+     31  100.0%    T __ZN2v88internal21Builtin_HandleApiCallEiPmPNS0_7IsolateE
+     31  100.0%      LazyCompile: ~stat internal/modules/cjs/loader.js:132:14
+     19   61.3%        LazyCompile: ~tryFile internal/modules/cjs/loader.js:334:17
+     16   84.2%          LazyCompile: ~tryExtensions internal/modules/cjs/loader.js:350:23
+     12   75.0%            LazyCompile: ~Module._findPath internal/modules/cjs/loader.js:444:28
+      4   25.0%            LazyCompile: ~tryPackage internal/modules/cjs/loader.js:288:20
+      3   15.8%          LazyCompile: ~tryPackage internal/modules/cjs/loader.js:288:20
+      3  100.0%            LazyCompile: ~Module._findPath internal/modules/cjs/loader.js:444:28
+     12   38.7%        LazyCompile: ~Module._findPath internal/modules/cjs/loader.js:444:28
+     12  100.0%          LazyCompile: ~Module._resolveFilename internal/modules/cjs/loader.js:796:35
+     12  100.0%            LazyCompile: ~Module._load internal/modules/cjs/loader.js:704:24
+
+     22    2.0%  T _vm_copy
+     11   50.0%    T __ZN2v88internal8Compiler30GetSharedFunctionInfoForScriptEPNS0_7IsolateENS0_6HandleINS0_6StringEEERKNS1_13ScriptDetailsENS_19ScriptOriginOptionsEPNS_9ExtensionEPNS0_10ScriptDataENS_14ScriptCompiler14CompileOptionsENSF_13NoCacheReasonENS0_11NativesFlagE
+      1    9.1%      T __ZN2v88internal8Compiler30GetSharedFunctionInfoForScriptEPNS0_7IsolateENS0_6HandleINS0_6StringEEERKNS1_13ScriptDetailsENS_19ScriptOriginOptionsEPNS_9ExtensionEPNS0_10ScriptDataENS_14ScriptCompiler14CompileOptionsENSF_13NoCacheReasonENS0_11NativesFlagE
+      1  100.0%        LazyCompile: ~toIdentifier /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/resolve-path/node_modules/http-errors/index.js:256:23
+      1  100.0%          LazyCompile: ~forEachCode /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/resolve-path/node_modules/http-errors/index.js:226:38
+      1  100.0%            T __ZN2v88internal8Compiler30GetSharedFunctionInfoForScriptEPNS0_7IsolateENS0_6HandleINS0_6StringEEERKNS1_13ScriptDetailsENS_19ScriptOriginOptionsEPNS_9ExtensionEPNS0_10ScriptDataENS_14ScriptCompiler14CompileOptionsENSF_13NoCacheReasonENS0_11NativesFlagE
+      1    9.1%      LazyCompile: ~processTicksAndRejections internal/process/task_queues.js:65:35
+      1    9.1%      LazyCompile: ~getWrappedType /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/graphql/utilities/buildASTSchema.js:174:50
+      1  100.0%        LazyCompile: ~buildField /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/graphql/utilities/buildASTSchema.js:205:42
+      1  100.0%          LazyCompile: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/graphql/utilities/buildASTSchema.js:302:49
+      1  100.0%            LazyCompile: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/graphql/jsutils/keyValMap.js:26:31
+      1    9.1%      LazyCompile: ~get /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/http-assert/node_modules/depd/lib/compat/index.js:54:16
+      1  100.0%        Eval: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/http-assert/node_modules/depd/index.js:1:1
+      1  100.0%          LazyCompile: ~Module._compile internal/modules/cjs/loader.js:1017:37
+      1  100.0%            LazyCompile: ~Module._extensions..js internal/modules/cjs/loader.js:1072:37
+      1    9.1%      LazyCompile: ~emitAfterScript internal/async_hooks.js:479:25
+      1  100.0%        LazyCompile: ~processTicksAndRejections internal/process/task_queues.js:65:35
+      1    9.1%      LazyCompile: ~defaultValue /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/protocol-buffers/compile.js:31:29
+      1  100.0%        LazyCompile: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/protocol-buffers/compile.js:383:22
+      1  100.0%          LazyCompile: ~forEach /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/protocol-buffers/compile.js:206:28
+      1  100.0%            LazyCompile: ~compileMessage /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/protocol-buffers/compile.js:173:33
+      1    9.1%      LazyCompile: ~createServer http.js:45:22
+      1  100.0%        LazyCompile: ~listen /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/koa/lib/application.js:79:9
+      1  100.0%          Eval: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/entry.js:1:1
+      1  100.0%            LazyCompile: ~Module._compile internal/modules/cjs/loader.js:1017:37
+      1    9.1%      LazyCompile: ~Module._extensions..js internal/modules/cjs/loader.js:1072:37
+      1  100.0%        LazyCompile: ~Module.load internal/modules/cjs/loader.js:916:33
+      1  100.0%          LazyCompile: ~Module._load internal/modules/cjs/loader.js:704:24
+      1  100.0%            LazyCompile: ~executeUserEntryPoint internal/modules/run_main.js:65:31
+      1    9.1%      LazyCompile: ~BinopTokenType /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/babylon/lib/index.js:258:26
+      1  100.0%        Eval: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/babylon/lib/index.js:1:1
+      1  100.0%          LazyCompile: ~Module._compile internal/modules/cjs/loader.js:1017:37
+      1  100.0%            LazyCompile: ~Module._extensions..js internal/modules/cjs/loader.js:1072:37
+      1    9.1%      LazyCompile: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/lodash/_baseMerge.js:24:27
+      1  100.0%        LazyCompile: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/lodash/_createBaseFor.js:9:18
+      1  100.0%          LazyCompile: ~baseMerge /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/lodash/_baseMerge.js:20:19
+      1  100.0%            LazyCompile: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/lodash/mergeWith.js:35:40
+      1    9.1%      LazyCompile: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/babel-code-frame/node_modules/chalk/index.js:23:43
+      1  100.0%        T __ZN2v88internal8Compiler30GetSharedFunctionInfoForScriptEPNS0_7IsolateENS0_6HandleINS0_6StringEEERKNS1_13ScriptDetailsENS_19ScriptOriginOptionsEPNS_9ExtensionEPNS0_10ScriptDataENS_14ScriptCompiler14CompileOptionsENSF_13NoCacheReasonENS0_11NativesFlagE
+      1  100.0%          Eval: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/babel-code-frame/node_modules/chalk/index.js:20:24
+      1  100.0%            Eval: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/babel-code-frame/node_modules/chalk/index.js:1:1
+
+     21    1.9%  t node::fs::Open(v8::FunctionCallbackInfo<v8::Value> const&)
+     21  100.0%    T __ZN2v88internal21Builtin_HandleApiCallEiPmPNS0_7IsolateE
+     21  100.0%      LazyCompile: ~openSync fs.js:467:18
+     20   95.2%        LazyCompile: ~readFileSync fs.js:374:22
+     20  100.0%          LazyCompile: ~Module._extensions..js internal/modules/cjs/loader.js:1072:37
+     20  100.0%            LazyCompile: ~Module.load internal/modules/cjs/loader.js:916:33
+      1    4.8%        LazyCompile: ~writeFileSync fs.js:1456:23
+      1  100.0%          LazyCompile: ~save /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/babel-register/lib/cache.js:32:14
+      1  100.0%            LazyCompile: ~processTicksAndRejections internal/process/task_queues.js:65:35
+
+     15    1.3%  /usr/lib/system/libsystem_pthread.dylib
+     14   93.3%    T __ZN2v88internal8Compiler30GetSharedFunctionInfoForScriptEPNS0_7IsolateENS0_6HandleINS0_6StringEEERKNS1_13ScriptDetailsENS_19ScriptOriginOptionsEPNS_9ExtensionEPNS0_10ScriptDataENS_14ScriptCompiler14CompileOptionsENSF_13NoCacheReasonENS0_11NativesFlagE
+      3   21.4%      T __ZN2v88internal8Compiler30GetSharedFunctionInfoForScriptEPNS0_7IsolateENS0_6HandleINS0_6StringEEERKNS1_13ScriptDetailsENS_19ScriptOriginOptionsEPNS_9ExtensionEPNS0_10ScriptDataENS_14ScriptCompiler14CompileOptionsENSF_13NoCacheReasonENS0_11NativesFlagE
+      1   33.3%        LazyCompile: ~prepareStackTrace /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/source-map-support/source-map-support.js:371:27
+      1  100.0%          LazyCompile: ~maybeOverridePrepareStackTrace internal/errors.js:84:40
+      1  100.0%            LazyCompile: ~prepareStackTrace internal/errors.js:59:27
+      1   33.3%        LazyCompile: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/core-js/library/modules/es6.array.from.js:11:69
+      1  100.0%          LazyCompile: ~module.exports /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/core-js/library/modules/_iter-detect.js:11:27
+      1  100.0%            Eval: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/core-js/library/modules/es6.array.from.js:1:1
+      1   33.3%        Eval: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/react-dom/cjs/react-dom-server.node.development.js:15:12
+      1  100.0%          Eval: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/react-dom/cjs/react-dom-server.node.development.js:1:1
+      1  100.0%            LazyCompile: ~Module._compile internal/modules/cjs/loader.js:1017:37
+      1    7.1%      LazyCompile: ~readSync fs.js:555:18
+      1  100.0%        LazyCompile: ~tryReadSync fs.js:362:21
+      1  100.0%          LazyCompile: ~readFileSync fs.js:374:22
+      1  100.0%            LazyCompile: ~Module._extensions..js internal/modules/cjs/loader.js:1072:37
+      1    7.1%      LazyCompile: ~maybeOverridePrepareStackTrace internal/errors.js:84:40
+      1  100.0%        LazyCompile: ~prepareStackTrace internal/errors.js:59:27
+      1  100.0%          T __ZN2v88internal9Accessors16ErrorStackGetterENS_5LocalINS_4NameEEERKNS_20PropertyCallbackInfoINS_5ValueEEE
+      1  100.0%            LazyCompile: ~callSiteToString /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/raw-body/node_modules/depd/lib/compat/index.js:21:76
+      1    7.1%      LazyCompile: ~get /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/resolve-path/node_modules/depd/lib/compat/index.js:54:16
+      1  100.0%        Eval: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/resolve-path/node_modules/depd/index.js:1:1
+      1  100.0%          LazyCompile: ~Module._compile internal/modules/cjs/loader.js:1017:37
+      1  100.0%            LazyCompile: ~Module._extensions..js internal/modules/cjs/loader.js:1072:37
+      1    7.1%      LazyCompile: ~get /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/http-errors/node_modules/depd/lib/compat/index.js:54:16
+      1  100.0%        Eval: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/http-errors/node_modules/depd/index.js:1:1
+      1  100.0%          LazyCompile: ~Module._compile internal/modules/cjs/loader.js:1017:37
+      1  100.0%            LazyCompile: ~Module._extensions..js internal/modules/cjs/loader.js:1072:37
+      1    7.1%      LazyCompile: ~formatRaw internal/util/inspect.js:815:19
+      1  100.0%        LazyCompile: ~formatValue internal/util/inspect.js:746:21
+      1  100.0%          LazyCompile: ~inspect internal/util/inspect.js:284:17
+      1  100.0%            LazyCompile: ~afterInspector internal/errors.js:668:17
+      1    7.1%      LazyCompile: ~createContext vm.js:220:23
+      1  100.0%        Eval: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/detail/template/index.js:1:1
+      1  100.0%          LazyCompile: ~Module._compile internal/modules/cjs/loader.js:1017:37
+      1  100.0%            LazyCompile: ~Module._extensions..js internal/modules/cjs/loader.js:1072:37
+      1    7.1%      LazyCompile: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/core-js/library/modules/_descriptors.js:2:48
+      1  100.0%        LazyCompile: ~module.exports /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/core-js/library/modules/_fails.js:1:27
+      1  100.0%          Eval: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/core-js/library/modules/_descriptors.js:1:1
+      1  100.0%            LazyCompile: ~Module._compile internal/modules/cjs/loader.js:1017:37
+      1    7.1%      Eval: ~<anonymous> internal/process/execution.js:1:1
+      1  100.0%        LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      1  100.0%          LazyCompile: ~nativeModuleRequire internal/bootstrap/loaders.js:303:29
+      1  100.0%            Eval: ~<anonymous> internal/bootstrap/node.js:1:1
+      1    7.1%      Eval: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/core-js/library/modules/es6.object.keys.js:1:1
+      1  100.0%        LazyCompile: ~Module._compile internal/modules/cjs/loader.js:1017:37
+      1  100.0%          LazyCompile: ~Module._extensions..js internal/modules/cjs/loader.js:1072:37
+      1  100.0%            LazyCompile: ~Module.load internal/modules/cjs/loader.js:916:33
+      1    7.1%      Eval: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/node_modules/babel-core/lib/transformation/file/index.js:1:1
+      1  100.0%        LazyCompile: ~Module._compile internal/modules/cjs/loader.js:1017:37
+      1  100.0%          LazyCompile: ~Module._extensions..js internal/modules/cjs/loader.js:1072:37
+      1  100.0%            LazyCompile: ~Module.load internal/modules/cjs/loader.js:916:33
+      1    7.1%      Eval: ~<anonymous> /Users/Thales/Desktop/blog/node.js/09-project-dev/BFF-demo/detail/client.js:1:1
+      1  100.0%        LazyCompile: ~Module._compile internal/modules/cjs/loader.js:1017:37
+      1  100.0%          LazyCompile: ~Module._extensions..js internal/modules/cjs/loader.js:1072:37
+      1  100.0%            LazyCompile: ~Module.load internal/modules/cjs/loader.js:916:33
+
+     14    1.3%  T node::binding::GetInternalBinding(v8::FunctionCallbackInfo<v8::Value> const&)
+     14  100.0%    T __ZN2v88internal21Builtin_HandleApiCallEiPmPNS0_7IsolateE
+     14  100.0%      LazyCompile: ~internalBinding internal/bootstrap/loaders.js:137:45
+      8   57.1%        Eval: ~<anonymous> crypto.js:1:1
+      8  100.0%          LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      8  100.0%            LazyCompile: ~compileForPublicLoader internal/bootstrap/loaders.js:219:25
+      1    7.1%        Eval: ~<anonymous> net.js:1:1
+      1  100.0%          LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      1  100.0%            LazyCompile: ~nativeModuleRequire internal/bootstrap/loaders.js:303:29
+      1    7.1%        Eval: ~<anonymous> internal/worker/js_transferable.js:1:1
+      1  100.0%          LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      1  100.0%            LazyCompile: ~nativeModuleRequire internal/bootstrap/loaders.js:303:29
+      1    7.1%        Eval: ~<anonymous> internal/url.js:1:1
+      1  100.0%          LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      1  100.0%            LazyCompile: ~nativeModuleRequire internal/bootstrap/loaders.js:303:29
+      1    7.1%        Eval: ~<anonymous> internal/http.js:1:1
+      1  100.0%          LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      1  100.0%            LazyCompile: ~nativeModuleRequire internal/bootstrap/loaders.js:303:29
+      1    7.1%        Eval: ~<anonymous> internal/bootstrap/node.js:1:1
+      1    7.1%        Eval: ~<anonymous> fs.js:1:1
+      1  100.0%          LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:270:27
+      1  100.0%            LazyCompile: ~nativeModuleRequire internal/bootstrap/loaders.js:303:29
+
