@@ -79,7 +79,7 @@ export default JSXBaseDemo
 
 ## 3.1、bind this
 
-* this - 使用 bind
+* ✅ this - 使用 bind
 
 ```jsx
 import React from 'react'
@@ -111,7 +111,7 @@ class EventDemo extends React.Component {
 export default EventDemo
 ```
 
-* this - 不用 bind ，使用静态方法
+* ✅ this - 不用 bind ，使用静态方法
 
 ```jsx
 import React from 'react'
@@ -172,7 +172,7 @@ class EventDemo extends React.Component {
        event.preventDefault() // 阻止默认行为
        event.stopPropagation() // 阻止冒泡
        console.log('target', event.target) // 触发事件的元素，指向当前元素，即当前元素触发
-       console.log('current target', event.currentTarget) // 绑定事件的元素，指向当前元素，假象！！！
+       console.log('current target', event.currentTarget) // currentTarget 绑定事件的元素，指向当前元素，假象！！！
 
        // ⚠️注意，event 其实是 React 封装的 SyntheticEvent 组合事件，可以看 __proto__.constructor 。
        console.log('event', event) // 不是原生的 Event ，原生的是 MouseEvent
@@ -181,7 +181,7 @@ class EventDemo extends React.Component {
        // 原生 event 如下。其 __proto__.constructor 是 MouseEvent
        console.log('nativeEvent', event.nativeEvent)
        console.log('nativeEvent target', event.nativeEvent.target)  // 触发事件的元素，指向当前元素，即当前元素触发
-       console.log('nativeEvent current target', event.nativeEvent.currentTarget) // 绑定事件的元素，指向 document ！！！
+       console.log('nativeEvent current target', event.nativeEvent.currentTarget) // currentTarget 绑定事件的元素，指向 document ！！！
     }
 }
 
@@ -212,26 +212,38 @@ class EventDemo extends React.Component {
                 }
             ]
         }
+	      // 方法④
+	      this.changeMsg2 = this.changeMsg2.bind(this, '🚗', '👫')
     }
     render() {
         // 传递参数 - 用 bind(this, a, b)
         return <ul>{this.state.list.map((item, index) => {
-            // ✅方法①：传参数
+            // ✅方法①：传参数，箭头函数的this值总是指向组件实例，调用地方非箭头函数，也不会有重复构建函数的性能问题；
             return <li key={item.id} onClick={this.clickHandler5(item.id, item.title)}>
-            {/* 方法①：不传参 */}
+            {/* ✅方法①：不传参 */}
             {/* return <li key={item.id} onClick={this.clickHandler6}> */}
               
-            {/* 方法② */}
-            {/* return <li key={item.id} onClick={(e) => this.clickHandler4(item.id, item.title, e)}> */}
+            {/* 🚫方法②：箭头函数，每次渲染会创建一个不同的函数 */}
+            {/* return <li key={item.id} onClick={(e) => this.clickHandler7(item.id, item.title, e)}> */}
               
             {/* 🚫方法③ */}
             {/* return <li key={item.id} onClick={this.clickHandler4.bind(this, item.id, item.title)}> */}
+              
+            {/* ✅方法④ */}
+            {/* return <li key={item.id} onClick={this.changeMsg2}> */}
                 index {index}; title {item.title}
             </li>
         })}</ul>
     }
   
-    // 传递参数
+  
+  	// 方法②：
+  	clickHandler7(id, title, event) {
+	      console.log(id, title)
+        console.log('event', event)
+    }
+    
+    // 方法③：传递参数
     clickHandler4(id, title, event) {
         console.log(id, title)
         console.log('event', event) // 最后追加一个参数，即可接收 event
@@ -249,7 +261,14 @@ class EventDemo extends React.Component {
     clickHandler6 = (e) => {
       console.log('event', e) 
     }
-}
+    
+    // 方法④：
+    changeMsg2(arg1, arg2) {
+    	console.log(this)
+    	this.setState({
+      	msg: '绑定this并传参的方式2' + arg1 + arg2
+    	})
+		}
 
 export default EventDemo
 ```
@@ -522,8 +541,8 @@ export default TodoListDemo
   
     ```js
     // 不可变值（函数式编程，纯函数） - 数组
-    const list5Copy = this.state.list5.slice()
-    list5Copy.splice(2, 0, 'a') // 中间插入/删除
+    const list5Copy = this.state.list5.slice()		// 先复制数组 
+    list5Copy.splice(2, 0, 'a')										// 再中间插入/删除
     this.setState({
         list1: this.state.list1.concat(100), // 追加
         list2: [...this.state.list2, 100], // 追加
