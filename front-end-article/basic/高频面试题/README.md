@@ -863,9 +863,7 @@ https://www.xiabingbao.com/post/design/observer-eventemitter.html
 
 https://leetcode-cn.com/problems/basic-calculator/
 
-## 39、将 location.search 中键值对，按照键的首字母顺序重新排列，返回新的 url
-
-
+## 39、将 location.search 中键值对，按照键的首字母顺序重排，返回新的 url
 
 
 

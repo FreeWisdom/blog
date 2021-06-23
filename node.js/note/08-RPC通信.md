@@ -31,7 +31,7 @@
 
 * RPC 使用特有服务寻址：
 
-  <img src="https://cdn.nlark.com/yuque/0/2021/jpeg/114317/1623321358565-82b9c586-422a-4d33-a673-473874bf3e1c.jpeg" alt="img" style="zoom:50%;" />
+  <img src="https://cdn.nlark.com/yuque/0/2021/jpeg/114317/1624006688433-cf177eac-07f4-4005-a4ab-47db576622a5.jpeg" alt="img" style="zoom:50%;" />
 
 ### 1.2.2、RPC 和 Ajax 基于不同的通信协议
 
