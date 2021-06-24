@@ -876,3 +876,116 @@ const clickElement = <a href="https://www.pingan8787.com" onClick={handleClick}>
 </body>
 ```
 
+# 8、redux 原理
+
+1. createStore 实现
+
+   ```js
+   const store = createStore(rootReducer, initalStore, middleware);
+   ```
+
+   1. 在 Redux 中，store 一般通过 createStore 来创建。
+   2. `createStore` 接收三个参数，分别是 reducers 函数、初始值 initalStore、中间件 middleware。
+   3. 其中 `createStore` 返回的方法主要有 `subscribe`、`dispatch`、`getState`、`replaceReducer`。
+      1. `getState` 是获取到 store 的方法，可以通过 `store.getState()` 获取到 `store`。
+         * 根据传入的初始值来创建一个对象。利用闭包的特性来保留这个 store，允许通过 getState 来获取到 store。
+      2. `dispatch` 是发送 action 的方法，它接收一个 action 对象，通知 `store` 去执行 reducer 函数。
+         * 将 action 传给 reducer 函数，将执行后的结果设置为新的 store；
+         * 然后执行 listeners 中的方法进行发布；
+      3. `subscribe` 是一个监听方法，可以监听 `store` 的变化，所以可以通过 `subscribe` 将 Redux 和其他框架结合起来。
+         * subscribe：使用一个数组来保存所有监听的方法；
+         * unsubscribe：subscribe 返回一个函数，函数中根据传入的 listener 的 index ，将传入的方法从数组中删除；
+      4. `replaceReducer` 用来异步注入 reducer 的方法，可以传入新的 reducer 来代替当前的 reducer。
+
+2. createStore 关键代码分析
+
+   ```js
+   export default function createStore(reducer, initialState) {
+     var currentReducer = reducer
+     var currentState = initialState
+     var listeners = []
+     var isDispatching = false;
+   
+     // 返回当前的state
+     function getState() {
+       return currentState
+     }
+   
+     // 注册listener，同时返回一个取消事件注册的方法
+     function subscribe(listener) {
+       // 发布订阅模式的 订阅
+       listeners.push(listener)
+       var isSubscribed = true
+   
+       return function unsubscribe() {
+         if (!isSubscribed) {
+            return
+         }
+         isSubscribed = false
+         var index = listeners.indexOf(listener)
+         listeners.splice(index, 1)
+       }
+     }
+     
+     // 通过action该改变state，然后执行subscribe注册的方法
+     function dispatch(action) {
+       try {
+         isDispatching = true
+         currentState = currentReducer(currentState, action)
+       } finally {
+         isDispatching = false
+       }
+       // 发布订阅模式的 发布
+       listeners.slice().forEach(listener => listener())
+       return action
+     }
+   
+     // 替换reducer，修改state变化的逻辑
+     function replaceReducer(nextReducer) {
+       currentReducer = nextReducer
+       dispatch({ type: ActionTypes.INIT })
+     }
+     
+     // 初始化时，执行内部一个dispatch，得到初始state
+     dispatch({ type: ActionTypes.INIT })
+   }
+   ```
+
+3. combineReducers 源码分析
+
+   ```js
+   export default function combineReducers(reducers) {
+     const reducerKeys = Object.keys(reducers)
+     const finalReducers = {}
+     //将合法的reducer提出来
+     for (let i = 0; i < reducerKeys.length; i++) {
+       const key = reducerKeys[i] 
+       if (typeof reducers[key] === 'function') {
+         finalReducers[key] = reducers[key]
+       }
+     }
+     const finalReducerKeys = Object.keys(finalReducers)
+     //返回一个reducer，同样接受两个参数，state和action
+     return function combination(state = {}, action) {
+       let hasChanged = false
+       const nextState = {}
+       for (let i = 0; i < finalReducerKeys.length; i++) {
+         const key = finalReducerKeys[i]
+         const reducer = finalReducers[key]
+         const previousStateForKey = state[key]
+         const nextStateForKey = reducer(previousStateForKey, action)    
+         nextState[key] = nextStateForKey
+         hasChanged = hasChanged || nextStateForKey !== previousStateForKey
+       }
+       return hasChanged ? nextState : state
+     }
+   }
+   ```
+
+4. react-redux / provider
+
+   * Provider原理：
+     * React通过Context属性，可以将属性(props)直接给子孙component，无须通过props层层传递, Provider仅仅起到获得store，然后将其传递给子孙元素而已。
+
+5. react-redux / connect
+

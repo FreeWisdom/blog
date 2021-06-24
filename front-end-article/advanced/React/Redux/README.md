@@ -449,9 +449,9 @@ ReactDOM.render(
 > const initialState = Immutable.Map({})
 > 
 > const store = createStore(
->   reducer,
->   initialState,
->   applyMiddleware(thunk)
+>     reducer,
+>     initialState,
+>     applyMiddleware(thunk)
 > )
 > 
 > export default store
@@ -461,8 +461,8 @@ ReactDOM.render(
 
 > ```javascript
 > const store = createStore(
->   reducer,
->   applyMiddleware(thunk, promise, logger)
+>   	reducer,
+>   	applyMiddleware(thunk, promise, logger)
 > );
 > ```
 
@@ -668,3 +668,6 @@ ReactDOM.render(
   ```
 
 ## 5.2、Redux-saga
+
+# 6、redux实现原理
+

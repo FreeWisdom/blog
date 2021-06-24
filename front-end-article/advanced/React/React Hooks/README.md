@@ -394,8 +394,8 @@ export default App
 
 * useMemo使用总结：
   * react默认会更新所有子组件；
-  * class组件使用SCU和PureComponent做优化；
-  * Hooks中使用useMemo做优化；
+    * class组件使用SCU和PureComponent做优化；
+    * Hooks中使用useMemo做优化；
   * class组件和hooks优化原理相同，都是对props做浅层比较；
 * memo 是缓存组件；
 * useMemo 是缓存组件内的一个值；
