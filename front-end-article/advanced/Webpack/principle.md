@@ -279,6 +279,11 @@ Webpack 的运行流程是一个串行的过程，从启动到结束会依次执
 
 ## 3.4、webpack的热更新是如何做到的？说明其原理？
 
+1. watch 示例中体现的，对本地源代码文件内容变更的监控。
+2. instant reload 示例中体现的，浏览器网页端与本地服务器端的 Websocket 通信。
+
+1. hmr 示例中体现的，也即是最核心的，模块解析与替换功能。
+
 webpack的热更新又称热替换（Hot Module Replacement），缩写为HMR。 这个机制可以做到不用刷新浏览器而将新变更的模块替换掉旧的模块。
 
 <img class="picture" src="https://cdn.nlark.com/yuque/0/2021/jpeg/114317/1624461072423-assets/web-upload/a6d7e2f9-26c6-48af-b9ed-88591c79f09d.jpeg" alt="" style="width: 805px; height: 837px;">
