@@ -7,6 +7,15 @@ const templateContext = vm.createContext({
     include: function (name, data) {
         const template = templateCache[name] || createTemplate(name)
         return template(data);
+    },
+    XSSTranslation: function (str) {
+        if(!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;')
     }
 });
 

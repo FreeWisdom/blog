@@ -17,7 +17,6 @@ app.use(async (ctx) => {
 
     // 需要在浏览器访问 http://localhost:3000/detail/?columnid=1 ，提供 columnid
     const result = await new Promise((resolve, reject) => {
-
         rpcClient.write({
             columnid: ctx.query.columnid
         }, function (err, data) {

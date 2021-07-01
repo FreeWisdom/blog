@@ -19,7 +19,7 @@ server
 
         // 直接返回假数据
         response.end({
-            column: columnData[0],
+            column: columnData[3],
             recommendColumns: [columnData[1], columnData[2]]
         });
     })

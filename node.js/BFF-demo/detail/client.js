@@ -16,8 +16,8 @@ const easySock = new EasySock({
 // 请求包二进制编码
 easySock.encode = function(data, seq) {
     const body = schemas.ColumnRequest.encode(data);
-
     const head = Buffer.alloc(8);
+
     head.writeInt32BE(seq);
     head.writeInt32BE(body.length, 4);
 
@@ -40,6 +40,7 @@ easySock.isReceiveComplete = function(buffer) {
     if (buffer.length < 8) {
         return 0
     }
+
     const bodyLength = buffer.readInt32BE(4);
     if (buffer.length >= bodyLength + 8) {
         return bodyLength + 8

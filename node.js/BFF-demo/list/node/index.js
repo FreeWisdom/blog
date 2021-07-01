@@ -12,7 +12,7 @@ require('babel-register')({
 const App = require('./app.jsx')
 
 // 此处是 es6 模版引擎，因为 react 模版只提供组件级别的渲染，为了对整个页面的渲染，需要模版引擎配合 react 完成；
-const template = require('./template')(__dirname + '/index.htm')
+const template = require('./template')(__dirname + '/index.html')
 
 app.use(mount('/static', static(__dirname + '/source')))
 
