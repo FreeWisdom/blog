@@ -471,10 +471,11 @@ ReactDOM.render(
 ## 5.2、Redux-thunk
 
 - Redux-thunk简介
+  - 拦截并包裹 dispatch ；
   - 组件中使用dispatch派发action；
   - 使用thunk前，派发的 action 是一个扁平的对象；
   - 使用thunk后，派发的 action 是一个函数（中间件一旦挂上，dispatch就会被中间件拦截）；
-    - 该函数返回（之前的）扁平action对象，函数的参数为(dispatch(action))（该参数是原本往reducer中派发扁平对象的dispatch）；
+    - 该函数返回（之前的）扁平action对象，函数的参数为(dispatch, action, asyncState)（该参数是原本往reducer中派发扁平对象的dispatch）；
     - 函数中返回的**扁平对象就是可以加入异步ajax请求得到的数据**；
 
 * **Redux-thunk 相较不使用中间件的 react-redux 有哪些优点？**
@@ -488,10 +489,12 @@ ReactDOM.render(
   ```jsx
   function createThunkMiddleware(extraArgument) {
     return ({ dispatch, getState }) => next => action => {
+      // 如果是函数，则函数中返回 dispatch ，获取到数据后，重新发送 dispatch(action) ；
       if (typeof action === 'function') {
         return action(dispatch, getState, extraArgument);
       }
-  
+  		
+      // 如果不是函数，则直接发送 dispatch(action) ；
       return next(action);
     };
   }
@@ -669,5 +672,41 @@ ReactDOM.render(
 
 ## 5.2、Redux-saga
 
-# 6、redux实现原理
+# 6、dva基本用法
+
+Model 对象的属性
+
+- namespace: 当前 Model 的名称。整个应用的 State，由多个小的 Model 的 State 以 namespace 为 key 合成
+
+- state: 该 Model 当前的状态。数据保存在这里，直接决定了视图层的输出
+
+- reducers: Action 处理器，处理同步动作，用来算出最新的 State
+
+- effects：Action 处理器，处理异步动作，基于基于 Redux-saga 实现，使用了 ES6 的 Generator 功能，让异步的流程更易于读取，写入和测试。
+
+  ```js
+  function *addAfter1Second(action, { put, call }) {
+    yield call(delay, 1000);
+    yield put({ type: 'add' });
+  }
+  ```
+
+  - call：执行异步函数
+  - put：发出一个 Action，类似于 dispatch
+
+```js
+{
+  namespace: 'count',
+  state: 0,
+  reducers: {
+    add(state) { return state + 1 },
+  },
+  effects: {
+    *addAfter1Second(action, { call, put }) {
+      yield call(delay, 1000);
+      yield put({ type: 'add' });
+    },
+  },
+}
+```
 

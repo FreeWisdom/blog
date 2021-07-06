@@ -25,6 +25,8 @@ easySock.encode = function(data, seq) {
 }
 
 // 返回包二进制解码成结构化数据
+// 每个请求包都带上序号，返回包也带有请求时的序号；
+// 客户端根据序号可以把请求包和返回包一一对应；
 easySock.decode = function(buffer) {
     const seq = buffer.readInt32BE();
     const body = schemas.ColumnResponse.decode(buffer.slice(8));
@@ -36,6 +38,8 @@ easySock.decode = function(buffer) {
 }
 
 // 判断包是否接受完毕，处理粘包&缺包情况
+// 由于 TCP 链接底层优化时，会自动将发送的包拼接成一个大包，一次性发送，即为 TCP 链接的 “粘包” 机制；
+// 需要有标记包长的字段；
 easySock.isReceiveComplete = function(buffer) {
     if (buffer.length < 8) {
         return 0
@@ -44,7 +48,7 @@ easySock.isReceiveComplete = function(buffer) {
     const bodyLength = buffer.readInt32BE(4);
     if (buffer.length >= bodyLength + 8) {
         return bodyLength + 8
-        
+
     } else {
         return 0
     }

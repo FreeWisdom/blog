@@ -33,7 +33,8 @@
     * 接收 tag字符串+props对象+child数组/text 三个参数；
     * 返回表示 dom 的 vnode ；
   * patch 函数
-    * 接受 oldVNode+newVNode 两个参数进行比较，并根据差异修改真实 dom ；
+    * 接受 oldVNode+newVNode 两个参数进行比较；
+    * 并根据差异，使用 `createElm(vnode, insertVnodeQue)` 映射到真实 dom ；
 
 * **patch(oldvnode|el, newvnode)** 函数内部的流程：
 
@@ -45,7 +46,6 @@
   4. ✅ 收集插入节点，调用插入钩子，插入渲染；
 
 * **patchVnode(oldvnode, newvnode, insertvnodeque)** 函数主要的逻辑如下 ：
-
   * 新 vnode.children 非文本节点的情况
     * ✅ 新旧 children 都存在，调用 updateChildren() 根据 oldCh,ch 对新旧 child 比较，根据 elm 将 ch 插入 vnode ；
     * ✅ 新 children 有，旧 children 无（旧 text 有），setTextContent() 清空 text，addVnodes() 添加 children；
@@ -54,7 +54,7 @@
   * 新 vnode.children 是文本节点的情况 
     * ✅ 旧 children 存在，removeVnodes() 移除旧 children；
     * ✅ setTextContent() 设置新 text；
-
+  
 * **updateChildren(parentElm, oldvnode, newvnode, insertedVnodeQueue)** 函数主要的逻辑如下：
   1. ✅ 优先处理特殊场景，先用 sameVnode 对比两端，即：
 

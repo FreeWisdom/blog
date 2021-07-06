@@ -595,7 +595,7 @@ const clickElement = <a href="https://www.pingan8787.com" onClick={handleClick}>
   * React 中注册的事件（及其调用的函数）；
 
 * React 不可以“管理”入口的函数（即，超出合成事件机制），setState 不可以命中 batchUpdate 机制，如：
-  * setTimeout & setInterval 等（及其调用的函数）；
+  * setTimeout & setInterval 等（及其调用的函数）；     
   * 自定义的 DOM 事件（及其调用的函数）；
 
 ## 5.3、什么是 transaction（事务）机制？
@@ -628,7 +628,7 @@ const clickElement = <a href="https://www.pingan8787.com" onClick={handleClick}>
 
 * Transaction 是什么？
 
-  * Transaction 对一个函数进行包装，让 React 在在一个函数运行前后执行特定逻辑，从而完成整个 Batch Update 流程的控制。
+  * Transaction 对一个setState的函数进行包装，让 React 在在函数运行前后执行特定逻辑，从而完成整个 Batch Update 流程的控制。
 
   * Transaction 源码，伪代码如下：
 
@@ -780,7 +780,7 @@ const clickElement = <a href="https://www.pingan8787.com" onClick={handleClick}>
   * 若浏览器 dom 需要渲染，则暂停 js 计算；
   * 若浏览器 dom 不需渲染，则继续 js 计算；
 
-# 7、前端路由（同vue）
+# 7、♨️前端路由（同vue）
 
 ## 7.1、hash
 
