@@ -150,7 +150,7 @@ export default ClickCounter
   export default ClickCounter
   ```
 
-  3. ♨️ **同时模拟 componentDidUpdate & componentDidUpdate** - **useEffect 传第二个参数 [a,b]**
+  3. ♨️ **同时模拟 componentDidMount & componentDidUpdate** - **useEffect 传第二个参数 [a,b]**
      * 效果同 1；
 
   ```jsx
@@ -390,15 +390,43 @@ function App() {
 export default App
 ```
 
-# 7、useMemo 如何做♨️性能优化？
+# 7、（搭配memo缓存组件）useMemo 如何做♨️性能优化？
 
 * useMemo使用总结：
   * react默认会更新所有子组件；
     * class组件使用SCU和PureComponent做优化；
     * Hooks中使用useMemo做优化；
+    
   * class组件和hooks优化原理相同，都是对props做浅层比较；
+
+  * useMemo 优化当前组件
+
+    * 优化当前组件主要是通过 memoize 来将一些复杂的计算逻辑进行缓存；
+
+      ```js
+      const num = useMemo(() => {
+        let num = 0;
+        // 这里使用 count 针对 num 做一些很复杂的计算，当 count 没改变的时候，组件重新渲染就会直接返回之前缓存的值。
+        return num;
+      }, [count]);
+      
+      return <div>{num}</div>
+      ```
+
+  * 优化子组件
+
+    * 父组件中把数据传给子组件，监听数据中的某一项如果改变就渲染子组件
+
 * memo 是缓存组件；
-* useMemo 是缓存组件内的一个值；
+
+* useMemo 是缓存组件内的一个值，函数返回的一个数据；
+
+  * 若 props 值类型，可以不使用 useMemo ，也会进行浅比较，实现优化；
+  * 若 props 是引用类型，必须使用 useMemo，才能实现优化；
+
+* 【例如】
+
+  * 把一些昂贵的计算（很多循环中的乘除等）逻辑放到 useMemo 中，只有当依赖值发生改变的时候才去更新。
 
 ```jsx
 import React, { useState, memo, useMemo } from 'react'
@@ -446,12 +474,19 @@ function App() {
 export default App
 ```
 
-# 8、useCallback 如何做♨️性能优化？
+# 8、（搭配memo缓存组件）useCallback 如何做♨️性能优化？
 
 * react hooks常见优化策略：
-  * useMemo 缓存数据；
+  * useMemo 缓存函数返回的数据；
   * useCallback 缓存函数；
+  * useCallback 是来优化子组件的，防止子组件的重复渲染。
 * ♨️若子组件调用了存在父组件的 callback ，而父组件不用 useCallback 包裹 callback 进行函数缓存，子组件 memo 缓存就会失效；
+* 【例如】
+  * 有一个函数中有网络请求，id不变请求的内容不变，你不希望每次组件渲染都重新请求一次；
+    * 那就用 父组件useCallback + 子组件memo 。
+  * 父组件函数中 setState 引起子组件渲染，若 state 不变，子组件不渲染；
+    * 那就用 父组件useCallback + 子组件memo 。
+* ♨️不要把所有的方法都包上 useCallback，useCallback 是要配合子组件的 **`shouldComponentUpdate`** 或者 **`React.memo`** 一起来使用的，否则就是反向优化，多了 useCallback 中的比较逻辑。
 
 ```jsx
 import React, { useState, memo, useMemo, useCallback } from 'react'
@@ -698,7 +733,7 @@ export default App
 
 * 依赖为 [] 时，模拟 DidMount 生命周期，re-render 不会重新执行，故 effect 函数也不会重新执行；
 
-* 【解决方案】没有依赖或依赖为 count 时，模拟 DidUpdate 生命周期，re-render 会重新执行，故 effect 函数也会重新执行；
+* 【解决方案】没有第二个参数或依赖为 count 时，模拟 DidUpdate 生命周期，re-render 会重新执行，故 effect 函数也会重新执行；
 * 【解决方案】在 useEffect 外，利用 useRef 创建变量（保持除 hook 外的纯函数），可在 useEffect 内使该变量自身 ++ ；
 
 ```js
@@ -730,6 +765,8 @@ export default UseEffectChangeState
 ```
 
 ## 14.3、useEffect 可能出现死循环
+
+> useEffect 不能对引用类型进行依赖，引用类型的地址不同，会一遍遍触发更新，导致出现死循环；
 
 * useEffect 中对依赖 [x, y] 判断用方法 Object.is(a,b) 去判断；
 

@@ -145,7 +145,7 @@ export default App
 * 用 context 正好，常用API如下；
   * const ThemeContext = **React.createContext**('light');
   * <**ThemeContext.Provider** value={this.state.theme}><ThemeButton /><ThemeLink/></ThemContext.Provider>
-  * class 组件：**ThemeButton.contextType** = ThemeContext;   const theme = **this.context**;
+  * class 组件：`static.contextType = ThemeContext;` && `const theme = this.context;` 
   * 函数组件：<**ThemeContext.Consumer**>{value => <p>{value}</p>>}</ThemeContext.Consumer>
 
 ```jsx
@@ -165,10 +165,9 @@ function ThemeLink (props) {
 
 // 底层组件 - class 组件
 class ThemedButton extends React.Component {
-    // 指定 contextType 读取当前的 theme context。
-    static contextType = ThemeContext           // 也可以用 ThemedButton.contextType = ThemeContext
+    static contextType = ThemeContext           // 用static来声明contextType，在运行时就可以获取到一个新的属性。
     render() {
-        const theme = this.context              // React 会往上找到最近的 theme Provider，然后使用它的值。
+        const theme = this.context              // 在运行时就可以获取到一个新的属性，然后使用它的值。
         return <div>
             <p>button's theme is {theme}</p>
         </div>

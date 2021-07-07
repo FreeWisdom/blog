@@ -51,7 +51,7 @@ if (cluster.isMaster) {
     }
 
 } else {
-    // ①--监听 uncaughtException 事件，node.js 不会因为出现 uncaughtException 错误而退出进程；
+    // ①--监听 uncaughtException 事件，检控错误上报，退出进程；
     process.on('uncaughtException', function (err) {
         // 这里可以做写日志的操作
         console.log(err);
