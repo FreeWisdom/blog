@@ -535,7 +535,81 @@ function App() {
 export default App
 ```
 
-# 9、自定义 Hook 实现 useAxios
+# 9、useImperativeHandle 透传 Ref
+
+通过 useImperativeHandle 用于让父组件获取子组件内的索引
+
+```jsx
+import React, { useRef, useEffect, useImperativeHandle, forwardRef } from "react";
+function ChildInputComponent(props, ref) {
+  const inputRef = useRef(null);
+  useImperativeHandle(ref, () => inputRef.current);
+  return <input type="text" name="child input" ref={inputRef} />;
+}
+const ChildInput = forwardRef(ChildInputComponent);
+function App() {
+  const inputRef = useRef(null);
+  useEffect(() => {
+    inputRef.current.focus();
+  }, []);
+  return (
+    <div>
+      <ChildInput ref={inputRef} />
+    </div>
+  );
+}
+```
+
+通过这种方式，App 组件可以获得子组件的 input 的 DOM 节点。
+
+# 10、useLayoutEffect 同步执行副作用
+
+大部分情况下，使用 useEffect 就可以帮我们处理组件的副作用，但是如果想要同步调用一些副作用，比如对 DOM 的操作，就需要使用 useLayoutEffect，useLayoutEffect 中的副作用会在 DOM 更新之后同步执行。
+
+```jsx
+function App() {
+  const [width, setWidth] = useState(0);
+  useLayoutEffect(() => {
+    const title = document.querySelector("#title");
+    const titleWidth = title.getBoundingClientRect().width;
+    console.log("useLayoutEffect");
+    if (width !== titleWidth) {
+      setWidth(titleWidth);
+    }
+  });
+  useEffect(() => {
+    console.log("useEffect");
+  });
+  return (
+    <div>
+      <h1 id="title">hello</h1>
+      <h2>{width}</h2>
+    </div>
+  );
+}
+```
+
+* useLayoutEffect 会在 render，DOM 更新之后同步触发函数，会优于 useEffect 异步触发函数。
+
+* useEffect和useLayoutEffect有什么区别？
+  * 简单来说就是调用时机不同；
+  * `useLayoutEffect`和原来`componentDidMount`&`componentDidUpdate`一致，在react完成DOM更新后马上**同步**调用的代码，会阻塞页面渲染。
+  * `useEffect`是会在整个页面渲染完才会调用的代码。
+
+官方建议优先使用`useEffect`
+
+> However, **we recommend starting with useEffect first** and only trying useLayoutEffect if that causes a problem.
+
+在实际使用时如果想避免**页面抖动**（在`useEffect`里修改DOM很有可能出现）的话，可以把需要操作DOM的代码放在`useLayoutEffect`里。关于使用`useEffect`导致页面抖动。
+
+不过`useLayoutEffect`在服务端渲染时会出现一个warning，要消除的话得用`useEffect`代替或者推迟渲染时机。[例如](https://www.jianshu.com/p/412c874c5add)
+
+# 11、自定义 Hook 实现 useAxios
+
+> 实际项目中，一般要把以下几部分拆成hooks拆出来：
+>
+> * 获取数据的部分写成 hook；
+> * 子功能
 
 * 自定义 hook
   * 本质是一个以 use 开头的函数；
@@ -595,7 +669,7 @@ export default useAxios
 // https://github.com/umijs/hooks
 ```
 
-# 10、Hooks 使用规范 
+# 12、Hooks 使用规范 
 
 1. 命名规范 useXXX；
 2. 只能用于React函数组件和自定义Hook中，其他地方不可以；
@@ -603,14 +677,14 @@ export default useAxios
 3. 只能用于顶层代码，不能在循环、判断中使用Hooks；
    * eslint插件 eslint-plugin-react-hooks 可以将检查该规则
 
-# 11、为何Hooks要依赖于调用顺序？
+# 13、为何Hooks要依赖于调用顺序？
 
 * Hooks 严重依赖于调用顺序；
 * 无论是 render 还是 re-render，Hooks 调用顺序必须一致；
 * 如果 Hooks 出现在循环、判断里，则无法保证顺序一致；
 * 有可能会出现变量读取 hook 的返回值时，会错乱🤪；
 
-# 12、class组件逻辑复用存在问题？
+# 14、class组件逻辑复用存在问题？
 
 * Mixins
   * 变量作用域来源不清；
@@ -623,7 +697,7 @@ export default useAxios
   * 学习成本高，不易理解；
   * 只能传递纯函数，而默认情况下纯函数功能有限（复杂功能需要借助hooks实现）；
 
-# 13、Hooks 做组件逻辑复用好处？
+# 15、Hooks 做组件逻辑复用好处？
 
 * 组件逻辑复用完全符合Hooks原有规则，没有其他要求，易理解记忆；
 * 变量作用域和明确；
@@ -673,9 +747,9 @@ function App() {
 export default App
 ```
 
-# 14、React Hooks 有哪些坑？
+# 16、React Hooks 有哪些坑？
 
-## 14.1、useState 初始化值，只有第一次有效
+## 16.1、useState 初始化值，只有第一次有效
 
 * render: 
   * 初始化 state；
@@ -729,7 +803,7 @@ function App() {
 export default App
 ```
 
-## 14.2、useEffect 内部不能修改 state
+## 16.2、useEffect 内部不能修改 state
 
 * 依赖为 [] 时，模拟 DidMount 生命周期，re-render 不会重新执行，故 effect 函数也不会重新执行；
 
@@ -764,7 +838,7 @@ function UseEffectChangeState() {
 export default UseEffectChangeState
 ```
 
-## 14.3、useEffect 可能出现死循环
+## 16.3、useEffect 可能出现死循环
 
 > useEffect 不能对引用类型进行依赖，引用类型的地址不同，会一遍遍触发更新，导致出现死循环；
 
@@ -804,4 +878,122 @@ export default UseEffectChangeState
     export default useAxios
     ```
 
-    
+# 17、react-redux in hooks
+
+## 17.1、useSelector()
+
+* ### 作用
+
+  * 从redux的store对象中提取数据(state)，类似于之前的connect的mapStateToProps参数的概念。
+    * 实现状态跟踪：
+      * 并且`useSelector`会订阅store，当action被dispatched的时候，会运行selector。
+    * 实现状态缓存：
+      * 如果 `useSelector` 中的函数的参数不改变，则缓存，若改变则重新更换数据；
+      * equalityFn 等效于 shouldComponentUpdate
+
+* ### 正确使用
+
+  * 首先知道，使用了 useSelector 的组件就会订阅 store（useSelector 是 connect 函数的替代品）。useSelector 第二个参数相当于 shouldComponentUpdate。
+  * 使用了 useSelector 得到的返回值需要通过调用 dispatch 来更新。(参见 useDispatch)
+  * 然后，useSelector 不会避免 selector 函数重复执行。需要使用 reselect 库对 selector 函数做优化。
+
+* ### selector和mapStateToProps的一些差异
+
+  * selector会返回任何值作为结果，并不仅仅是对象。然后这个selector返回的结果，就会作为`useSelector`的返回结果。
+  * 当action被dispatched的时候，`useSelector()`将对前一个selector结果值和当前结果值进行浅比较。**如果不同，那么就会被re-render。** 反之亦然。
+  * selector不会接收ownProps参数，但是，可以通过闭包(下面有示例)或使用柯里化selector来使用props。
+  * 使用记忆(memoizing) selector时必须格外小心(下面有示例)。
+  * `useSelector()`默认使用`===`(严格相等)进行相等性检查，而不是浅相等(`==`)。
+  * 优化：
+    * selector的值改变会造成re-render。但是这个与`connect`有些不同，`useSelector()`不会阻止组件由于其父级re-render而re-render，即使组件的props没有更改。如果需要进一步的性能优化，可以在`React.memo()`中包装函数组件
+
+* ### 代码
+
+  ```js
+  import React from 'react'
+  import { useSelector } from 'react-redux'
+  
+  export const CounterComponent = () => {
+    const counter = useSelector(state => state.counter)
+    return <div>{counter}</div>
+  }
+  ```
+
+## 17.2、useStore()
+
+* ### 作用
+
+  * 返回redux `<Provider>`组件的`store`对象的引用
+
+* ### 使用
+
+  ```jsx
+  import React from 'react'
+  import { useStore } from 'react-redux'
+   
+  export const CounterComponent = ({ value }) => {
+    const store = useStore()
+   
+    // 仅仅是个例子! 不要在你的应用中这样做.
+    // ⚠️ 如果store中的state改变，这个将不会自动更新
+    return <div>{store.getState()}</div>
+  }
+  ```
+
+## 17.3、useDispatch()
+
+* ### 作用
+
+  * 返回Redux store中对`dispatch`函数的引用。
+
+* ### 使用
+
+  * 当使用`dispatch`将回调传递给子组件时，建议使用`useCallback`对其进行记忆，否则子组件可能由于引用的更改进行不必要地呈现。
+
+* ### 代码
+
+  ```js
+  import React from 'react'
+  import { useDispatch } from 'react-redux'
+  
+  export const CounterComponent = ({ value }) => {
+    const dispatch = useDispatch()
+  
+    return (
+      <div>
+        <span>{value}</span>
+        <button onClick={() => dispatch({ type: 'increment-counter' })}>
+          Increment counter
+        </button>
+      </div>
+    )
+  }
+  ```
+
+  将回调使用dispatch传递给子组件时，建议使用来进行回调useCallback，因为否则，由于更改了引用，子组件可能会不必要地呈现。
+
+  ```js
+  import React, { useCallback } from 'react'
+  import { useDispatch } from 'react-redux'
+  
+  export const CounterComponent = ({ value }) => {
+    const dispatch = useDispatch()
+    const incrementCounter = useCallback(
+      () => dispatch({ type: 'increment-counter' }),
+      [dispatch]
+    )
+  
+    return (
+      <div>
+        <span>{value}</span>
+        <MyIncrementButton onIncrement={incrementCounter} />
+      </div>
+    )
+  }
+  
+  export const MyIncrementButton = React.memo(({ onIncrement }) => (
+    <button onClick={onIncrement}>Increment counter</button>
+  ))
+  ```
+
+  
