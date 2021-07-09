@@ -67,7 +67,7 @@ output: {
   * 若产出第三方 lib 一定要使用 babel-runtime；
   * 若仅产出自己使用的系统，不供第三方使用，可以使用 babel-polifill；
 
-# 8、webpack 如何实现懒加载？
+# 8、webpack 如何实现懒加载？♨️HOC的使用
 
 * 其实就是 import() 的语法：
 
@@ -82,8 +82,61 @@ output: {
 * 与 react 和 vue 的异步组件、路由相似：
 
   1. react 中使用 `const asyncComponent = React.lazy(() => import('asyncComponent'))` 引入异步组件；
-
   2. react 中使用 `<React.Suspense fallback={ <div>加载中...</div> }>` 处理加载前的等待效果；
+  
+* ♨️react-router路由懒加载
+
+  1. 首先，使用 `() => import("./xxx" /* webpackchunkname */)` 告诉 webpack 如何划分 chunk ；
+
+     * 将 `import Main from "@/view/main"` 替换为 `() => import("@/view/main" /* webpackChunkName:"user" */)` ;
+
+     * 使用这个方式引入模块之后，再次打开项目，可以在谷歌浏览器的NetWork里面看到有个user.chunk.js被下载了，这里chunk就是webpack打出来的包的后缀名，user是我们引入模块的时候使用魔法注释 `/* webpackChunkName:"user" */` 指定的名字。
+
+  2. 其次，由于 import 进来的只是个 Promise 对象，需要将 Promise 对象 await 之后的值，以 React 组件方式返回，返回后付值给所需变量；
+
+     * 这时候就需要我们手写一个 HOC 来解决这个问题（⚠️react中使用 lazy➕suspense 实现⚠️）。
+
+       * 函数1  包裹一个  异步返回组件的箭头函数2；
+       * 在  函数1  中调用  箭头函数2自执行，得到 promise 对象；
+       * await 处理 promise 对象得到 react 组件；
+       * 返回出去，在第1步的 webpack 配置中得到该组件；
+
+       ```typescript
+       // src/components/async-module-loader/index.tsx
+       import React from 'react'
+       
+       export interface AyncModuleLoaderState {
+           asyncComponent: any
+       }
+       export default function AyncModuleLoader(importComponent: any) {
+           return class AsyncComponent extends React.Component<unknown, AyncModuleLoaderState> {
+               constructor(props: unknown) {
+                   super(props);
+                   this.state = {
+                       asyncComponent: null
+                   };
+               }
+               async componentDidMount() {
+                   if (this.state.asyncComponent) {
+                       return;
+                   }
+                   const { default: component } = await importComponent();
+                   this.setState({
+                       asyncComponent: component
+                   });
+               }
+               render() {
+                   const {asyncComponent:Component} = this.state
+                   return Component ? <Component {...this.props} /> : null;
+               }
+           }
+       }
+       
+       // 使用：
+       // const model = {
+       //		Main: AsyncModuleLoader(() => import("@/view/main" /* webpackChunkName:"user" */))
+       // }
+       ```
 
 # 9、为何 proxy 不能被 polyfill？
 
@@ -194,4 +247,10 @@ output: {
 3. 只有 ES6 Module 的静态引用，才能有 webpack 的 `production` 环境下编译时的静态代码分析；
 
 4. 只有 ES6 Module 的编译时引入，才能根据上方静态代码分析的判断，做到按需引入，从而实现 Tree-Shaking ；
+
+# 16、filename & chunkFilename
+
+* `filename` 指**列在** `entry` 中，打包后输出的文件的名称。
+
+* `chunkFilename` 指**未列在** `entry` 中，却又需要被打包出来的文件的名称。
 
