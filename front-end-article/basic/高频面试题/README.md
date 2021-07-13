@@ -548,11 +548,51 @@ const a = [1, 2, 3];a instanceof Array;		// true
 ## 23、✍️🈳️手写ajax（普通+promise）
 
 ```js
-// 普通function ajax(url, successFn) {  const xhr = new XHMHttpRequest();  xhr.open("GET", url, true);	xhr.onreadystatechange = function () {    if(xhr.readyState === 4) {      if(xhr.status === 200) {        successFn(xhr.responseText);      }    }  }  xhr.send(null);}
+// 普通
+function ajax(url, successFn) {  
+  const xhr = new XHMHttpRequest();  
+  xhr.open("GET", url, true);	
+  xhr.onreadystatechange = function () {    
+    if(xhr.readyState === 4) {      
+      if(xhr.status === 200) {        
+        successFn(xhr.responseText);      
+      }    
+    }  
+  }  
+  xhr.send(null);
+}
 ```
 
 ```js
-// promise版function ajax(url) {  const p = new Promise((resolve, reject) => {    const xhr = new XMLHttpRequest();    xhr.open("GET", url, true);    xhr.onreadystatechange = function () {      if(xhr.readystate === 4) {        if(xhr.status === 200) {          resolve(          	JSON.parse(xhr.responseText);          )        } else if(xhr === 404) {          reject(          	new Error("404 not found");          )        }      }    }    xhr.send(null);  })  return p;};const url = '/xxx/xxx.json';ajax(url)	.then(res => {  	console.log(res);	})	.catch(err => {  	console.error(err);	})
+// promise版
+function ajax(url) {  
+  const p = new Promise((resolve, reject) => {    
+    const xhr = new XMLHttpRequest();    
+    xhr.open("GET", url, true);    
+    xhr.onreadystatechange = function () {      
+      if(xhr.readystate === 4) {        
+        if(xhr.status === 200) {          
+          resolve(          	
+            JSON.parse(xhr.responseText);          
+          )        
+        } else if(xhr === 404) {          
+          reject(          	
+            new Error("404 not found");          
+          )        
+        }      
+      }    
+    }    
+    xhr.send(null);  
+  })  
+  return p;
+};
+
+const url = '/xxx/xxx.json';
+ajax(url).then(res => {  	
+  console.log(res);	
+}).catch(err => {  	
+  console.error(err);	
+})
 ```
 
 ## 24、请描述event loop的机制
@@ -808,7 +848,7 @@ function deepClone(obj = {}) {
     }
   }
   return res;
-
+}
 ```
 
 ## 34、介绍 RAF request animation frame
