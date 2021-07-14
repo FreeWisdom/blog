@@ -1,131 +1,132 @@
 # 1、React 组件如何通讯？
 
-* 父子组件 props
+1. 父子组件 props
 
-  ```js
-  const Child = ({ name }) => {
-      <div>{name}</div>
-  }
-  
-  class Parent extends React.Component {
-      constructor(props) {
-          super(props)
-          this.state = {
-              name: 'zach'
-          }
-      }
-      render() {
-          return (
-              <Child name={this.state.name} />
-          )
-      }
-  }
-  ```
+```js
+const Child = ({ name }) => {
+    <div>{name}</div>
+}
 
-* 父子组件 ref
-
-  ```js
-  class Modal extends React.Component {
-    show = () => {// do something to show the modal}
-    hide = () => {// do something to hide the modal}
+class Parent extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            name: 'zach'
+        }
+    }
     render() {
-      return <div>I'm a modal</div>
+        return (
+            <Child name={this.state.name} />
+        )
+    }
+}
+```
+
+2. 父子组件 ref
+   * 父组件中调用子组件的方法；
+   * 达到控制子组件的效果；
+
+```jsx
+class Modal extends React.Component {
+  show = () => {// do something to show the modal}
+  hide = () => {// do something to hide the modal}
+  render() {
+    return <div>I'm a modal</div>
+  }
+}
+
+class Parent extends React.Component {
+  componentDidMount() {
+    if(/* some condition */) {
+        this.modal.show()		// 父组件操作子组件方法
     }
   }
-  
-  class Parent extends React.Component {
+  render() {
+    return (
+      <Modal
+        ref={el => {
+          this.modal = el
+        }}
+      />
+    )
+  }
+}
+```
+
+3. 子父组件 自定义事件
+   * 父组件的方法传递给子组件调用
+
+```jsx
+const Child = ({ getName }) => {
+    <div onClick={() => getName('thales')}>Click Me</div>
+}
+
+class Parent extends React.Component {
+    getName = (data) => {
+        console.log("Parent received value from child: " + data)
+    }
+    render() {
+        return (
+            <Child getName={this.getName} />
+        )
+    }
+}
+```
+
+4. 兄弟组件 公共父组件
+5. 兄弟组件 context
+6. 不相关组件 观察者模式
+
+```js
+class EventBus {
+    constructor() {
+        this.bus = document.createElement('fakeelement');
+    }
+
+    addEventListener(event, callback) {
+        this.bus.addEventListener(event, callback);
+    }
+
+    removeEventListener(event, callback) {
+        this.bus.removeEventListener(event, callback);
+    }
+
+    dispatchEvent(event, detail = {}){
+        this.bus.dispatchEvent(
+          // javascript提供了现成的api来发送自定义事件: CustomEvent，
+          new CustomEvent(event, { detail })
+        );
+    }
+}
+
+export default new EventBus;
+```
+
+```js
+import EventBus from './EventBus'
+class ComponentA extends React.Component {
     componentDidMount() {
-      if(/* some condition */) {
-          this.modal.show()		// 父组件操作子组件方法
-      }
+        EventBus.addEventListener('myEvent', this.handleEvent)
+    }
+    componentWillUnmount() {
+        EventBus.removeEventListener('myEvent', this.handleEvent)
+    }
+    handleEvent = (e) => {
+        console.log(e.detail.log)  //i'm zach
+    }
+}
+
+class ComponentB extends React.Component {
+    sendEvent = () => {
+        EventBus.dispatchEvent('myEvent', {log: "i'm zach"}))
     }
     render() {
-      return (
-        <Modal
-          ref={el => {
-            this.modal = el
-          }}
-        />
-      )
+        return <button onClick={this.sendEvent}>Send</button>
     }
-  }
-  ```
+}
+```
 
-* 子父组件 自定义事件
-
-  ```js
-  const Child = ({ getName }) => {
-      <div onClick={() => getName('thales')}>Click Me</div>
-  }
-  
-  class Parent extends React.Component {
-      getName = (data) => {
-          console.log("Parent received value from child: " + data)
-      }
-      render() {
-          return (
-              <Child getName={this.getName} />
-          )
-      }
-  }
-  ```
-
-* 兄弟组件 公共父组件
-
-* 兄弟组件 context
-
-* 不相关组件 观察者模式
-
-  ```js
-  class EventBus {
-      constructor() {
-          this.bus = document.createElement('fakeelement');
-      }
-  
-      addEventListener(event, callback) {
-          this.bus.addEventListener(event, callback);
-      }
-  
-      removeEventListener(event, callback) {
-          this.bus.removeEventListener(event, callback);
-      }
-  
-      dispatchEvent(event, detail = {}){
-          this.bus.dispatchEvent(
-            // javascript提供了现成的api来发送自定义事件: CustomEvent，
-            new CustomEvent(event, { detail })
-          );
-      }
-  }
-  
-  export default new EventBus;
-  ```
-
-  ```js
-  import EventBus from './EventBus'
-  class ComponentA extends React.Component {
-      componentDidMount() {
-          EventBus.addEventListener('myEvent', this.handleEvent)
-      }
-      componentWillUnmount() {
-          EventBus.removeEventListener('myEvent', this.handleEvent)
-      }
-      handleEvent = (e) => {
-          console.log(e.detail.log)  //i'm zach
-      }
-  }
-  
-  class ComponentB extends React.Component {
-      sendEvent = () => {
-          EventBus.dispatchEvent('myEvent', {log: "i'm zach"}))
-      }
-      render() {
-          return <button onClick={this.sendEvent}>Send</button>
-      }
-  }
-  ```
-
-* 所有组件 redux
+7. 所有组件 redux
 
 # 2、JSX 本质是什么？
 

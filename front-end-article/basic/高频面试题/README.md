@@ -335,25 +335,77 @@ console.log(res)		// [10, NaN, NaN]
 })
 ```
 
-## 11、✍️🈳函数 call / apply / bind 的区别？
-
-* call /apply 区别在于第二个参数：
+## 11、✍️函数 call / apply / bind 的区别？
 
 ```js
-fn.call(obj, 1, 2);						// 第二个参数零散拆分
-fn.apply(obj, [1, 2]);				// 第二个参数数组或类数组的集合
-```
+const obj = {
+  name: '小鸭子',
+};
 
-* call / bind 区别在于立即执行还是等待执行：
+function say (arg1, arg2) {
+  console.log(`${this.name ? `我是一只${this.name}，` : ''}${arg1}，${arg2}`);
+}
 
-```js
-fn.call(obj, 1, 2); // 改变fn中的this，并且把fn立即执行
-fn.bind(obj, 1, 2); // 改变fn中的this，fn并不执行
+say('咿呀咿呀哟', '呱呱！'); // 咿呀咿呀哟，呱呱！
+
+say.call(obj, '咿呀咿呀哟', '呱呱！') // 我是一只小鸭子，咿呀咿呀哟，呱呱！
+
+say.apply(obj, ['咿呀咿呀哟', '呱呱！']); // 我是一只小鸭子，咿呀咿呀哟，呱呱！
+
+const manualSay = say.bind(obj, '咿呀咿呀哟', '呱呱！'); // 绑定但不是立即执行
+manualSay(); // 手动执行，输出：我是一只小鸭子，咿呀咿呀哟，呱呱！
 ```
 
 1. 手写 call 函数
+
+   ```js
+   // call 实现
+   Function.prototype.myCall = function(context) {
+     context = context || window; // 默认 window
+     const args = [...arguments].slice(1); // 参数
+     const fn = Symbol(); // 给 context 设置一个独一无二的属性，避免覆盖原有属性
+     context[fn] = this; // 这里的 this 指向调用它的函数 fn
+     const result = context[fn](...args); // 调用之
+     delete context[fn]; // 删除添加的属性
+     return result; // 返回值
+   }
+   
+   say.myCall(obj, '咿呀咿呀哟', '呱呱！') // 我是一只小鸭子，咿呀咿呀哟，呱呱！
+   ```
+
 2. 手写 bind 函数
+
+   ```js
+   // apply 实现
+   Function.prototype.myApply = function(context, args) {
+     context = context || window; // 默认 window
+     args = [...args]; // 参数
+     const fn = Symbol(); // 给 context 设置一个独一无二的属性，避免覆盖原有属性
+     context[fn] = this; // 这里的 this 指向调用它的函数fn
+     const result = context[fn](...args); // 调用之
+     delete context[fn]; // 删除添加的属性
+     return result; // 返回值
+   }
+   
+   say.myApply(obj, ['咿呀咿呀哟', '呱呱！']) // 我是一只小鸭子，咿呀咿呀哟，呱呱！ 
+   ```
+
 3. 手写 apply 函数
+
+   ```js
+   // apply 实现
+   Function.prototype.myApply = function(context, args) {
+     context = context || window; // 默认 window
+     args = [...args]; // 参数
+     const fn = Symbol(); // 给 context 设置一个独一无二的属性，避免覆盖原有属性
+     context[fn] = this; // 这里的 this 指向调用它的函数fn
+     const result = context[fn](...args); // 调用之
+     delete context[fn]; // 删除添加的属性
+     return result; // 返回值
+   }
+   
+   say.myApply(obj, ['咿呀咿呀哟', '呱呱！']) // 我是一只小鸭子，咿呀咿呀哟，呱呱！ 
+   ```
 
 ## 12、闭包
 
@@ -385,9 +437,10 @@ fn.bind(obj, 1, 2); // 改变fn中的this，fn并不执行
 
 ## 13、JS 垃圾回收机制？
 
-*  JS 垃圾回收机制采用**标记清楚法**：
-   * 存在一个根结点，始终不会被回收，称为 GC root（即，浏览器中为 window， dom 根结点）；
-   * 与 GC root 不链接的节点（即，不可访达的节点）被垃圾回收清除；
+*  JS 垃圾回收机制采用**标记清楚法**，大部分垃圾回收语言用的算法称之为 Mark-and-sweep 。算法由以下几步组成：
+   1. 垃圾回收器创建了一个“roots”列表。Roots 通常是代码中全局变量的引用。JavaScript 中，“window” 对象是一个全局变量，被当作 root 。window 对象总是存在，因此垃圾回收器可以检查它和它的所有子对象是否存在（即不是垃圾）；
+   2. 所有的 roots 被检查和标记为激活（即不是垃圾）。所有的子对象也被递归地检查。从 root 开始的所有对象如果是可达的，它就不被当作垃圾。
+   3. 所有未被标记的内存会被当做垃圾，收集器现在可以释放内存，归还给操作系统了。
 
 ## 14、什么导致内存泄漏？
 
@@ -442,7 +495,10 @@ fn.bind(obj, 1, 2); // 改变fn中的this，fn并不执行
 3. 闭包：
 
    * ♨️ ***函数实例上的隐式指针会留存实例创建环境下的作用域对象***； 
-   * ✅ 建议：及时清除定时器、计时器，解除事件绑定，在退出函数之前，将不使用的局部变量全部删除。可以使变量赋值为null；
+   * ✅ 建议：
+     1. 及时清除定时器、计时器，解除事件绑定；
+     2. 在退出函数之前，将不使用的局部变量全部删除，可以使变量赋值为null；
+     3. 若变量通过函数return函数，返回到outer函数调用的地方，则直到所有outer函数执行完，方解决内存泄漏；
 
    ```js
    var funcs = [];
@@ -489,11 +545,30 @@ const zhangsan = {
 ## 16、关于作用域和自由变量的场景题
 
 ```js
-let i;for(i = 1; i <= 3; i++) {  setTimeout(function () {    console.log(i);  }, 0)}// 4// 4// 4// 4
+let i;
+for(i = 1; i <= 3; i++) {  
+  setTimeout(function () {    
+    console.log(i);  
+  }, 0)}
+// 4
+// 4
+// 4
+// 4
 ```
 
 ```js
-let a =100;function test() {  alert(a);  a = 10;  alert(a);};test();alert(a);// 100// 10// 10
+let a =100;
+function test() {  
+  alert(a);  
+  a = 10;  
+  alert(a);
+};
+test();
+alert(a);
+
+// 100
+// 10
+// 10
 ```
 
 ## 17、函数声明和函数表达式的区别？

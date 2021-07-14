@@ -989,3 +989,6 @@ const clickElement = <a href="https://www.pingan8787.com" onClick={handleClick}>
 
 5. react-redux / connect
 
+   * mapstatetoprops
+   * mapdispatchtoprops
+
