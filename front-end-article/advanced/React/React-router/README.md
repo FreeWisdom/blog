@@ -19,6 +19,8 @@
 
 # 3、♨️路由守卫的最佳实践
 
+> https://blog.csdn.net/ajh99990/article/details/104324739
+
 ## 3.1、基本配置
 
 * 实现：
@@ -386,11 +388,44 @@
 
 * react 16.6 以前，需要自己写 HOC 完成对 promise 的转换处理；
 
+  ```typescript
+  // src/components/async-module-loader/index.tsx
+  import React from 'react'
+  
+  export interface AyncModuleLoaderState {
+      asyncComponent: any
+  }
+  export default function AyncModuleLoader(importComponent: any) {
+      return class AsyncComponent extends React.Component<unknown, AyncModuleLoaderState> {
+          constructor(props: unknown) {
+              super(props);
+              this.state = {
+                  asyncComponent: null
+              };
+          }
+          async componentDidMount() {
+              if (this.state.asyncComponent) {
+                  return;
+              }
+            	// ⚠️这里
+              const { default: component } = await importComponent();
+              this.setState({
+                  asyncComponent: component
+              });
+          }
+          render() {
+              const {asyncComponent:Component} = this.state
+              return Component ? <Component {...this.props} /> : null;
+          }
+      }
+  }
+  ```
+
 * 使用 `react.lazy` + `react.suspense` 
 
 * webpack 会自动监听 import 语法；
 
-  ```js
+  ```jsx
   import React, { Suspense } from 'react';
   
   const OtherComponent = React.lazy(() => import('./OtherComponent'));
@@ -406,3 +441,18 @@
   }
   ```
 
+## 3.4、♨️♨️总结
+
+> sessionStorage存储登录信息：https://blog.csdn.net/qq_34664239/article/details/107937929
+
+1. 登陆后，tocken经Base64编码后存储到sessionStorage；
+2. 页面跳转到系统首页，sessionStorage中拿到用户信息，去后端换取当前用户权限，存储到store中，防止被控制台篡改；
+3. 封装fetch，所有HTTP Request Header Authorization 加上Base64编码后的token(前后端可约定规则)；
+4. 后台拿到token后对每个请求进行校验，若校验失败返回401，前端response钩子里统一catch error 跳转至登陆页面。
+5. 跳转路由时，写一个自定义路由守卫组件，并在路由组件中注入以下3种信息；
+   1.  react-router-dom 的 Switch 将自定义路由守卫组件包裹起来之后，路由守卫组件的 props 中会被注入一些与路径有关的信息【location.pathname当前页面的路径】；
+   2. 将路由配置文件传入自定义路由守卫组件中【routeConfig】；
+   3. 将store中的当前用户权限，引入自定义路由守卫组件【当前用户权限】；
+      * 同时后端也会判断若权限和用户不匹配时跳转到登陆页面；
+6. 路由守卫组件中将【location.pathname当前页面的路径】在【routeConfig】中查找当前路径匹配的页面组件；
+7. 路由守卫组件中根据【当前用户权限】在【routeConfig的auth权限数组】中查找，若找到了，就显示出7中当前路由匹配的组件；

@@ -131,6 +131,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <script type="text/javascript">
   // 根据 DOM 元素距离顶部的 top 值获取是否加载该图片；
   var img1 = document.getElementById('img1');
+  // if(img1.object.getBoundingClientRect().top === window.innerHeight){   }
   img1.src = img1.getAttribute('data-realsrc');
 </script>
 ```
@@ -252,4 +253,6 @@ div1.addEventListener('drag', throttle(function (e) {
 * XSRF 的预防
   * 使用 POST 接口；
     * post接口的跨域需要server端高度支持；
+    * 敏感的操作应该使用POST，而不是GET，以form表单的形式提交，可以避免token泄露。
   * 增加验证，如密码、短信验证、指纹等；
+

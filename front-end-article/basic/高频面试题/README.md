@@ -71,12 +71,35 @@
   * +字符串拼接
   * ==双等号
 
-## 4、== 和 === 的不同？
+## 4、== 和 === 和 Object.is(a, b)的不同？
 
 * == 会类型转换
+
 * === 不会进行类型转换，严格相等
+
 * 只有在判断 a == null 时使用 == ；
   * 包含了a === null ||  a === undefined；
+  
+* ```JS
+  Object.is('foo', 'foo');     // true
+  Object.is(window, window);   // true
+  
+  Object.is('foo', 'bar');     // false
+  Object.is([], []);           // false
+  
+  var foo = { a: 1 };
+  var bar = { a: 1 };
+  Object.is(foo, foo);         // true
+  Object.is(foo, bar);         // false
+  
+  Object.is(null, null);       // true
+  
+  // 特例
+  Object.is(0, -0);            // false
+  Object.is(0, +0);            // true
+  Object.is(-0, -0);           // true
+  Object.is(NaN, 0/0);         // true
+  ```
 
 ## 5、✍️手写深度比较 lodash isEqual
 
@@ -427,10 +450,45 @@ manualSay(); // 手动执行，输出：我是一只小鸭子，咿呀咿呀哟�
 3. 闭包的实际应用？https://cloud.tencent.com/developer/article/1728078?from=information.detail.js%E9%97%AD%E5%8C%85%E5%BA%94%E7%94%A8
 
    * 防抖
+
    * 节流
+
    * 高阶函数
+
    * 定时器
+
    * 事件绑定
+
+   * 单例模式
+
+     ```js
+     var Singleton = (
+       function () {
+         var instance; 
+         var CreateSingleton = function (name) { 
+           this.name = name; 
+           if (instance) {
+             return instance;
+           }
+           // 打印实例名字
+           this.getName();
+           return instance = this;
+         }
+     
+         // 获取实例的名字
+         CreateSingleton.prototype.getName = function() {
+           console.log(this.name)
+         }
+         return CreateSingleton;
+       }
+     )();
+     
+     // 创建实例对象 1
+     var a = new Singleton('a');
+     // 创建实例对象 2 
+     var b = new Singleton('b');
+     console.log(a===b); 			// true
+     ```
 
 4. 闭包有哪些影响？
    * 变量会常驻内存，得不到释放，不要乱用，可能造成内存泄漏；
@@ -578,7 +636,7 @@ alert(a);
 * 函数表达式：`const fn = function () {...}`
   * 函数表达式，**不会预加载**；
 
-## 18、讲一下原型和原型链吧？
+## 18、♨️讲一下原型和原型链吧？
 
 * 原型关系如下：
 
@@ -591,7 +649,8 @@ alert(a);
 ## 19、如何判断一个变量是不是数组？
 
 ```js
-const a = [1, 2, 3];a instanceof Array;		// true
+const a = [1, 2, 3];
+a instanceof Array;		// true
 ```
 
 ## 20、🈳️如何用 JS 实现继承？（8种）
@@ -604,13 +663,26 @@ const a = [1, 2, 3];a instanceof Array;		// true
 * new Object(xxx) 
 
   ```js
-  const obj1 = {  a: 10,  b: 20};const obj2 = new Object(obj1);console.log(obj1 === obj2);			// true，地址相同
+  const obj1 = {  a: 10,  b: 20};
+  const obj2 = new Object(obj1);
+  console.log(obj1 === obj2);			// true，地址相同
   ```
 
 * Object.create(xxx) 会创建一个空对象，并且该空对象的`__proto__`原型指向传入的对象；
 
   ```js
-  const obj1 = Object.create(null);const obj2 = Object.create({  a: 10,  b: 20});console.log(obj1);// {}// 		No propertiesconsole.log(obj2);// {}// 		__proto__: // 			a: 10// 			b: 20// 			__proto__: Object
+  const obj1 = Object.create(null);
+  const obj2 = Object.create({  a: 10,  b: 20});
+  console.log(obj1);
+  // {}
+  // 		No properties
+  
+  console.log(obj2);
+  // {}
+  // 		__proto__: 
+  // 			a: 10
+  // 			b: 20
+  // 			__proto__: Object
   ```
 
 ## 22、什么是同步/异步？
@@ -656,7 +728,7 @@ function ajax(url) {
           )        
         }      
       }    
-    }    
+    }
     xhr.send(null);  
   })  
   return p;
@@ -670,17 +742,23 @@ ajax(url).then(res => {
 })
 ```
 
-## 24、请描述event loop的机制
+## 24、♨️请描述event loop的机制
 
-### 24.1、浏览器中的 event loop
+### 24.1、♨️浏览器中的 event loop
 
 1. js是单线程的；
    * 异步（ajax/setTimeout）使用回调，基于event loop；
    * DOM事件也是使用回调，基于event loop，但DOM 事件不是异步的；
+   
 2. 描述 event loop 机制：
+   
+   > ⚠️：微任务队列仅有一个☝️；
+   >
+   > ⚠️：宏任务队列可以有多个；
+   
    1. 同步 js 代码在 Call Stack 执行；
       * 遇到微任务，将微任务的 then 或 catch 的 callback 函数插到 micro task queue 队列尾；
-
+   
       * 遇到宏任务，将宏任务中的 callback 函数放到 webAPIs ；
         * webAPIs 等待时机，将宏任务中的 callback 函数插到 Callback Queue 队列尾；
    2. 同步代码执行完毕，Call Stack 清空；
@@ -688,19 +766,18 @@ ajax(url).then(res => {
    3. 执行当前微任务队列，直到清空：
 
       * micro task queue 队列中 callback 函数，按先进先出的顺序，从队列头到队列尾，依次放到 Call Stack 全部执行；
-        * 若微任务中嵌套了宏任务，则将该宏任务也放到 webAPIs 中，按照宏任务处理；
-
+        * 若微任务中嵌套了宏任务，则将该宏任务也放到 webAPIs 中，按照下一轮宏任务处理；
+        * 若微任务中嵌套了微任务，则将嵌套的微任务放到当前微任务队列，直到当前微任务队列清空；
+   
    4. 尝试 DOM 渲染；
-
+   
    5. 执行当前宏任务队列，直到清空：
-
+   
       * Callback Queue 队列中 callback 函数，按先进先出的顺序，从队列头到队列尾，依次放到 Call Stack 执行；
-        * 若某个宏任务中嵌套了微任务；
-        * 则先清空上个宏任务中嵌套的微任务；
-        * 再尝试 DOM 渲染；
-        * 最后再执行下个宏任务；
+        * 若某个宏任务中嵌套了微任务，此时微任务队列一定是清空的，直接将微任务放进微任务队列，待下一轮调用；
+        * 若某个宏任务中嵌套了宏任务，则再开启一个宏任务队列，待下一轮调用；
 
-### 24.2、node 中的 event loop
+### 24.2、♨️node 中的 event loop
 
 1. js执行为单线程，所有代码皆在主线程调用栈完成执行，当主线程任务清空后才会去轮询取任务队列中任务；
 
@@ -727,14 +804,54 @@ ajax(url).then(res => {
 ## 25、什么是宏任务和微任务，两者有什么区别？
 
 * 宏任务和微任务有哪些？
-  1. 宏任务：setTimeout，setInterval，Ajax，DOM事件；
+  1. 宏任务：setTimeout，setInterval，Ajax，DOM事件，i/o；
   2. 微任务：Promise async/await；
   3. 微任务执行时机比宏任务要早；
+  
 * 为何微任务执行时机比宏任务要早？
   * 宏任务：DOM渲染后触发，如setTimeout；
   * 微任务：DOM渲染前触发，如Promise；
+  
+* 微任务/宏任务 输出顺序
 
-## 26、Promise 有了解吗？
+  ```js
+  var p1 = new Promise((resolve, reject) => {
+    setTimeout(resolve, 1000, 1);
+  })
+  
+  setTimeout(() => {
+    console.log(2);
+  }, 0)
+  
+  var p2 = new Promise((resolve, reject) => {
+    resolve(3)
+    console.log(4)
+  })
+  
+  p2.then((res) => {
+    console.log(res)
+  }).then((res) => {
+    console.log(res)
+  })
+  
+  p1.then((res) => {
+    console.log(res)
+  })
+  
+  console.log(5)
+  console.log("1")
+  
+  // 4
+  // 5
+  // "1"
+  // 3
+  // undefined
+  // 2
+  // 1
+
+## 26、♨️Promise 有了解吗？
+
+### 1、then、catch
 
 1. Promise 是一种异步编程的解决方案，解决了异步流程控制的回调地狱问题；
 
@@ -747,17 +864,203 @@ ajax(url).then(res => {
 
 3. .then & .catch 
    * resolved 状态的 Promise 会回调后面的第一个 .then；
+     * then 接收两个函数,分别对应 resolve 和 reject 状态的回调,函数中接收实例化时传入的参数.
    * rejected 状态的 Promise 会回调后面的第一个 .catch；
+     * catch 相当于.then(null, rejection) 
+       * 当 then 中没有传入 rejection 时，错误会冒泡进入 catch 函数中；
+       * 若传入了 rejection，则错误会被 rejection 捕获，而且不会进入 catch ；
+       * then 中的回调函数中发生的错误只会在下一级的 then 中被捕获，不会影响该 promise 的状态；
      * 任何一个 rejected 状态后面没有 .catch 的 Promise ，都会造成 Js环境的全局错误；
-
+   
 4. 执行 then 和 catch 会返回一个新的 Promise，该 Promise 最终状态根据 then 和 catch 的回调函数的执行结果决定：
    * 如果回调函数最终结果是 throw，则该 Promise 是 rejected 状态；
    * 如果回调函数最终结果是 return，则该 Promise 是 resolved 状态；
    * 如果回调函数最终 return 了一个新 Promise ，则该老 Promise 会和回调函数 return 的新 Promise 状态保持一致；
      * 这种 Promise 的链式调用中，可以串行的执行多个异步任务；
+   
 5. Promise.all([promise1, promise2]) 接受一个数组，数组中可以包含多个 promise ；
    * 数组中所有的 promise 状态都为 resolved 时，会回调后面的第一个 .then；
-   * 数组中所有的 promise 状态都为 rejected 时，会回调后面的第一个 .catch；
+   * 数组中有一个 promise 状态为 rejected 时，会回调后面的第一个 .catch；
+   
+6. 手写promise简单版：
+
+   ```js
+   promise class PromiseM {
+     constructor(process) {
+       this.status = 'pending'
+       this.msg = ''
+       process(this.resolve.bind(this), this.reject.bind(this)) {
+         return this
+       }
+     }
+   
+     resolve(val) {
+       this.status = 'fulfilled'
+       this.msg = val
+     }
+   
+     reject(err) {
+       this.status = 'rejected'
+       this.msg = err
+     }
+   
+     then(fufilled, reject) {
+       if (this.status === 'fulfilled') {
+         fufilled(this.msg)
+       } 
+       if (this.status === 'rejected') {
+         reject(this.msg)
+       }
+     }
+     
+     // Promise.all方法接收一个promise数组，返回一个新promise2，并发执行数组中的全部promise；
+     // 所有promise状态都为resolved时，promise2状态为resolved并返回全部promise结果，结果顺序和promise数组顺序一致；
+     // 如果有一个promise为rejected状态，则整个promise2进入rejected状态。
+     static all(promiseList) {
+       return new Promise((resolve, reject) => {
+         const result = [];
+         let i = 0;
+         for (const p of promiseList) {
+           p.then(value => {
+             result[i] = value;
+             if (result.length === promiseList.length) {
+               resolve(result);
+             }
+           }, reject);
+           i++;
+         }
+       });
+     }
+   }
+   
+   //测试代码
+   var mm = new PromiseM(
+     function(resolve,reject){
+       resolve('123'); 
+     }
+   );
+   
+   mm.then(
+     function(success){
+       console.log(success);
+     },
+     function(){
+       console.log('fail!');
+     }
+   );
+   ```
+
+### 2、generator 和异步控制: 
+
+* 利用 Generator 函数的暂停执行的效果，可以把异步操作写在 yield 语句里面，等到调用 next 方法时再往后执行；
+* 这实际上等同于不需要写回调函数了，因为异步操作的后续操作可以放在 yield 语句下面，反正要等到调用 next 方法时再执行；
+* 所以，Generator 函数的一个重要实际意义就是用来处理异步操作，改写回调函数。
+
+### 3、async 和异步控制：
+
+* async 表示这是一个 async 函数，await 只能用在这个函数里面；
+* await 表示在这里等待异步操作返回结果，再继续执行；
+  * 如果 async 函数返回的是一个同步的值，这个值将被包装成一个理解 resolve 的 Promise，等同于 `return Promise.resolve(value)；`
+  * await 用于一个异步操作之前，表示要“等待”这个异步操作的返回值。
+* await 后一般是一个 promise 对象 
+
+* Async/await【1】输出
+
+  ```js
+  async function async1() {
+    console.log('async1 start')
+    await async2()
+    console.log('async1 end')
+  }
+  
+  async function async2() {
+    console.log('async2')
+  }
+  
+  console.log('script start')
+  
+  setTimeout(function () {
+    console.log('setTimeout')
+  }, 0)
+  
+  async1();
+  
+  new Promise(function (resolve) {
+    console.log('promise1')
+    resolve();
+  }).then(function () {
+    console.log('promise2')
+  })
+  
+  console.log('script end')
+  
+  // script start
+  // async1 start
+  // async2
+  // promise1
+  // script end
+  // async1 end
+  // promise2
+  // setTimeout
+  ```
+
+* async/await【2】输出
+
+  ```js
+  async function testSometing() {
+    console.log("执行testSometing");
+    return "testSometing";
+  }
+  
+  async function testAsync() {
+    console.log("执行testAsync");
+    return Promise.resolve("hello async");
+  }
+  
+  async function test() {
+    console.log("test start...");
+    const v1 = await testSometing();
+    console.log(v1);
+    const v2 = await testAsync();
+    console.log(v2);
+    console.log(v1, v2);
+  }
+  
+  test();
+  
+  var promise = new Promise((resolve) => {
+    console.log("promise start..");
+    resolve("promise");
+  }); 
+  promise.then((val) => console.log(val));
+  setTimeout(() => { console.log("setTime1") }, 3000);
+  console.log("test end...")
+  
+  // test start...
+  // 执行testSometing
+  // promise start..
+  // test end...
+  // testSometing
+  // 执行testAsync
+  // promise
+  // hello async
+  // testSometing hello async
+  // setTime1
+  ```
+
+### 4、有三个 promise，A\B\C如何串行执行？
+
+```js
+// promise 
+A.then(B).then(C).catch(...) 
+
+// async/await 
+(async ()=>{ 
+  await a(); 
+  await b(); 
+  await c(); 
+})()
+```
 
 ## 27、判断字符串以字母开头，后面字母数字下划线，长度6-30
 
@@ -1036,7 +1339,13 @@ https://leetcode-cn.com/problems/basic-calculator/
 ## 7、document load 和 ready 的区别？
 
 ```js
-window.addEventListener('load', function () {  //页面加载完全部资源才会执行，包括图片/视频})document.addEventListener('DOMContentLoaded', function () {  // DOM 渲染完即可执行，此时图片、视频可能还未加载完})
+window.addEventListener('load', function () {  
+  //页面加载完全部资源才会执行，包括图片/视频
+})
+
+document.addEventListener('DOMContentLoaded', function () {  
+  // DOM 渲染完即可执行，此时图片、视频可能还未加载完
+})
 ```
 
 ## 8、什么是 cookie？
@@ -1057,7 +1366,20 @@ window.addEventListener('load', function () {  //页面加载完全部资源才�
 * 如何使用：
 
   ```js
-  localStorage.setItem("a", 100);							// 自动被转换成字符串localStorage.setItem("b", "200");localStorage.getItem("a");									// 100 自动被转换成字符串 "100"localStorage.getItem("b");									// "200"localStorage.setItem('myCat', 'Tom');				// 加了一个 localStorage 项let cat = localStorage.getItem('myCat');		// 读取 localStorage 项localStorage.removeItem('myCat');						// 移除 localStorage 项localStorage.clear();												// 移除所有的 localStorage 项sessionStorage.setItem('key', 'value');			// 保存数据到 sessionStoragelet data = sessionStorage.getItem('key');		// 从 sessionStorage 获取数据sessionStorage.removeItem('key');						// 从 sessionStorage 删除保存的数据sessionStorage.clear();											// 从 sessionStorage 删除所有保存的数据
+  localStorage.setItem("a", 100);							// 自动被转换成字符串
+  localStorage.setItem("b", "200");
+  localStorage.getItem("a");									// 100 自动被转换成字符串 "100"
+  localStorage.getItem("b");									// "200"
+  
+  localStorage.setItem('myCat', 'Tom');				// 加了一个 localStorage 项
+  let cat = localStorage.getItem('myCat');		// 读取 localStorage 项
+  localStorage.removeItem('myCat');						// 移除 localStorage 项
+  localStorage.clear();												// 移除所有的 localStorage 项
+  
+  sessionStorage.setItem('key', 'value');			// 保存数据到 sessionStorage
+  let data = sessionStorage.getItem('key');		// 从 sessionStorage 获取数据
+  sessionStorage.removeItem('key');						// 从 sessionStorage 删除保存的数据
+  sessionStorage.clear();											// 从 sessionStorage 删除所有保存的数据
   ```
 
 * localStorage / sessionStorage 与 cookie 的区别？
@@ -1068,6 +1390,23 @@ window.addEventListener('load', function () {  //页面加载完全部资源才�
 
   * localStorage 数据会永久存储，除非代码或手动删除；
   * sessionStorage 数据只存在于当前会话，浏览器关闭则清空；
+
+## 10、事件冒泡/事件捕获
+
+事件的三个阶段：事件捕获->事件目标->事件冒泡
+
+- 捕获阶段：先由文档的根节点document往事件触发对象，往外向内捕获事件对象
+- 目标阶段：到达目标事件位置（事发地），触发事件
+- 冒泡阶段：再从目标事件位置往文档的根节点方向回溯，从内向外冒泡事件对象
+
+> *  当我们点击目标元素之后，不会马上触发目标元素的事件；
+> * 会先执行事件捕获从根元素逐步到目标元素；
+> * 接着在事件目标阶段，**顺序触发**目标元素事件；
+> * 到了冒泡阶段，从目标元素向外到根元素，执行冒泡
+> * ⚠️自定义事件的第三个参数：
+>   * true：（默认）冒泡阶段执行该事件；
+>   * false：捕获阶段执行该事件；
+> * 链接：https://juejin.cn/post/6902051243615584269
 
 # 4⃣️ HTTP
 
@@ -1080,16 +1419,15 @@ window.addEventListener('load', function () {  //页面加载完全部资源才�
   * `<img src=跨域图片地址 />`
 
     * 可用于统计打点，访问静态页面时，通过img标签指定src 为访问统计的地址， img标签向统计程序发出请求，实现统计
-
-      统计示例代码采用文件来记录访问次数，实际项目可以记录数据库；
-
-  * `<link href=跨域css地址 />`
-
-    * 可使用CDN，CDN一般都是外域；
-
-  * `<script src=跨域js地址></script>`
-
-    * 可实现 JSONP；
+  * 统计示例代码采用文件来记录访问次数，实际项目可以记录数据库；
+    
+* `<link href=跨域css地址 />`
+  
+  * 可使用CDN，CDN一般都是外域；
+  
+* `<script src=跨域js地址></script>`
+  
+  * 可实现 JSONP；
 
 ## 2、解释 jsonp 的原理，为何它不是真正的 ajax ？
 
@@ -1104,7 +1442,11 @@ window.addEventListener('load', function () {  //页面加载完全部资源才�
 ## 3、CORS（服务端支持）
 
 ```js
-// 第二个参数填写允许跨域的域名称，不建议直接写"*";response.setHeader("Access-Control-Allow-Origin", "http//localhost:8011");// 接收跨域的cookieresponse.seterHeader("Access-Control-Allow-Credentials", "true");
+// 第二个参数填写允许跨域的域名称，不建议直接写"*";
+response.setHeader("Access-Control-Allow-Origin", "http//localhost:8011");
+
+// 接收跨域的cookie
+response.seterHeader("Access-Control-Allow-Credentials", "true");
 ```
 
 ## 4、🈳️fetch 与 axios
@@ -1112,11 +1454,36 @@ window.addEventListener('load', function () {  //页面加载完全部资源才�
 ## 5、✍️手写XMLHttpRequest
 
 ```js
-// GET 请求const xhr = new XMLHttpRequest();xhr.open("GET", "/data/test.json", true);	// true 异步请求xhr.onreadystatechange = function () {  if(xhr.readyState === 4) {    if(xhr.status === 200) {      console.log(JSON.parse(xhr.responseText));	// 转换成json形式      alert(xhr.responseText);    } else {      console.log("其他情况")    }  }}；xhr.send(null);			// get请求不用发送数据
+// GET 请求
+const xhr = new XMLHttpRequest();
+xhr.open("GET", "/data/test.json", true);	// true 异步请求
+xhr.onreadystatechange = function () {  
+  if(xhr.readyState === 4) {    
+    if(xhr.status === 200) {      
+      console.log(JSON.parse(xhr.responseText));	// 转换成json形式      
+      alert(xhr.responseText);    
+    } else {
+      console.log("其他情况")    
+    }  
+  }
+}；
+
+xhr.send(null);			// get请求不用发送数据
 ```
 
 ```js
-// POST 请求const xhr = new XMLHttpRequest();xhr.open("POST", "/login.json", true);xhr.onreadystatechange = function () {  if(xhr.readyState === 4) {    if(xhr.status === 200) {      console.log(JSON.parse(xhr.responseText))    }  }}const data = {  usr: zhz,  pasw: xxx}xhr.send(JSON.stringify(data));		// post请求发送字符串
+// POST 请求
+const xhr = new XMLHttpRequest();
+xhr.open("POST", "/login.json", true);
+xhr.onreadystatechange = function () {  
+  if(xhr.readyState === 4) {    
+    if(xhr.status === 200) {      
+      console.log(JSON.parse(xhr.responseText))    
+    }  
+  }
+}
+const data = {  usr: "zhz",  pasw: "xxx" }
+xhr.send(JSON.stringify(data));		// post请求发送字符串
 ```
 
 ## 6、了解 readyState 吗？
@@ -1142,7 +1509,7 @@ window.addEventListener('load', function () {  //页面加载完全部资源才�
   * 403 - 客户端没有权限；
 * 5xx - 服务端错误；
   * 500 - 服务器错误；
-  * 540 - 网关超时；
+  * 504 - 网关超时；
 
 ## 8、ajax 请求 get 和 post 的区别？
 
@@ -1156,10 +1523,14 @@ window.addEventListener('load', function () {  //页面加载完全部资源才�
    * 是一种新的 API 设计方法；
    * 传统 API 设计把每个 **url 当作一个功能**；
    * Rrestful API 设计把每个 **url 当作一个唯一的资源**；
-
 2. 如何设计 Rrestful API ？
    1. 尽量不用 url 参数，即不用 location.search 部分；
    2. 用 location.pathname 部直接表示要请求的资源；
+3. 分别表示：
+   1. get 获取服务器的数据；
+   2. post 新建数据；
+   3. patch/put 更新数据；
+   4. delete 删除数据；
 
 ## 10、常见的请求Request Headers
 
@@ -1201,12 +1572,12 @@ window.addEventListener('load', function () {  //页面加载完全部资源才�
   ```js
   // search:'a=10&b=20&c=30'
   function query(name) {  
-    const search = location.search.substr(1);		// 删除 ? 号  
-    const reg = new RegExp(`(^|&)${name}=([^&]*)(&|$)`, 'i');  
-    const res = search.match(reg);  
-    if(res === null) {    
-      return null;  
-    }  
+    const search = location.search.substr(1);		// 删除 ? 号
+    const reg = new RegExp(`(^|&)${name}=([^&]*)(&|$)`, 'i');
+    const res = search.match(reg);
+    if(res === null) {
+      return null;
+    }
     return res[2]
   };
   query('a');
@@ -1236,7 +1607,8 @@ function urlToObj() {
     const paramArr = paramStr.split('=');    
     const key = paramArr[0];    
     const val = paramArr[1];    
-    res[key] = val;  });  
+    res[key] = val;  
+  });  
   return res;
 }
 ```
@@ -1288,6 +1660,13 @@ function urlToObj() {
     4. 未改变，返回 304，命中缓存；
     5. 若改变，重新返回资源与 Last-Modified ；
 
+## 16、http和https的区别
+
+- https协议需要到ca申请证书，一般免费证书较少，成本高。
+- http是超文本传输协议，信息是明文传输，https则是具有安全性的ssl加密传输协议。
+- http的连接很简单，是无状态的；https协议是由SSL+HTTP协议构建的可进行加密传输、身份认证的网络协议，比http协议安全。
+- http默认端口是80，https是443。
+
 # 5⃣️ development
 
 ## 1、git 有哪些常用命令？
@@ -1297,6 +1676,8 @@ function urlToObj() {
 # 6⃣️ production
 
 ## 1、讲一下输入 url 到渲染出页面的过程？
+
+> 【包括tcp、缓存、跨域、渲染、dns】https://www.cnblogs.com/liutianzeng/p/10456865.html
 
 1. 加载资源的过程：
    1. 浏览器拿着域名根据 DNS 解析出 IP地址；
@@ -1308,6 +1689,15 @@ function urlToObj() {
    3. 浏览器根据 Render Tree 渲染页面；
    4. 遇到 js ，暂停渲染，加载并执行 js ，js 可能更改 Render Tree ，则重新渲染；
    5. 直至渲染完成；
+3. 总结整体过程
+   1. 浏览器的地址栏输入URL并按下回车。
+   2. 浏览器查找当前URL是否存在缓存，并比较缓存是否过期。
+   3. DNS解析URL对应的IP。
+   4. 根据IP建立TCP连接（三次握手）。
+   5. HTTP发起请求。
+   6. 服务器处理请求，浏览器接收HTTP响应。
+   7. 渲染页面，构建DOM树。
+   8. 关闭TCP连接（四次挥手）。
 
 ## 2、知道重绘和回流吗？
 
@@ -1369,7 +1759,13 @@ function urlToObj() {
 ## 6、window.onload 和 DOMContentLoaded 的区别？
 
 ```js
-window.addEventListener('load', function(){
+window.onload = funcRef;
+```
+
+在页面加载完成后 funcRef 方法会被调用。
+
+```js
+window.addEventListener('onload', function(){
   // 页面全部资源加载完才会执行，包括图片、视频等；
 })
 document.addEventListener('DOMContentLoaded', function() {
@@ -1418,11 +1814,46 @@ document.addEventListener('DOMContentLoaded', function() {
 
    * 根据元素顶到视口顶的距离 `object.getBoundingClientRect().top` ， 设置图片加载默认 `src="preview.png"` 还是加载真实 `real-src="real.png"` ；
 
-4. 对DOM查询做变量缓存；
+   ```html
+   <img id="img1" src="preview.png" data-realsrc="abc.png"/>
+   <script type="text/javascript">
+     // 根据 DOM 元素距离顶部的 top 值获取是否加载该图片；
+     var img1 = document.getElementById('img1');
+     // if(img1.object.getBoundingClientRect().top === window.innerHeight){   }
+     img1.src = img1.getAttribute('data-realsrc');
+   </script>
+   ```
 
-5. 将频繁 dom 插入，先插入文档片段，再一次性将文档片段插入；
+4. 图片预加载：
 
-6. ✍️ 防抖（减少频繁请求）：
+   * 该方法尤其适用预加载大量的图片。画廊网站使用该技术，预加载图片数量达50多张。
+   * 将该脚本应用到登录页面，只要用户输入登录帐号，大部分画廊图片将被预加载。
+   * 只需简单编辑、加载所需要图片的路径与名称即可，很容易实现：
+
+   ```html
+   <div class="hidden">  
+       <script type="text/javascript">  
+         var images = new Array()  
+         function preload() {  
+           for (i = 0; i < preload.arguments.length; i++) {  
+             images[i] = new Image()  
+             images[i].src = preload.arguments[i]  
+           }  
+         }  
+         preload(
+           "http://qiniu.cllgeek.com/react02.png",
+           "http://qiniu.cllgeek.com/react03.png",
+           "http://qiniu.cllgeek.com/react04.png"
+         )
+       </script>  
+   </div>
+   ```
+
+5. 对DOM查询做变量缓存；
+
+6. 将频繁 dom 插入，先插入文档片段，再一次性将文档片段插入；
+
+7. ✍️ 防抖（减少频繁请求）：
 
    ```js
    const input1 = document.getElementById('input1')
@@ -1447,7 +1878,7 @@ document.addEventListener('DOMContentLoaded', function() {
    }, 600))
    ```
 
-7. ✍️ 节流（减少回流）：
+8. ✍️ 节流（减少回流）：
 
    ```js
    const div1 = document.geteElementById('div');
@@ -1470,4 +1901,32 @@ document.addEventListener('DOMContentLoaded', function() {
    }, 1000))
    ```
 
-8. 避免回流：
+9. 避免回流：
+
+# 8⃣️项目问题
+
+## 1、umijs/es5-imcompatible-versions 开源库贡献代码
+
+* 业界有个潜在的约定，npm 包发布前需要先用 babel 转出一份 es5 的代码；
+* 压缩工具 uglify 又只支持 es5 的语法，
+*  [es5-imcompatible-versions](https://github.com/umijs/es5-imcompatible-versions)，用于收集 uglify 压缩有问题的 npm 包版本，遇到已被收录的 es6 包，会自动走 babel 编译。
+
+## 2、解决 CKEditor5 图片上传成功依然报错问题
+
+* 官方教程中上传图片有三种方法；
+* 使用ckfinder框架，在初始化CKEditor时，需要定义 ckfinder的uploadUrl参数，参数为上传到自己服务器的地址；
+
+* 图片明明已经上传到服务器，返回数据也是按照所谓教程的**{"default":"url"}**格式。可是依然会报错；
+
+* 看了CKEditor中ckfinder的源码才发现问题。阅读ckeditor5-adapter-ckfinder发现，ckfinder也定义了UploadAdapter，同样实现了upload()和 abort() 方法。而问题就出现在upload()方法中；
+
+  ```js
+  if ( !response || !response.uploaded ) {
+    return reject(
+      response && response.error && response.error.message ? response.error.message : genericError
+    );
+  }
+  ```
+
+* ckfinder请求之后的返回体response应该不为空，且还要包括uploaded和url字段，所以**返回数据实际格式应该是{"uploaded":1,"url":"/"}**，如此就不会出错了。
+

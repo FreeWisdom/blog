@@ -143,7 +143,7 @@ function exec(name) {
 });
 ```
 
-> 重点处理一下边界情况：在进行`git add .`后再次进行编辑，commit的版本是执行过`git add .`的文件，但是校验的确实当前修改的版本。可以通过`git stash` 相关命令来处理。
+> 重点处理一下边界情况：在进行`git add .`后再次进行编辑，commit的版本是执行过`git add .`的文件，但是校验的却是当前修改的版本。可以通过`git stash` 相关命令来处理。
 
 ```shell
 git stash push

@@ -22,7 +22,7 @@ class Parent extends React.Component {
 }
 ```
 
-2. 父子组件 ref
+2. 子父组件 ref
    * 父组件中调用子组件的方法；
    * 达到控制子组件的效果；
 
@@ -127,6 +127,82 @@ class ComponentB extends React.Component {
 ```
 
 7. 所有组件 redux
+
+8. 路由传参
+
+   1. #### params传参【单参】(刷新页面后参数不消失，参数会在地址栏显示)
+
+      ```jsx
+      // 【路由页面】：
+      <Route path='/demo/:id' component={Demo}></Route>  //注意要配置 /:id
+      
+      // 【路由跳转并传递参数】：
+      // 1、链接方式：
+      <Link to={'/demo/'+'6'}>XX</Link>
+      // 或：
+      <Link to={{pathname:'/demo/'+'6'}}>XX</Link>
+      // 2、js方式：
+      this.props.history.push('/demo/'+'6')  
+      // 或：
+      this.props.history.push({pathname:'/demo/'+'6'})
+      
+      // 【获取参数】：
+      this.props.match.params.id    										 //注意这里是match而非history
+      ```
+
+   2. #### params传参【多参】(刷新页面后参数不消失，参数会在地址栏显示)
+
+      ```jsx
+      state={
+          id:88,
+          name:'Jack',
+      }
+      // 【路由页面】：
+      <Route path='/demo/:id/:name' component={Demo}></Route>  
+      
+      // 【路由跳转并传递参数】：
+      // 1、链接方式：
+      <Link to={{pathname:`/demo/${this.state.id}/${this.state.name}`}}>XX</Link>
+      // 2、js方式：
+      this.props.history.push({pathname:`/demo/${this.state.id}/${this.state.name}`})
+      
+      // 【获取参数】：
+      this.props.match.params     //结果 {id: "88", name: "Jack"}
+      ```
+
+   3. #### query传参(刷新页面后参数消失)
+
+      ```jsx
+      // 【路由页面】：
+      <Route path='/demo' component={Demo}></Route>  //无需配置
+      
+      // 【路由跳转并传递参数】：
+      // 1、链接方式：
+      <Link to={{pathname:'/demo', query:{id:22,name:'dahuang'}}}>XX</Link>
+      // 2、js方式：
+      this.props.history.push({pathname:'/demo', query:{id:22,name:'dahuang'}})
+      
+      // 【获取参数】： 
+      this.props.location.query.name
+      ```
+
+   4. #### state传参( 刷新页面后参数不消失，state传的参数是加密的，比query传参好用)
+
+      * ⚠️ state 传参的方式只支持Browserrouter路由，不支持hashrouter
+
+      ```jsx
+      // 【路由页面】：
+      <Route path='/demo' component={Demo}></Route>  //无需配置
+      
+      // 【路由跳转并传递参数】：
+      // 1、链接方式： 
+      <Link to={{pathname:'/demo', state:{id:12,name:'dahuang'}}}>XX</Link> 
+      // 2、js方式：
+      this.props.history.push({pathname:'/demo', state:{id:12,name:'dahuang'}})
+      
+      // 【获取参数】： 
+      this.props.location.state.name
+      ```
 
 # 2、JSX 本质是什么？
 
@@ -399,3 +475,4 @@ const APP = () => {
    ```
 
 3. 见 src/component/TodoLIst
+

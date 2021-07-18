@@ -173,7 +173,9 @@ console.log('div1ChildNodesP', div1ChildNodesP)
 ### 2.3.3、删除子元素
 
 ```js
-div1.removeChild( div1ChildNodesP[0] )
+div1.removeChild( 
+  div1ChildNodesP[0] 
+)
 ```
 
 ## 2.4、♨️DOM性能
