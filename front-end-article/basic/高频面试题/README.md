@@ -51,7 +51,6 @@
   * object    ====>    object
   * array     ====>    object
   * null        ====>    object
-* 应该使用 `Object.prototype.toString.call(obj)` ；
 
 ## 3、请列举强制类型转换和隐式类型转换
 
@@ -169,7 +168,7 @@
   * 返回新数组的length；
   * 改变原数组；
 
-## 8、数组的 API 哪些是纯函数？
+## 8、♨️数组的 API 哪些是纯函数？
 
 * 纯函数：不改变原数组（无副作用）、返回一个数组；
 
@@ -232,6 +231,14 @@
 
   * ✅ unshift
 
+  * reverse()
+
+    * 颠倒数组中元素的顺序，改变原数组，返回该数组
+
+  * sort()
+
+    * 对数组元素进行排序，改变原数组，返回该数组
+
   * foreach
 
     * `forEach()` 方法对数组的每个元素执行一次给定的函数。
@@ -247,6 +254,19 @@
     // expected output: "c"
     ```
 
+  * find
+
+    *  `find()` 方法返回数组中满足提供的测试函数的第一个元素的值。否则返回 [`undefined`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/undefined)。
+
+    ```js
+    const array1 = [5, 12, 8, 130, 44];
+    
+    const found = array1.find(element => element > 10);
+    
+    console.log(found);
+    // expected output: 12
+    ```
+    
   * some
 
     * `some()` 方法测试数组中是不是至少有1个元素通过了被提供的函数测试。它返回的是一个Boolean类型的值。
@@ -293,7 +313,7 @@
 
   * ✅ splice
 
-    * 剪接
+    * 剪接：从数组中添加/删除项目，改变原数组，返回被删除的元素
 
     ```js
     const months = ['Jan', 'March', 'April', 'June'];
@@ -646,11 +666,14 @@ alert(a);
 
 * 原型链：实例获取属性或调取方法，会先在自身找，若找不到则顺着 `__proto__` 寻找，一直找到 `Object.prototype.__proto__` ；
 
-## 19、如何判断一个变量是不是数组？
+## 19、♨️如何判断一个变量是不是数组？
 
 ```js
-const a = [1, 2, 3];
-a instanceof Array;		// true
+Object.prototype.toString.call(obj).slice(8, -1) === 'Array';			// 可以判读所有类型通用方法
+obj instanceof Array;																							// 判断 obj 是否是 Array 的实例	
+Array.isArray(obj);																								// es6 方法判断
+obj._proto_ === Array.prototype;																	// obj 通过原型链找到 Array.prototype
+Array.prototype.isPrototypeOf(obj);																// 检验数组 Array 在 obj 的原型链上，
 ```
 
 ## 20、🈳️如何用 JS 实现继承？（8种）
@@ -1143,7 +1166,7 @@ flat([[1, 2], 3, [4, 5, [6, 7, [8, 9, [10, 11]]]]]);
 // [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 ```
 
-## 32、✍️数组去重
+## 32、♨️✍️数组去重
 
 * 传统方式，遍历元素挨个比较、去重
 
@@ -1174,7 +1197,7 @@ flat([[1, 2], 3, [4, 5, [6, 7, [8, 9, [10, 11]]]]]);
   // [1, 2, 0, 44, 3]
   ```
 
-## 33、✍️手写深拷贝
+## 33、♨️✍️手写深拷贝
 
 * **深拷贝和浅拷贝区别是啥？**
 
@@ -1207,7 +1230,7 @@ flat([[1, 2], 3, [4, 5, [6, 7, [8, 9, [10, 11]]]]]);
 ```js
 function deepClone(obj = {}) {
   // 值类型直接返回，过滤引用类型，若是值类型，直接原本返回；
-  if(typeof obj !== 'object' && typeof obj === null) {
+  if(typeof obj !== "object" || obj === null) {
     return obj;
   };
   
@@ -1220,7 +1243,8 @@ function deepClone(obj = {}) {
     res = {};
   };
   for(let key in obj) {
-    // hasOwnProperty 该方法，检测一个对象是否含有特定的自身属性；会忽略掉那些从原型链上继承到的属性。
+    // 另外使用 for...in 循环遍历对象的属性时，其原型链上的所有属性都将被访问；
+    // 如果只要只遍历对象自身的属性，而不遍历继承于原型链上的属性，要使用 hasOwnProperty 方法过滤一下。
     if(obj.hasOwnProperty(key)) {
       res[key] = deepClone(obj[key]);
     }
@@ -1294,7 +1318,7 @@ https://leetcode-cn.com/problems/basic-calculator/
 * 删除：
   * `xxx.removeChild('yyy')`；
 * 改：
-  * `xxx.opendChild('yyy')`；
+  * `xxx.apendChild('yyy')`；
 * 查找：
   * `document.getElementById('xxx')`；
   * `document.getElementByTagName('xxx')`；
@@ -1866,12 +1890,14 @@ document.addEventListener('DOMContentLoaded', function() {
                clearTimeout(timer)
            };
            timer = setTimeout(() => {
+             	// arguments 是 fn 传的参数；
                fn.apply(this, arguments);
                timer = null;
            }, delay)
        }
    };
    
+   // 由于 fn.apply(this, arguments); debounce 中不能使用箭头函数；
    input1.addEventListener('keyup', debounce(function (e) {
        console.log(input1.value);
        console.log(e.target);

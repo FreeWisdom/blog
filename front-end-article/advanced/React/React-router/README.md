@@ -1,3 +1,5 @@
+> ♨️宝藏总结路由：https://www.cnblogs.com/-roc/p/14522546.html
+
 # 1、路由模式
 
 ## 1.1、hash 模式
