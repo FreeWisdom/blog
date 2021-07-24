@@ -878,6 +878,69 @@ export default UseEffectChangeState
     export default useAxios
     ```
 
+## 16.4、♨️解决闭包的有效方法
+
+1. 用闭包中最新的值：
+   * 正确设置 `React Hook` 的依赖项；
+2. 直接使用state，不使用闭包的值：
+   * 对于过时的状态，使用函数方式更新状态 + 相关的 state 最好放到一个对象中进行统一管理；
+3. 若数据复杂，则建议使用usereducer
+
+> * 官方原话是：
+>   * useEffect、useMemo、useCallback都是自带闭包的。每一次组件的渲染，它们都会捕获当前组件函数上下文中的状态(state, props)，所以每一次这三种hooks的执行，**反映的也都是当前的状态**，你无法使用它们来捕获上一次的状态。
+
+1. 调用更新时传递函数解决
+
+```jsx
+setData(value+1)->setData(value=>value+1)
+```
+
+2. 使用useRef
+
+```jsx
+const ref = useRef();
+ref.current = value;
+
+useEffect(() => {
+  let timer = setInterval(() => {
+    setData(ref.current + 1)
+  }, 1000);
+  return () => {
+    clearInterval(timer);
+  }
+}, []);
+```
+
+3. useReducer
+
+```jsx
+function reducer(count, action) {
+  switch (action.type) {
+    case 'add':
+      return count + action.gap;
+    default:
+      return count;
+  } 
+}
+
+function Demo() {
+  const [count, dispatch] = useReducer(reducer, 0);
+
+  useEffect(() => {
+    let timer = setInterval(function() {
+      dispatch({type: 'add', gap: 10});
+    }, 1000);
+    return () => {
+      clearInterval(timer);
+    }
+  }, []);
+
+  return (
+    <p>{count}</p>
+  );
+} 
+```
+
 # 17、react-redux in hooks
 
 ## 17.1、useSelector()

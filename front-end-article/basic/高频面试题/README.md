@@ -666,6 +666,13 @@ alert(a);
 
 * 原型链：实例获取属性或调取方法，会先在自身找，若找不到则顺着 `__proto__` 寻找，一直找到 `Object.prototype.__proto__` ；
 
+* 原型对象有一个constructor属性，指向该原型对象对应的构造函数
+
+  ```js
+  function Foo(){};
+  console.log(Foo.prototype.constructor === Foo);		//true
+  ```
+
 ## 19、♨️如何判断一个变量是不是数组？
 
 ```js
@@ -1307,7 +1314,11 @@ https://leetcode-cn.com/problems/basic-calculator/
 
 ## 39、将 location.search 中键值对，按照键的首字母顺序重排，返回新的 url
 
+## 40、数组打乱
 
+
+
+## 41、js浮点数
 
 # 3⃣️ JS-web-API
 
