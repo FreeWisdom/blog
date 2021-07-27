@@ -673,7 +673,7 @@ alert(a);
   console.log(Foo.prototype.constructor === Foo);		//true
   ```
 
-## 19、♨️如何判断一个变量是不是数组？
+## 19、⚠️♨️如何判断一个变量是不是数组？
 
 ```js
 Object.prototype.toString.call(obj).slice(8, -1) === 'Array';			// 可以判读所有类型通用方法
@@ -912,7 +912,20 @@ ajax(url).then(res => {
    * 数组中所有的 promise 状态都为 resolved 时，会回调后面的第一个 .then；
    * 数组中有一个 promise 状态为 rejected 时，会回调后面的第一个 .catch；
    
-6. 手写promise简单版：
+6. Promise.allSettled([promise1, promise2])
+
+   * 等到所有promises都已敲定（settled）（每个promise都已兑现（fulfilled）或已拒绝（rejected））。
+     返回一个promise，该promise在所有promise完成后完成。并带有一个对象数组，每个对象对应每个promise的结果。
+
+7. Promise.race([promise1, promise2])
+
+   * 当iterable参数里的任意一个子promise被成功或失败后，父promise马上也会用子promise的成功返回值或失败详情作为参数调用父promise绑定的相应句柄，并返回该promise对象。
+
+8. Promise.any([promise1, promise2])
+
+   * 接收一个Promise对象的集合，当其中的一个 promise 成功，就返回那个成功的promise的值。
+
+9. 手写promise简单版：
 
    ```js
    promise class PromiseM {
@@ -1316,9 +1329,54 @@ https://leetcode-cn.com/problems/basic-calculator/
 
 ## 40、数组打乱
 
+* 【一】
+  * 随机选择数组arr中的下标；
+  * 将该下标数的子项push到arr数组尾部；
+  * 在arr中从该下标处删除该子项；
 
+```js
+function upsetArr(arr) {
+  let len = arr.length;
+  for(let i = 0; i < len; i ++) {
+    const randomIndex = Math.floor(Math.random() * len);
+    arr.push(arr[randomIndex]);
+    arr.splice(randomIndex, 1);
+  }
+  return arr;
+}
 
-## 41、js浮点数
+const arr = [1, 2, 2, 3, 66, 99];
+upsetArr(arr);
+```
+
+* 【二】
+  * randomNum() 返回 -0.5 ～ +0.5 的随机数；
+  * arr.sort() 根据 randomNum() 函数返回值的正负情况，分配 arr 中前一项和后一项的排列序位；
+
+```js
+function randomNum() {
+  // 返回 -0.5 ～ +0.5 的随机数
+  return 0.5 - Math.random();
+}
+
+const arr = [1, 2, 2, 3, 66, 99];
+arr.sort(randomNum);
+```
+
+## 41、js判断两个浮点数是否相等
+
+```js
+// 不考虑兼容
+function numIsEqual(lef, rig) {
+    return Math.abs(lef - rig) < Number.EPSILON
+}
+
+// 考虑兼容
+function numIsEqual(lef, rig) {
+  let EPSILON = number.EPSILON ? number.EPSILON : Math.pow(2, -25);
+  return Math.abs(lef - rig) < EPSILON;
+}
+```
 
 # 3⃣️ JS-web-API
 
@@ -1455,7 +1513,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     * 可用于统计打点，访问静态页面时，通过img标签指定src 为访问统计的地址， img标签向统计程序发出请求，实现统计
   * 统计示例代码采用文件来记录访问次数，实际项目可以记录数据库；
-    
+  
 * `<link href=跨域css地址 />`
   
   * 可使用CDN，CDN一般都是外域；
